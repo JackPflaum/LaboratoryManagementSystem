@@ -1,0 +1,52 @@
+Navigation:
+Jobs (takes to list of pending and completed jobs)
+Clients (takes to client page, list of clients)
+Admin Controls (signup new users)
+User (takes to user page)
+
+
+Dashboard:
+Pending jobs in a table -> click job -> page with job details and list of samples -> click sample -> sample details page with tests associated to it
+Completed jobs in a table -> click job -> goes to job details page with list of samples -> click sample -> sample details page with tests associated to it
+pending table (job number, created, due date, samples completed, samples pending (or 5/11 pending))
+completed table (job number, date completed)
+
+
+Clients:
+list of clients (client name, current jobs, completed jobs)
+add client button -> add client form
+click on client in table -> take to client page
+
+
+Client Details Page:
+client page (list of jobs current and completed) -> click job -> take to job details page
+Edit client details -> client form with prefilled with current details
+
+
+Jobs:
+lists out all the current jobs and previous jobs
+can make different search queries on the table and the table sorts based on the search
+add job button -> add job form (details on left and add tests on the right side)
+edit job button (change details and add samples)
+
+
+Job Details Page:
+includes job details (client, job number, created, etc.) and list of samples
+click sample in list and it takes you to sample page.
+create report button
+
+
+Sample Page (accessed through jobs or user):
+show individual samples from a job
+sample details (id, assigned user, etc)
+list of tests and result input
+edit result button
+edit details button
+
+
+User Page:
+list of assigned samples -> click sample and taken to sample details page
+include pending and completed
+user details displayed on page
+change user details button -> user details form
+
