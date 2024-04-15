@@ -26,9 +26,7 @@ class Client extends Model<ClientAttributes> implements ClientAttributes {
 
 
     static associate(models: any) {
-        Client.hasMany(models.Job, {
-           foreignKey: 'clientId',
-        });
+        Client.hasMany(models.Job);    // establish hasMany relationship with Job model
     }
 }
 
@@ -49,6 +47,9 @@ Client.init({
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        validate: {
+            isEmail: true,
+        },
     },
     phoneNumber: {
         type: DataTypes.STRING,
