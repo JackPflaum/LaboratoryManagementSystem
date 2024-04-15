@@ -1,19 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import { Modal, Button, Label, TextInput, Textarea, Select, Radio, FileInput } from 'flowbite-react';
 
 
 interface EditSampleModalProps {
-    sampleDetails: {};
+    editedDetails: {};
+    setEditedDetails: {};
     showModal: boolean;
     closeModal: () => void;
+    closeModalSave: () => void;
+    sampleId: string;
 }
 
-const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails, showModal, closeModal}) => {
+const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ editedDetails, setEditedDetails, showModal, closeModal, closeModalSave, sampleId}) => {
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const [ localError, setLocalError ] = useState<string>('');
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        try {
+            const response = await axios.post(`http://localhost:3000/api/sample-details/${sampleId}/update-sample-details`, { editedDetails });
 
-        closeModal();
+            if (response.status === 200) {
+                // upon successful update, close modal and save editedDetails to sampleDetails in Sample page.
+                closeModalSave();
+            }
+        } catch (error) {
+            console.log('handleSubmit() Error:', error);
+        }
+    }
+
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEditedDetails((prev) => ({
+            ...prev,
+            [name] : value,
+        }));
+    }
+
+    // handles checking file size is within limit and adds file to editedDetails state
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedPhoto = e.target.file[0];
+
+        // check file size
+        const maxSizeBytes = 5 * 1024 * 1024;    // 5MB
+        if (selectedPhoto.size > maxSizeBytes ) {
+            setLocalError('Image size exceeds the allowable limit of 5MB');
+            return;
+        }
+
+        setEditedDetails((prev) => {
+            ...prev,
+            e.target.name: selectedPhoto,
+        });
+        setLocalError('');
     }
 
 
@@ -29,9 +70,9 @@ const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails,
                                 <TextInput
                                     id="jobNumber"
                                     type="text"
-                                    value={}
+                                    value={editedDetails.jobNumber}
                                     name="jobNumber"
-                                    onChange={}
+                                    // onChange={}
                                     required
                                     disabled-readonly
                                 />
@@ -41,9 +82,9 @@ const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails,
                                 <TextInput
                                     id="sampleNumber"
                                     type="text"
-                                    value={}
+                                    value={editedDetails.sampleNumber}
                                     name="sampleNumber"
-                                    onChange={}
+                                    // onChange={}
                                     required
                                     disabled-readonly
                                 />
@@ -52,7 +93,7 @@ const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails,
                                 <div>
                                     <Label htmlFor="type" value="Select sample type" />
                                 </div>
-                                <Select id="type" name="type" required>
+                                <Select id="type" name="type" defaultValue={editedDetails.type} onChange={handleInputChange} required>
                                     <option value="solid">Solid</option>
                                     <option value="liquid">Liquid</option>
                                     <option value="gas">Gas</option>
@@ -62,25 +103,24 @@ const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails,
                                 <fieldset>
                                     <legend>Storage Area</legend>
                                     <div>
-                                        <Radio id="fridge" name="storage" value="fridge" />
+                                        <Radio
+                                            id="fridge"
+                                            name="storage"
+                                            value="fridge"
+                                            checked={editedSampleDetails.storage === "fridge"}
+                                            onChange={handleInputChange} />
                                         <Label htmlFor="fridge" value="Fridge" />
                                     </div>
                                     <div>
-                                        <Radio id="shelf" name="storage" value="shelf" />
+                                        <Radio
+                                            id="shelf"
+                                            name="storage"
+                                            value="shelf"
+                                            checked={editedSampleDetails.storage === "shelf"}
+                                            onChange={handleInputChange} />
                                         <Label htmlFor="shelf" value="Shelf" />
                                     </div>
                                 </fieldset>
-                            </div>
-                            <div>
-                                <Label htmlFor="status" value="Status" />
-                                <TextInput
-                                    id="status"
-                                    type="text"
-                                    value={}
-                                    name="status"
-                                    onChange={}
-                                    required
-                                />
                             </div>
                             <div>
                                 <Label htmlFor="photo" value="Upload Photo" />
@@ -88,7 +128,8 @@ const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails,
                                     id="photo"
                                     value={}
                                     name="photo"
-                                    onChange={}
+                                    accept="image/png image/jpg, image/jpeg"
+                                    onChange={handleFileChange}
                                     placeholder="A sample photo may be useful for future reference"
                                 />
                             </div>
@@ -96,17 +137,18 @@ const EditSampleDetailsModal: React.FC<EditSampleModalProps> = ({ sampleDetails,
                                 <Label htmlFor="comments" value="Comments" />
                                 <Textarea
                                     id="comments"
-                                    value={}
+                                    value={editedDetails.comments}
                                     name="comments"
                                     rows={5}
-                                    placeholder=""
-                                    onChange={}
+                                    placeholder="Add any helpful comments..."
+                                    onChange={handleInputChange}
                                 />
                             </div>
                             <div>
                                 <Button type="submit">Save</Button>
                                 <Button type="button" onClick={closeModal}>Cancel</Button>
                             </div>
+                            { localError && <p>{localError}</p> }
                         </div>
                     </form>
                 </Modal.Body>
