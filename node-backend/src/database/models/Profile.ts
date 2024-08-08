@@ -2,16 +2,10 @@ import { Model, DataTypes } from "sequelize"
 import sequelize from "./db";
 import { ModelsInterface } from "../types/models-interface";
 import User from "../models/User"
-
-interface ProfileAttributes {
-    userId: number;
-    personalEmail?: string;
-    phoneNumber?: string;
-    position?: string;
-    dateStarted: Date;
-}
+import { ProfileAttributes } from "../types/models-interface";
 
 class Profile extends Model<ProfileAttributes> implements ProfileAttributes {
+    id!: number;
     userId!: number;
     personalEmail?: string;
     phoneNumber?: string;
@@ -19,12 +13,18 @@ class Profile extends Model<ProfileAttributes> implements ProfileAttributes {
     dateStarted!: Date;
 
     static associate(models: ModelsInterface) {
-        Profile.belongsTo(models.User, {foreignKey: "userId", onDelete: "CASCADE"});
-        Profile.hasMany(models.Test, {foreignKey: "testId"});
+        Profile.belongsTo(models.User, { foreignKey: "userId", onDelete: "CASCADE" });
+        Profile.hasMany(models.Test, { foreignKey: "testId" });
     }
 }
 
 Profile.init({
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        primaryKey: true,
+    },
     userId: {
         type: DataTypes.INTEGER,
         allowNull: false,

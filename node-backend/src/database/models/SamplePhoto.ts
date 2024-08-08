@@ -2,25 +2,26 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';    // import database instance from database.ts
 import Sample from '../models/Sample';
 import { ModelsInterface } from '../types/models-interface';
-
-
-interface SamplePhotoAttributes {
-    sampleId: number;
-    photo: Buffer;    // stored as binary data
-}
-
+import { SamplePhotoAttributes } from '../types/models-interface';
 
 class SamplePhoto extends Model<SamplePhotoAttributes> implements SamplePhotoAttributes {
+    id!: number;
     sampleId!: number;
-    photo!: Buffer;
+    photo!: Buffer;    // stored as binary data
 
     static associate(models: ModelsInterface) {
-        SamplePhoto.belongsTo(models.Sample, { foreignKey: 'sampleId'});
+        SamplePhoto.belongsTo(models.Sample, { foreignKey: 'sampleId' });
     }
 }
 
 
 SamplePhoto.init({
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        primaryKey: true,
+    },
     sampleId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -34,7 +35,7 @@ SamplePhoto.init({
         type: DataTypes.BLOB,    // stored as binary data
         allowNull: false,
     }
-},  {
+}, {
     sequelize,
     modelName: 'SamplePhoto',
     tableName: 'sample_photos',

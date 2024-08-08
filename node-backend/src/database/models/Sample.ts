@@ -2,19 +2,10 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';
 import { ModelsInterface } from '../types/models-interface';
 import Job from './Job';
-
-
-interface SampleAttributes {
-    jobNumber: string;
-    sampleNumber: string;
-    type: string;
-    storage: string;
-    completed: boolean;
-    comments?: string;
-}
-
+import { SampleAttributes } from '../types/models-interface';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
+    id!: number;
     jobNumber!: string;
     sampleNumber!: string;
     type!: string;
@@ -23,14 +14,20 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
     comments?: string;
 
     static associate(models: ModelsInterface) {
-        Sample.belongsTo(models.Job, {foreignKey: 'jobNumber', onDelete: 'CASCADE'});
-        Sample.hasMany(models.Test, {foreignKey: "testId"});
-        Sample.hasMany(models.SamplePhoto, {foreignKey: "sampleId"});
+        Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', onDelete: 'CASCADE' });
+        Sample.hasMany(models.Test, { foreignKey: "testId" });
+        Sample.hasMany(models.SamplePhoto, { foreignKey: "sampleId" });
     }
 }
 
 
 Sample.init({
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        primaryKey: true,
+    },
     jobNumber: {    // foreign key field 
         type: DataTypes.STRING,
         allowNull: false,
@@ -44,19 +41,19 @@ Sample.init({
         allowNull: false,
         unique: true,
     },
-    type : {
+    type: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    storage : {
+    storage: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    completed : {
+    completed: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
-    comments : {
+    comments: {
         type: DataTypes.TEXT,
     },
 }, {

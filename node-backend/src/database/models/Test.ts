@@ -3,19 +3,10 @@ import sequelize from './db';    // import database instance from database.ts
 import Sample from '../models/Sample';
 import Profile from '../models/Profile';
 import { ModelsInterface } from '../types/models-interface';
-
-
-interface TestAttributes {
-    sampleId: number;
-    profileId: number;
-    testName: string;
-    unit: string;
-    result?: number;
-    comment?: string;
-}
-
+import { TestAttributes } from '../types/models-interface';
 
 class Test extends Model<TestAttributes> implements TestAttributes {
+    id!: number;
     sampleId!: number;
     profileId!: number;
     testName!: string;
@@ -31,6 +22,12 @@ class Test extends Model<TestAttributes> implements TestAttributes {
 
 
 Test.init({
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        primaryKey: true,
+    },
     sampleId: {
         type: DataTypes.INTEGER,
         allowNull: false,

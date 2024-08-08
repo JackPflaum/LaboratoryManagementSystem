@@ -2,16 +2,10 @@ import { Model, DataTypes } from "sequelize";
 import { ModelsInterface } from "../types/models-interface";
 import sequelize from "./db";
 import Client from "./Client";
-
-interface JobAttributes {
-    clientId: number;
-    jobNumber: string;
-    comments?: string;
-    dueDate: Date;
-    completed?: boolean;
-}
+import { JobAttributes } from "../types/models-interface";
 
 class Job extends Model<JobAttributes> implements JobAttributes {
+    id!: number;
     clientId!: number;
     jobNumber!: string;
     comments?: string;
@@ -19,8 +13,8 @@ class Job extends Model<JobAttributes> implements JobAttributes {
     completed?: boolean;
 
     static associate(models: ModelsInterface) {
-        Job.belongsTo(models.Client, {foreignKey: "clientId"});
-        Job.hasMany(models.Sample, {foreignKey: "jobNumber"});
+        Job.belongsTo(models.Client, { foreignKey: "clientId" });
+        Job.hasMany(models.Sample, { foreignKey: "jobNumber" });
     }
 
     // create a new job number based on the most recent job number
@@ -32,7 +26,7 @@ class Job extends Model<JobAttributes> implements JobAttributes {
 
         if (latestJobNumber) {
             // split jobNumber into year and number
-            const [ year, number ] = latestJobNumber.jobNumber.split("-");
+            const [year, number] = latestJobNumber.jobNumber.split("-");
             const newNumber = parseInt(number, 10) + 1;  // using 10 base to ensure unexpected behavior e.g. leading zeroes.
             return `${year}-${newNumber}`;
         } else {
@@ -43,6 +37,12 @@ class Job extends Model<JobAttributes> implements JobAttributes {
 }
 
 Job.init({
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        primaryKey: true,
+    },
     clientId: {
         type: DataTypes.INTEGER,
         allowNull: false,
