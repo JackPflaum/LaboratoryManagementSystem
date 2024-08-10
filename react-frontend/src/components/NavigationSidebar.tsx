@@ -3,13 +3,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import { Link } from "react-router-dom";
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import ScienceIcon from '@mui/icons-material/Science';
 import BusinessIcon from '@mui/icons-material/Business';
 import PersonIcon from '@mui/icons-material/Person';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 
 
 const navigationLinks = [
+    {
+        title: "Dashboard",
+        icon: <DashboardIcon />,
+        path: "/dashboard"
+    },
     {
         title: "Jobs",
         icon: <ScienceIcon />,
@@ -132,7 +139,7 @@ const NavigationSidebar = ({ mainComponent }: NavigationSidebarProps) => {
                 <List>
                     {navigationLinks.map((link, index) => (
                         <ListItem key={link.title} disablePadding sx={{ display: "block" }}>
-                            <ListItemButton>
+                            <ListItemButton component={Link} to={link.path}>
                                 <ListItemIcon>
                                     {link.icon}
                                 </ListItemIcon>
