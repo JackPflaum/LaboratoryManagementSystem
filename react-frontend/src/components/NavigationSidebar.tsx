@@ -4,7 +4,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import { Link } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ScienceIcon from '@mui/icons-material/Science';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -97,7 +97,7 @@ interface NavigationSidebarProps {
     mainComponent: React.ReactNode;
 };
 
-const NavigationSidebar = ({ mainComponent }: NavigationSidebarProps) => {
+const NavigationSidebar = () => {
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
     return (
@@ -152,7 +152,7 @@ const NavigationSidebar = ({ mainComponent }: NavigationSidebarProps) => {
             </Drawer>
             <MainContent open={drawerOpen}>
                 <DrawerHeader />
-                {mainComponent}
+                <Outlet />
             </MainContent>
         </Box >
     )
