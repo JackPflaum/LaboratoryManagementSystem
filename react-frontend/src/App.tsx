@@ -4,6 +4,7 @@ import './App.css';
 import Login from './components/Login';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
+import NoMatch from './components/NoMatch';
 
 function App() {
 
@@ -17,9 +18,13 @@ function App() {
                         <Route path="/*" element={<Layout />}>
                             <Route index element={<Dashboard />} />  {/* this is the default child route when '/' path is rendered */}
                             <Route path="dashboard" element={<Dashboard />} />
+                            <Route path="*" element={<NoMatch />} />
                         </Route>
                     ) : (
-                        <Route path="/" element={<Login />} />
+                        <>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="*" element={<NoMatch />} />
+                        </>
                     )}
             </Routes>
         </BrowserRouter>
