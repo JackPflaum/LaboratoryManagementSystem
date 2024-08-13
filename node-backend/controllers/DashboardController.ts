@@ -34,14 +34,18 @@ export class DashboardController {
                 }
             });
 
-            res.status(200).json({
+            // get list of jobs
+            const jobs = await Job.findAll();
+
+            return res.status(200).json({
                 pendingJobsCount: pendingJobsCount,
                 pendingSamplesCount: pendingSamplesCount,
                 completedJobsCount: completedJobsCount,
+                jobs: jobs,
             });
         } catch (error) {
             console.log('getDashboard() Error:', error);
-            res.status(500).json({ 'error': 'Internal server error'});
+            return res.status(500).json({ 'error': 'Internal server error' });
         }
     }
 }
