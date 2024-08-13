@@ -4,9 +4,10 @@ import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid"
 interface DisplayGridProps {
     columns: GridColDef[];
     rows: GridRowsProp;
+    isLoading?: boolean;
 }
 
-const DisplayGrid = ({ columns, rows }: DisplayGridProps) => {
+const DisplayGrid = ({ columns, rows, isLoading }: DisplayGridProps) => {
     const pageSize = 5;
 
     return (
@@ -26,6 +27,7 @@ const DisplayGrid = ({ columns, rows }: DisplayGridProps) => {
                     backgroundColor: "white",
                     borderRadius: 4,
                 }}
+                loading={isLoading}
             />
         </Box>
     )

@@ -1,15 +1,16 @@
 import { Typography } from "@mui/material"
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { CardData } from "../../types/interfaces";
 
 interface DashboardCardProps {
-    titles: string[];
+    cardData: CardData[];
 }
 
-const DashboardCard = ({ titles }: DashboardCardProps) => {
+const DashboardCard = ({ cardData }: DashboardCardProps) => {
     return (
         <>
-            {titles.map((title, index) => (
+            {cardData.map((data, index) => (
                 <Card
                     key={index}
                     sx={{
@@ -31,10 +32,10 @@ const DashboardCard = ({ titles }: DashboardCardProps) => {
                         }}
                     >
                         <Typography variant="h6" component="div">
-                            {title}
+                            {data.title}
                         </Typography>
                         <Typography variant="body1" mt={2}>
-                            17
+                            {data.count}
                         </Typography>
                     </CardContent>
                 </Card>
