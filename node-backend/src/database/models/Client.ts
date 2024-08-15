@@ -1,7 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';    // import database instance from database.ts
-import { ModelsInterface } from '../types/models-interface';
-import { ClientAttributes } from '../types/models-interface';
+import { ModelsInterface, ClientAttributes } from '../types/models-interface';
 
 // In Typescript '!' means the attribute must be assigned a value and '?' means it is optional
 class Client extends Model<ClientAttributes> implements ClientAttributes {
@@ -9,7 +8,11 @@ class Client extends Model<ClientAttributes> implements ClientAttributes {
     name!: string;
     email!: string;
     phoneNumber?: string;
-    address?: string;
+    addressLine?: string;
+    suburb?: string;
+    state?: string;
+    postcode?: string;
+    fullAddress?: string;    // virtual field
     purchaseOrderNumber?: string;
 
     static associate(models: ModelsInterface) {
@@ -41,13 +44,31 @@ Client.init({
     phoneNumber: {
         type: DataTypes.STRING,
     },
-    address: {
+    addressLine: {
         type: DataTypes.STRING,
+    },
+    suburb: {
+        type: DataTypes.STRING,
+    },
+    state: {
+        type: DataTypes.STRING,
+    },
+    postcode: {
+        type: DataTypes.STRING,
+    },
+    fullAddress: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return `${this.addressLine}, ${this.suburb} ${this.state} ${this.postcode}`;
+        },
+        set(value: string) {
+            throw new Error("Do not try to set the 'fullAddress' value");
+        }
     },
     purchaseOrderNumber: {
         type: DataTypes.STRING,
         unique: true,
-    }
+    },
 }, {
     sequelize,    // Pass the sequelized instance. It tells which database instance to use for that model.
     modelName: 'Client',
