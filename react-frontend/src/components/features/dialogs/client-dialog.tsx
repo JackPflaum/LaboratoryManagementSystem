@@ -1,13 +1,15 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material"
+import { useState } from "react";
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form";
 import { ClientAttributes } from "../../../types/interfaces";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup"
+import { useCreateClientMutation } from "../../../queries/useQueries";
 
 // client details validation schema
 const clientSchema = yup.object().shape({
     clientName: yup.string().trim().required("Client name is required"),
-    email: yup.string().trim().matches(/\S+@\S+\.\S/, "Invalid email address").required("Email is required"),
+    email: yup.string().trim().required("Email is required").matches(/\S+@\S+\.\S/, "Invalid email address"),
     phoneNumber: yup.string().trim().optional(),
     addressLine: yup.string().optional(),
     suburb: yup.string().optional(),
@@ -23,6 +25,8 @@ interface ClientDialogProps {
 }
 
 const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
+
+    const [error, setError] = useState<string>("");
 
     const australianStates = [
         { value: "", label: "Select State" },
@@ -54,17 +58,32 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
         resolver: yupResolver(clientSchema)
     });
 
-    // handle client form submission
+    const { mutate: createClient } = useCreateClientMutation();
+
+    // handle client form submissions
     const onSubmit = (formData: ClientAttributes) => {
         console.log("Data", formData);
+        if (data?.id) {
+            // update client database
+        } else {
+            // create new client in the database
+            createClient(formData, {
+                onSuccess: () => {
+                    handleClose();
+                },
+                onError: (error) => {
+                    setError(JSON.stringify(error));
+                }
+            });
+        }
     };
-
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
             <DialogTitle>{!data ? "Add Client" : "Edit Client"}</DialogTitle>
+            <Divider />
             <DialogContent>
-                <Stack spacing={2} sx={{ marginTop: 2 }}>
+                <Stack spacing={2}>
                     <Controller
                         name="clientName"
                         control={control}
@@ -168,6 +187,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                             {...field}
                                             error={!!fieldState.error}
                                             placeholder={fieldState.error?.message}
+                                            sx={{ minWidth: "100px" }}
                                         >
                                             {australianStates.map((state) => (
                                                 <MenuItem key={state.value} value={state.value}>
@@ -199,6 +219,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     </Grid>
                 </Stack>
             </DialogContent>
+            {error && <Alert severity="error">{error}</Alert>}
             <DialogActions>
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
