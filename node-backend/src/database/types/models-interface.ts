@@ -17,21 +17,26 @@ export interface ModelsInterface {
 }
 
 export interface ClientAttributes {
-    id: number;
+    id?: number;
     name: string;
     email: string;
     phoneNumber?: string;
-    address?: string;
+    addressLine?: string;
+    suburb?: string;
+    state?: string;
+    postcode?: string;
+    fullAddress?: string;
     purchaseOrderNumber?: string;
 }
 
 export interface JobAttributes {
-    id: number;
+    id?: number;
     clientId: number;
     jobNumber: string;
     comments?: string;
     dueDate: Date;
     completed?: boolean;
+    createdAt?: Date;
 }
 
 export interface UserAtributes {

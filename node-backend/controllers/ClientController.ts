@@ -1,15 +1,7 @@
 import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 import Client from '../src/database/models/Client';
-
-// maybe import from Client
-interface ClientAttributes {
-    name: string;
-    email: string;
-    phoneNumber: string;
-    address: string;
-    purchaseOrderNumber: string;
-}
+import { ClientAttributes } from '../src/database/types/models-interface';
 
 
 // handles requests related to client information
@@ -19,12 +11,12 @@ export class ClientController {
     static async getClients(req: Request, res: Response) {
         try {
             const clients = await Client.findAll();
-            res.status(200).json(clients);
+            return res.status(200).json({ clients });
         } catch (error) {
             console.log('getClients() Error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error' });
         }
-    }
+    };
 
 
     // retrieve client from database with specified id
@@ -38,10 +30,10 @@ export class ClientController {
             }
 
             // respond with retieved client details
-            res.status(200).json(client);
+            return res.status(200).json({ client });
         } catch (error) {
             console.log('getClientDetails() Error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error' });
         }
     }
 
@@ -49,26 +41,65 @@ export class ClientController {
     // add new client details to database 
     static async addNewClient(req: Request, res: Response) {
         // get form data from request body
-        const { name, email, phoneNumber, address, purchaseOrderNumber }: ClientAttributes = req.body;
+        const {
+            name,
+            email,
+            phoneNumber,
+            addressLine,
+            suburb,
+            state,
+            postcode,
+            purchaseOrderNumber
+        }: ClientAttributes = req.body;
+
         try {
             // create client and send back newly created client in json response
-            const newClient = await Client.create({name, email, phoneNumber, address, purchaseOrderNumber});
-            res.status(201).json(newClient);
+            await Client.create({ name, email, phoneNumber, addressLine, suburb, state, postcode, purchaseOrderNumber });
+            return res.status(201).json({ success: "New Client has been created" });
         } catch (error) {
             console.log('addNewClient() Error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error' });
         }
-    }
+    };
 
 
     // update an existing client in the database
     static async updateClientDetails(req: Request, res: Response) {
+        const { clientId } = req.params;
+        const {
+            name,
+            email,
+            phoneNumber,
+            addressLine,
+            suburb,
+            state,
+            postcode,
+            purchaseOrderNumber
+        }: ClientAttributes = req.body;
+
         try {
-            res.send('Client Details updated');
+            const client = await Client.findByPk(clientId);
+
+            if (!client) {
+                return res.status(404).json({ error: "Client not found." });
+            }
+
+            await client.update({
+                name: name !== "" ? name : client.name,
+                email: email !== "" ? email : client.email,
+                phoneNumber: phoneNumber !== "" ? phoneNumber : client.phoneNumber,
+                addressLine: addressLine !== "" ? addressLine : client.addressLine,
+                suburb: suburb !== "" ? suburb : client.suburb,
+                state: state !== "" ? state : client.state,
+                postcode: postcode !== "" ? postcode : client.postcode,
+                purchaseOrderNumber: purchaseOrderNumber !== "" ? purchaseOrderNumber : client.purchaseOrderNumber,
+            });
+
+            return res.status(201).json({ success: "Client Details updated" });
         } catch (error) {
             console.log('updateClientDetails() Error:', error);
         };
-    }
+    };
 
 
     // confirms clients existance in the database (called before addNewClient)
@@ -87,13 +118,13 @@ export class ClientController {
 
             // return true or false based on whether name or email was found in database
             if (client) {
-                res.status(200).json({ result: true });
+                return res.status(200).json({ result: true });
             } else {
-                res.status(200).json({ result: false });
+                return res.status(200).json({ result: false });
             };
         } catch (error) {
             console.log('confirmClientExists() Error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error' });
         }
     };
 };
