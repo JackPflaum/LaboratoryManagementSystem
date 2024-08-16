@@ -75,8 +75,8 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     handleClose();
                 },
                 onError: (error) => {
-                    setError(JSON.stringify(error));
-                    console.log("Error:", error);
+                    setError(error.message);
+                    console.log("Error:", error.message);
                 }
             });
         } else {
@@ -86,8 +86,8 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     handleClose();
                 },
                 onError: (error) => {
-                    setError(`Error: ${JSON.stringify(error)}`);
-                    console.log("Error: ", error);
+                    setError(`Error: ${error.message}`);
+                    console.log("Error: ", error.message);
                 }
             });
         }

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ClientAttributes } from "../types/interfaces";
+import { useAuth } from "../context/AuthContext";
 
 // all Query Keys in one single object.
 const queryKeys = {
@@ -13,8 +14,37 @@ const queryKeys = {
     }
 };
 
+
+// login to the system
+export const useLoginMutation = () => {
+    const { setUser } = useAuth();
+
+    return useMutation({
+        mutationFn: async (data: { email: string, password: string }) => {
+            return await fetch("http://localhost/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then((res) => res.json())
+        },
+        onSuccess: (res) => {
+            // TODO: save returned JWT token?
+            // set returned authorization data to AuthContext
+            setUser(res);
+        },
+        onError: (error) => {
+            console.log(error.message);
+        }
+    })
+};
+
+
 // gets data for Dashboard screen
 export const useGetJobsQuery = () => {
+    // add debouncer here
     return useQuery({
         queryKey: queryKeys.jobs.getJobsList,
         queryFn: async () => {
@@ -22,7 +52,6 @@ export const useGetJobsQuery = () => {
                 method: "GET"
             })
                 .then((res) => res.json())
-                .catch((error) => error.json())
         },
     });
 };
@@ -48,7 +77,7 @@ export const useCreateClientMutation = () => {
             // queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
         },
         onError: (error) => {
-            console.log("Error: ", error);
+            console.log("Error: ", error.message);
         }
     });
 };
@@ -74,7 +103,7 @@ export const useUpdateClientMutation = () => {
             // queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
         },
         onError: (error) => {
-            console.log("Error: ", error);
+            console.log("Error: ", error.message);
         },
     });
 };
