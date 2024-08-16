@@ -11,12 +11,12 @@ export class AuthorizationController {
 
     // handles user login
     static async login(req: Request, res: Response) {
-        const { workEmail, password } = req.body;
+        const { email, password } = req.body;
         try {
             // find user based on email
             const user = await User.findOne({
                 where: {
-                    workEmail: workEmail,
+                    workEmail: email,
                 }
             })
 
@@ -45,10 +45,12 @@ export class AuthorizationController {
                 maxAge: 15 * 60 * 1000    // 15 minutes
             });
 
-            res.status(200).json({ success: "User has successfully logged in.", })
+            return res.status(200).json({
+                fullName: `${user.firstName} ${user.lastName}`,
+            });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ error: "Internal server error" });
         }
     }
 };

@@ -30,7 +30,7 @@ router.get('/sample-details/:id', SampleController.getSampleDetails);
 router.put('/sample-details/:id/update-sample-details', SampleController.updateSampleDetails);
 
 // User Authorization requests
-router.get('/login', AuthorizationController.login);
+router.post('/login', AuthorizationController.login);
 
 // User-Profile related requests
 router.get('/user/:id', UserController.getUser);
