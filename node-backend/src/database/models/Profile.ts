@@ -1,8 +1,7 @@
 import { Model, DataTypes } from "sequelize"
 import sequelize from "./db";
-import { ModelsInterface } from "../types/models-interface";
+import { ModelsInterface, ProfileAttributes } from "../types/models-interface";
 import User from "../models/User"
-import { ProfileAttributes } from "../types/models-interface";
 
 class Profile extends Model<ProfileAttributes> implements ProfileAttributes {
     id!: number;

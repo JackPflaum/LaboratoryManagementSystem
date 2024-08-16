@@ -2,8 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';    // import database instance from database.ts
 import Sample from '../models/Sample';
 import Profile from '../models/Profile';
-import { ModelsInterface } from '../types/models-interface';
-import { TestAttributes } from '../types/models-interface';
+import { ModelsInterface, TestAttributes } from '../types/models-interface';
 
 class Test extends Model<TestAttributes> implements TestAttributes {
     id!: number;

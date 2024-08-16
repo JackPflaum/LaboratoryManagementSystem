@@ -1,8 +1,7 @@
 import { Model, DataTypes } from "sequelize";
-import { ModelsInterface } from "../types/models-interface";
+import { ModelsInterface, JobAttributes } from "../types/models-interface";
 import sequelize from "./db";
 import Client from "./Client";
-import { JobAttributes } from "../types/models-interface";
 
 class Job extends Model<JobAttributes> implements JobAttributes {
     id!: number;

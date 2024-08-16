@@ -1,8 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';
-import { ModelsInterface } from '../types/models-interface';
+import { ModelsInterface, SampleAttributes } from '../types/models-interface';
 import Job from './Job';
-import { SampleAttributes } from '../types/models-interface';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
     id!: number;

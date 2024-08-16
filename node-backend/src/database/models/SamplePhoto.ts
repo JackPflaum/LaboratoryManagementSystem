@@ -1,8 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';    // import database instance from database.ts
 import Sample from '../models/Sample';
-import { ModelsInterface } from '../types/models-interface';
-import { SamplePhotoAttributes } from '../types/models-interface';
+import { ModelsInterface, SamplePhotoAttributes } from '../types/models-interface';
 
 class SamplePhoto extends Model<SamplePhotoAttributes> implements SamplePhotoAttributes {
     id!: number;

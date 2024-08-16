@@ -1,8 +1,7 @@
 import { DataTypes, Model } from "sequelize";
-import { ModelsInterface } from "../types/models-interface";
+import { ModelsInterface, UserAtributes } from "../types/models-interface";
 import sequelize from "./db";
-import bcrypt from "bcrypt";
-import { UserAtributes } from "../types/models-interface";
+import * as bcrypt from "bcrypt";
 
 class User extends Model<UserAtributes> implements UserAtributes {
     id!: number;
