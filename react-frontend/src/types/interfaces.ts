@@ -24,3 +24,7 @@ export interface ClientAttributes {
     postcode?: string;
     purchaseOrderNumber?: string;
 };
+
+export interface UserContextAttributes {
+    fullName: string;
+};
