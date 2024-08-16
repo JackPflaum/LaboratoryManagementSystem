@@ -28,7 +28,7 @@ export const useGetJobsQuery = () => {
 };
 
 
-// create new Client in database
+// create new Client in the database
 export const useCreateClientMutation = () => {
     const queryClient = useQueryClient();
 
@@ -36,16 +36,45 @@ export const useCreateClientMutation = () => {
         mutationFn: async (data: ClientAttributes) => {
             await fetch("http://localhost/api/clients/add-new-client", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(data),
             });
         },
         onSuccess: (res) => {
             console.log("Success: ", res);
             // refresh the cached Client list
-            // queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClientsList] });
+            // queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
         },
         onError: (error) => {
             console.log("Error: ", error);
         }
+    });
+};
+
+
+// update existing Client in the database
+export const useUpdateClientMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ data, id }: { data: ClientAttributes; id: number }) => {
+            await fetch(`http://localhost/api/clients/${id}/update-client-details`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+        },
+        onSuccess: (res) => {
+            console.log("Success: ", res);
+            // refresh the cached Client list
+            // queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
+        },
+        onError: (error) => {
+            console.log("Error: ", error);
+        },
     });
 };

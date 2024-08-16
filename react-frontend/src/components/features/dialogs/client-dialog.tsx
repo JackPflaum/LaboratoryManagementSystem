@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ClientAttributes } from "../../../types/interfaces";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup"
-import { useCreateClientMutation } from "../../../queries/useQueries";
+import { useCreateClientMutation, useUpdateClientMutation } from "../../../queries/useQueries";
 
 // client details validation schema
 const clientSchema = yup.object().shape({
@@ -26,8 +26,10 @@ interface ClientDialogProps {
 
 const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
 
+    // set error messages when submitting form
     const [error, setError] = useState<string>("");
 
+    // address dropdown options
     const australianStates = [
         { value: "", label: "Select State" },
         { value: "NSW", label: "New South Wales" },
@@ -40,6 +42,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
         { value: "ACT", label: "Australian Capital Territory" }
     ];
 
+    // prefill input fields if data exists
     const mapDataToForm = (data?: ClientAttributes) => {
         return {
             clientName: data?.name ?? "",
@@ -60,11 +63,22 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
 
     const { mutate: createClient } = useCreateClientMutation();
 
+    const { mutate: updateClient } = useUpdateClientMutation();
+
     // handle client form submissions
     const onSubmit = (formData: ClientAttributes) => {
         console.log("Data", formData);
         if (data?.id) {
             // update client database
+            updateClient({ data: formData, id: data.id }, {
+                onSuccess: () => {
+                    handleClose();
+                },
+                onError: (error) => {
+                    setError(JSON.stringify(error));
+                    console.log("Error:", error);
+                }
+            });
         } else {
             // create new client in the database
             createClient(formData, {
@@ -72,7 +86,8 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     handleClose();
                 },
                 onError: (error) => {
-                    setError(JSON.stringify(error));
+                    setError(`Error: ${JSON.stringify(error)}`);
+                    console.log("Error: ", error);
                 }
             });
         }
