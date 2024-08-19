@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClientAttributes } from "../types/interfaces";
+import { ClientAttributes, CreateUserProps } from "../types/interfaces";
 import { useAuth } from "../context/AuthContext";
 
 // all Query Keys in one single object.
@@ -39,6 +39,22 @@ export const useLoginMutation = () => {
             console.log(error.message);
         }
     })
+};
+
+
+// create new User
+export const useCreateUserMutation = () => {
+    return useMutation({
+        mutationFn: async (data: CreateUserProps) => {
+            await fetch("http://localhost:8000/api/admin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+        }
+    });
 };
 
 

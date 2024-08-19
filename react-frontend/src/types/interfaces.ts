@@ -28,3 +28,11 @@ export interface ClientAttributes {
 export interface UserContextAttributes {
     fullName: string;
 };
+
+export interface CreateUserProps {
+    firstName: string;
+    lastName: string;
+    workEmail: string;
+    password: string;
+    confirmPassword: string;
+};

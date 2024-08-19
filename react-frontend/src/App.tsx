@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
@@ -7,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import NoMatch from './components/NoMatch';
 import Jobs from './components/Jobs';
 import Clients from './components/Clients';
+import Admin from './components/Admin';
 import { useAuth } from './context/AuthContext';
 
 function App() {
@@ -28,8 +28,9 @@ function App() {
                         </Route>
                     ) : (
                         <>
-                            <Route path="/" element={<Login />} />
-                            <Route path="/login" element={<Login />} />
+                            <Route path="/*" element={<Login />} />
+                            <Route path="login" element={<Login />} />
+                            <Route path="admin" element={<Admin />} />
                             <Route path="*" element={<NoMatch />} />
                         </>
                     )}
