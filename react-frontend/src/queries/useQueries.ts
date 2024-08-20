@@ -33,7 +33,7 @@ export const useAdminLoginMutation = () => {
             if (response.status !== 200) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || "Something went wrong.");
-            }
+            };
 
             return response.json();
         },
@@ -53,14 +53,20 @@ export const useLoginMutation = () => {
 
     return useMutation({
         mutationFn: async (data: { email: string, password: string }) => {
-            return await fetch("http://localhost:8000/api/user-login", {
+            const response = await fetch("http://localhost:8000/api/user-login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(data)
-            })
-                .then((res) => res.json())
+            });
+
+            if (response.status !== 200) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Something went wrong.");
+            };
+
+            return response.json();
         },
         onSuccess: (res: UserContextAttributes) => {
             // TODO: save returned JWT token?
