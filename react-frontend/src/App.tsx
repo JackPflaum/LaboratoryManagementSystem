@@ -7,12 +7,14 @@ import NoMatch from './components/NoMatch';
 import Jobs from './components/Jobs';
 import Clients from './components/Clients';
 import Admin from './components/Admin';
-import { useAuth } from './context/AuthContext';
+import { useAuthUser } from './context/UserAuthContext';
+import UserLogin from './components/UserLogin';
+import AdminLogin from './components/AdminLogin';
 
 function App() {
 
     // get user authorization from AuthContext
-    const { user } = useAuth();
+    const { user } = useAuthUser();
 
     return (
         <BrowserRouter>
@@ -28,8 +30,9 @@ function App() {
                         </Route>
                     ) : (
                         <>
-                            <Route path="/*" element={<Login />} />
-                            <Route path="login" element={<Login />} />
+                            <Route path="/*" element={<UserLogin />} />
+                            <Route path="user-login" element={<UserLogin />} />
+                            <Route path="admin-login" element={<AdminLogin />} />
                             <Route path="admin" element={<Admin />} />
                             <Route path="*" element={<NoMatch />} />
                         </>

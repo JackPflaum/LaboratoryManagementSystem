@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 import User from '../src/database/models/User';
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-// handles requests related to user authorization
+// handles requests related to user and admin authorization
 export class AuthorizationController {
 
     // handles user login
-    static async login(req: Request, res: Response) {
+    static async userlogin(req: Request, res: Response) {
         const { email, password } = req.body;
         try {
             // find user based on email
@@ -53,4 +53,22 @@ export class AuthorizationController {
             return res.status(500).json({ error: "Internal server error" });
         }
     }
+
+
+    // handles admin login
+    static async adminLogin(req: Request, res: Response) {
+        const { email, password } = req.body;
+
+        try {
+            if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
+                return res.status(401).json({ error: "Invalid email or password." })
+            }
+
+            return res.status(200).json({ isAuthorized: true });
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: "Internal server error" });
+        };
+    };
 };

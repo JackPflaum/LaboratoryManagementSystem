@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClientAttributes, CreateUserProps } from "../types/interfaces";
-import { useAuth } from "../context/AuthContext";
+import { AdminContextAttributes, ClientAttributes, CreateUserProps, UserContextAttributes } from "../types/interfaces";
+import { useAuthUser } from "../context/UserAuthContext";
+import { useAuthAdmin } from "../context/AdminAuthContext";
 
 // all Query Keys in one single object.
 const queryKeys = {
@@ -15,13 +16,44 @@ const queryKeys = {
 };
 
 
-// login to the system
-export const useLoginMutation = () => {
-    const { setUser } = useAuth();
+// admin login to the system
+export const useAdminLoginMutation = () => {
+    const { setAdmin } = useAuthAdmin();
 
     return useMutation({
         mutationFn: async (data: { email: string, password: string }) => {
-            return await fetch("http://localhost/api/login", {
+            const response = await fetch("http://localhost:8000/api/admin-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.status !== 200) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Something went wrong.");
+            }
+
+            return response.json();
+        },
+        onSuccess: (res: AdminContextAttributes) => {
+            // TODO: save returned JWT token?
+            // set returned authorization data to AdminAuthContext
+            setAdmin(res);
+            console.log("res: ", res);
+        }
+    })
+};
+
+
+// user login to the system
+export const useLoginMutation = () => {
+    const { setUser } = useAuthUser();
+
+    return useMutation({
+        mutationFn: async (data: { email: string, password: string }) => {
+            return await fetch("http://localhost:8000/api/user-login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -30,14 +62,11 @@ export const useLoginMutation = () => {
             })
                 .then((res) => res.json())
         },
-        onSuccess: (res) => {
+        onSuccess: (res: UserContextAttributes) => {
             // TODO: save returned JWT token?
             // set returned authorization data to AuthContext
             setUser(res);
         },
-        onError: (error) => {
-            console.log(error.message);
-        }
     })
 };
 
@@ -79,7 +108,7 @@ export const useCreateClientMutation = () => {
 
     return useMutation({
         mutationFn: async (data: ClientAttributes) => {
-            await fetch("http://localhost/api/clients/add-new-client", {
+            await fetch("http://localhost:8000/api/clients/add-new-client", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -105,7 +134,7 @@ export const useUpdateClientMutation = () => {
 
     return useMutation({
         mutationFn: async ({ data, id }: { data: ClientAttributes; id: number }) => {
-            await fetch(`http://localhost/api/clients/${id}/update-client-details`, {
+            await fetch(`http://localhost:8000/api/clients/${id}/update-client-details`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
