@@ -11,7 +11,7 @@ const AuthContext = createContext<AuthContextAttributes>({
     setUser: () => { },
 });
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
     const [user, setUser] = useState<UserContextAttributes | null>(null);
 
@@ -27,4 +27,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuthUser = () => useContext(AuthContext);

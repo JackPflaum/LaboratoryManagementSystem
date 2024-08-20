@@ -29,6 +29,10 @@ export interface UserContextAttributes {
     fullName: string;
 };
 
+export interface AdminContextAttributes {
+    isAuthorized: boolean;
+};
+
 export interface CreateUserProps {
     firstName: string;
     lastName: string;

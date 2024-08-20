@@ -5,9 +5,13 @@ import { JobController } from '../controllers/JobController';
 import { SampleController } from '../controllers/SampleController';
 import { AuthorizationController } from '../controllers/AuthorizationController';
 import { UserController } from '../controllers/UserController';
+import { AdminController } from '../controllers/AdminController';
 
 
 const router = Router();
+
+// Admin related requests
+router.post('/admin/add-new-user', AdminController.addNewUser);
 
 // Dashboard related requests 
 router.get('/dashboard', DashboardController.getDashboard);
@@ -30,7 +34,8 @@ router.get('/sample-details/:id', SampleController.getSampleDetails);
 router.put('/sample-details/:id/update-sample-details', SampleController.updateSampleDetails);
 
 // User Authorization requests
-router.post('/login', AuthorizationController.login);
+router.post('/user-login', AuthorizationController.userlogin);
+router.post('/admin-login', AuthorizationController.adminLogin)
 
 // User-Profile related requests
 router.get('/user/:id', UserController.getUser);
