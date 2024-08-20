@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Login from './components/Login';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import NoMatch from './components/NoMatch';
@@ -10,15 +9,18 @@ import Admin from './components/Admin';
 import { useAuthUser } from './context/UserAuthContext';
 import UserLogin from './components/UserLogin';
 import AdminLogin from './components/AdminLogin';
+import { useAuthAdmin } from './context/AdminAuthContext';
 
 function App() {
 
-    // get user authorization from AuthContext
+    // get user authorization from UserAuthContext and AdminAuthContext
     const { user } = useAuthUser();
+    const { admin } = useAuthAdmin();
 
     return (
         <BrowserRouter>
             <Routes>
+                {/* User Routes */}
                 {user ?
                     (
                         <Route path="/*" element={<Layout />}>
@@ -28,15 +30,24 @@ function App() {
                             <Route path="clients" element={<Clients />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
-                    ) : (
-                        <>
-                            <Route path="/*" element={<UserLogin />} />
-                            <Route path="user-login" element={<UserLogin />} />
-                            <Route path="admin-login" element={<AdminLogin />} />
-                            <Route path="admin" element={<Admin />} />
-                            <Route path="*" element={<NoMatch />} />
-                        </>
-                    )}
+                    ) : null}
+
+                {/* Admin Routes */}
+                {admin ? (
+                    <>
+                        <Route path="admin" element={<Admin />} />
+                    </>
+                ) : null}
+
+                {/* Public Routes */}
+                {!user && !admin ? (
+                    <>
+                        <Route path="/*" element={<UserLogin />} />
+                        <Route path="user-login" element={<UserLogin />} />
+                        <Route path="admin-login" element={<AdminLogin />} />
+                        <Route path="*" element={<NoMatch />} />
+                    </>
+                ) : null}
             </Routes>
         </BrowserRouter>
     );
