@@ -30,12 +30,13 @@ export const useAdminLoginMutation = () => {
                 body: JSON.stringify(data),
             });
 
+            const responseData = await response.json();
+
             if (response.status !== 200) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Something went wrong.");
+                throw new Error(responseData.error || "Something went wrong.");
             };
 
-            return response.json();
+            return responseData;
         },
         onSuccess: (res: AdminContextAttributes) => {
             // TODO: save returned JWT token?
@@ -61,12 +62,13 @@ export const useLoginMutation = () => {
                 body: JSON.stringify(data)
             });
 
+            const responseData = await response.json();
+
             if (response.status !== 200) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Something went wrong.");
+                throw new Error(responseData.error || "Something went wrong.");
             };
 
-            return response.json();
+            return responseData;
         },
         onSuccess: (res: UserContextAttributes) => {
             // TODO: save returned JWT token?
@@ -81,13 +83,21 @@ export const useLoginMutation = () => {
 export const useCreateUserMutation = () => {
     return useMutation({
         mutationFn: async (data: CreateUserProps) => {
-            await fetch("http://localhost:8000/api/admin", {
+            const response = await fetch("http://localhost:8000/api/admin/add-new-user", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(data)
-            })
+            });
+
+            const responseData = await response.json();
+
+            if (response.status !== 201) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData;
         }
     });
 };
