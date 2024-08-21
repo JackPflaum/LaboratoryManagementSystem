@@ -1,14 +1,15 @@
 import { DataTypes, Model } from "sequelize";
-import { ModelsInterface, UserAtributes } from "../types/models-interface";
+import { ModelsInterface, UserAttributes } from "../types/models-interface";
 import sequelize from "./db";
 import * as bcrypt from "bcrypt";
 
-class User extends Model<UserAtributes> implements UserAtributes {
+class User extends Model<UserAttributes> implements UserAttributes {
     id!: number;
     firstName!: string;
     lastName!: string;
     workEmail!: string;
     password!: string;
+    permissions!: string[];
 
     static associate(models: ModelsInterface) {
         User.hasOne(models.Profile, { foreignKey: "userId" });
@@ -19,7 +20,7 @@ User.init({
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
+        autoIncrement: true,
         primaryKey: true,
     },
     firstName: {
@@ -44,6 +45,11 @@ User.init({
                 msg: "Please enter a valid email address."
             }
         },
+    },
+    permissions: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
+        defaultValue: []
     },
     password: {
         type: DataTypes.STRING,

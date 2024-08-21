@@ -39,7 +39,7 @@ Job.init({
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
+        autoIncrement: true,
         primaryKey: true,
     },
     clientId: {
