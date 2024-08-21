@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import Login from "./Login";
+import LoginForm from "./LoginForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema, UserLoginProps } from "./UserLogin";
 import { useAdminLoginMutation } from "../queries/useQueries";
@@ -30,7 +30,7 @@ const AdminLogin = () => {
             adminLogin(formData, {
                 onSuccess: () => {
                     // TODO: save auth credentials in context
-                    // navigate("/admin");
+                    navigate("/admin");
                 },
                 onError: (error) => {
                     setErrorMessage(error.message);
@@ -43,7 +43,7 @@ const AdminLogin = () => {
     };
 
     return (
-        <Login
+        <LoginForm
             title={title}
             control={control}
             handleSubmit={handleSubmit}

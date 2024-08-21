@@ -12,7 +12,7 @@ interface LoginProps {
     errorMessage?: string;
 };
 
-const Login = ({ title, control, handleSubmit, onSubmit, isPending, errorMessage }: LoginProps) => {
+const LoginForm = ({ title, control, handleSubmit, onSubmit, isPending, errorMessage }: LoginProps) => {
 
     return (
         <>
@@ -111,4 +111,4 @@ const Login = ({ title, control, handleSubmit, onSubmit, isPending, errorMessage
     );
 };
 
-export default Login;
+export default LoginForm;

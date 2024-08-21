@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../queries/useQueries";
-import Login from "./Login";
+import LoginForm from "./LoginForm";
 
 // login validation schema
 export const loginSchema = yup.object().shape({
@@ -56,7 +56,7 @@ const UserLogin = () => {
     };
 
     return (
-        <Login
+        <LoginForm
             title={title}
             control={control}
             handleSubmit={handleSubmit}
