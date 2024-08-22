@@ -8,8 +8,13 @@ class User extends Model<UserAttributes> implements UserAttributes {
     firstName!: string;
     lastName!: string;
     workEmail!: string;
-    password!: string;
     permissions!: string[];
+    password!: string;
+
+    static async hashPassword(password: string) {
+        const saltRounds = 10;
+        return await bcrypt.hash(password, saltRounds);
+    };
 
     static associate(models: ModelsInterface) {
         User.hasOne(models.Profile, { foreignKey: "userId" });
@@ -54,9 +59,6 @@ User.init({
     password: {
         type: DataTypes.STRING,
         allowNull: false,
-        get() {
-            return () => this.getDataValue("password");
-        }
     },
 }, {
     sequelize,
@@ -66,10 +68,12 @@ User.init({
     hooks: {
         beforeCreate: async (user: User) => {
             if (user.password) {
-                const saltRounds = 10;
-                bcrypt.hash(user.password, saltRounds)
-                    .then((hash: string) => user.password = hash)
-                    .catch((error: Error) => console.log(error));
+                user.password = await User.hashPassword(user.password);
+            }
+        },
+        beforeUpdate: async (user: User) => {
+            if (user.password) {
+                user.password = await User.hashPassword(user.password);
             }
         },
     }
