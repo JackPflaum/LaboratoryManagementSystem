@@ -39,11 +39,12 @@ export interface JobAttributes {
     createdAt?: Date;
 }
 
-export interface UserAtributes {
-    id: number;
+export interface UserAttributes {
+    id?: number;
     firstName: string;
     lastName: string;
     workEmail: string;
+    permissions: string[];
     password: string;
 }
 

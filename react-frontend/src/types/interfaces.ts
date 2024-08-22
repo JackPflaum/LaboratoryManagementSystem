@@ -37,6 +37,7 @@ export interface CreateUserProps {
     firstName: string;
     lastName: string;
     workEmail: string;
+    permissions: string[];
     password: string;
     confirmPassword: string;
 };
