@@ -101,7 +101,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     <Controller
                         name="name"
                         control={control}
-                        defaultValue={data?.name}
                         render={({ field, fieldState }) => (
                             <TextField
                                 label="Name"
@@ -118,7 +117,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     <Controller
                         name="email"
                         control={control}
-                        defaultValue={data?.email}
                         render={({ field, fieldState }) => (
                             <TextField
                                 label="Email"
@@ -135,7 +133,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     <Controller
                         name="phoneNumber"
                         control={control}
-                        defaultValue={data?.phoneNumber}
                         render={({ field, fieldState }) => (
                             <TextField
                                 label="Phone Number"
@@ -155,7 +152,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                 <Controller
                                     name="addressLine"
                                     control={control}
-                                    defaultValue={data?.addressLine}
                                     render={({ field, fieldState }) => (
                                         <TextField
                                             label="Address Line"
@@ -172,7 +168,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                 <Controller
                                     name="suburb"
                                     control={control}
-                                    defaultValue={data?.suburb}
                                     render={({ field, fieldState }) => (
                                         <TextField
                                             label="Suburb"
@@ -192,7 +187,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                             <Controller
                                 name="state"
                                 control={control}
-                                defaultValue={data?.state || ""}
                                 render={({ field, fieldState }) => (
                                     <FormControl size="small">
                                         <InputLabel>State</InputLabel>
@@ -215,7 +209,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                             <Controller
                                 name="postcode"
                                 control={control}
-                                defaultValue={data?.postcode}
                                 render={({ field, fieldState }) => (
                                     <TextField
                                         label="Postcode"
