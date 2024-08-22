@@ -8,7 +8,7 @@ import { useCreateClientMutation, useUpdateClientMutation } from "../../../queri
 
 // client details validation schema
 const clientSchema = yup.object().shape({
-    clientName: yup.string().trim().required("Client name is required"),
+    name: yup.string().trim().required("Client name is required"),
     email: yup.string().trim().required("Email is required").matches(/\S+@\S+\.\S/, "Invalid email address"),
     phoneNumber: yup.string().trim().optional(),
     addressLine: yup.string().optional(),
@@ -45,7 +45,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
     // prefill input fields if data exists
     const mapDataToForm = (data?: ClientAttributes) => {
         return {
-            clientName: data?.name ?? "",
+            name: data?.name ?? "",
             email: data?.email ?? "",
             phoneNumber: data?.phoneNumber ?? "",
             addressLine: data?.addressLine ?? "",
@@ -86,8 +86,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     handleClose();
                 },
                 onError: (error) => {
-                    setError(`Error: ${error.message}`);
-                    console.log("Error: ", error.message);
+                    setError(error.message);
                 }
             });
         }
@@ -100,7 +99,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
             <DialogContent>
                 <Stack spacing={2}>
                     <Controller
-                        name="clientName"
+                        name="name"
                         control={control}
                         defaultValue={data?.name}
                         render={({ field, fieldState }) => (
@@ -232,6 +231,22 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                             />
                         </Grid>
                     </Grid>
+                    <Controller
+                        name="purchaseOrderNumber"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Purchase Order Number"
+                                value={field.value}
+                                onChange={(e) => {
+                                    field.onChange(e);
+                                }}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                size="small"
+                            />
+                        )}
+                    />
                 </Stack>
             </DialogContent>
             {error && <Alert severity="error">{error}</Alert>}
