@@ -42,7 +42,6 @@ export const useAdminLoginMutation = () => {
             // TODO: save returned JWT token?
             // set returned authorization data to AdminAuthContext
             setAdmin(res);
-            console.log("res: ", res);
         }
     })
 };
@@ -118,28 +117,48 @@ export const useGetJobsQuery = () => {
 };
 
 
+// gets data for Client display grid
+export const useGetClientsQuery = () => {
+    // TODO: add debouncer here when adding search filter
+    return useQuery({
+        queryKey: queryKeys.clients.getClientsList,
+        queryFn: async () => {
+            const response = await fetch("http://localhost:8000/api/clients", {
+                method: "GET"
+            });
+
+            const responseData = response.json();
+
+            return responseData;
+        },
+    });
+};
+
+
 // create new Client in the database
 export const useCreateClientMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (data: ClientAttributes) => {
-            await fetch("http://localhost:8000/api/clients/add-new-client", {
+            const response = await fetch("http://localhost:8000/api/clients/add-new-client", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(data),
             });
+
+            const responseData = await response.json();
+
+            if (response.status !== 201) {
+                throw new Error(responseData.error || "Something went wrong.")
+            }
         },
         onSuccess: (res) => {
-            console.log("Success: ", res);
             // refresh the cached Client list
-            // queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
+            queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
         },
-        onError: (error) => {
-            console.log("Error: ", error.message);
-        }
     });
 };
 
@@ -159,12 +178,8 @@ export const useUpdateClientMutation = () => {
             });
         },
         onSuccess: (res) => {
-            console.log("Success: ", res);
             // refresh the cached Client list
-            // queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
-        },
-        onError: (error) => {
-            console.log("Error: ", error.message);
+            queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
         },
     });
 };
