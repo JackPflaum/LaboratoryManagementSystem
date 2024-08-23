@@ -59,6 +59,9 @@ Client.init({
     fullAddress: {
         type: DataTypes.VIRTUAL,
         get() {
+            if (!this.addressLine || !this.suburb || !this.state || !this.postcode) {
+                return "";
+            }
             return `${this.addressLine}, ${this.suburb} ${this.state} ${this.postcode}`;
         },
         set(value: string) {
@@ -67,6 +70,7 @@ Client.init({
     },
     purchaseOrderNumber: {
         type: DataTypes.STRING,
+        allowNull: true,
         unique: true,
     },
 }, {

@@ -10,8 +10,25 @@ export class ClientController {
     // retrieve all clients from database
     static async getClients(req: Request, res: Response) {
         try {
-            const clients = await Client.findAll();
-            return res.status(200).json({ clients });
+            const clients = await Client.findAll({
+                attributes: [
+                    "id",
+                    "name",
+                    "email",
+                    "phoneNumber",
+                    "purchaseOrderNumber",
+                    "addressLine",
+                    "suburb",
+                    "state",
+                    "postcode",
+                    "fullAddress"
+                ]
+            });
+
+            // convert to plain javascript objects to remove Sequelize meta data
+            const formattedClients = clients.map(client => client.get({ plain: true }));
+
+            return res.status(200).json(formattedClients);
         } catch (error) {
             console.log('getClients() Error:', error);
             return res.status(500).json({ error: 'Internal server error' });
