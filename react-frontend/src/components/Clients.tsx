@@ -5,12 +5,16 @@ import ClientDialog from "./features/dialogs/client-dialog";
 import DisplayGrid from "./features/display-grid";
 import { useGetClientsQuery } from "../queries/useQueries";
 import { getClientsColumns } from "./features/grid-columns/clients-column";
+import { ClientAttributes } from "../types/interfaces";
+import { UserPermissions } from "../types/enums";
+import { useHasPermission } from "../hooks/custom-hooks";
 
 
 const Clients = () => {
 
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [editingClient, setEditingClient] = useState<ClientAttributes | undefined>(undefined);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -20,12 +24,22 @@ const Clients = () => {
         setOpenDialog(false);
     };
 
-    const columns = getClientsColumns();
+    const editAction = (row: ClientAttributes) => {
+        setEditingClient(row);
+        setOpenDialog(true);
+    };
+
+    const deleteAction = (id: number | undefined) => {
+        // TODO: delete client
+        console.log("Delete Client with Id: ", id);
+    };
+
+    console.log("HAS PERMISSION: ", useHasPermission(UserPermissions.ADD_EDIT_CLIENTS));
+
+    // const columns = getClientsColumns(useHasPermission(UserPermissions.ADD_EDIT_CLIENTS) ? { editAction, deleteAction } : {})
+    const columns = getClientsColumns({ editAction, deleteAction })
 
     const { data, isLoading } = useGetClientsQuery();
-
-    console.log("DATA: ", data);
-
 
     return (
         <Container>
@@ -36,6 +50,8 @@ const Clients = () => {
                 sx={{
                     display: "flex",
                     justifyContent: "space-evenly",
+                    marginTop: 4,
+                    marginBottom: 2
                 }}
             >
                 <TextField
@@ -55,7 +71,7 @@ const Clients = () => {
                 columns={columns}
                 isLoading={isLoading}
             />
-            {openDialog && <ClientDialog open={openDialog} handleClose={handleCloseDialog} />}
+            {openDialog && <ClientDialog open={openDialog} handleClose={handleCloseDialog} data={editingClient} />}
         </Container>
     )
 };

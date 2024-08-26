@@ -1,7 +1,18 @@
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { ClientAttributes } from "../../../types/interfaces";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-export function getClientsColumns(): GridColDef[] {
-    return [
+interface ClientColumnProps {
+    editAction?: (row: ClientAttributes) => void;
+    deleteAction?: (id: number) => void;
+}
+
+
+// TODO: change to useMemo()
+
+export function getClientsColumns({ editAction, deleteAction }: ClientColumnProps) {
+    const columns: GridColDef[] = [
         {
             field: "name",
             headerName: "Client Name",
@@ -26,6 +37,31 @@ export function getClientsColumns(): GridColDef[] {
             field: "purchaseOrderNumber",
             headerName: "Purchase Order Number",
             width: 150
-        },
-    ]
+        }
+    ];
+
+
+    if (editAction && deleteAction) {
+        columns.unshift({
+            field: "actions",
+            width: 100,
+            getActions: (params: GridRowParams<ClientAttributes>) => [
+                <GridActionsCellItem
+                    key="edit"
+                    label="Edit"
+                    icon={<EditIcon />}
+                    onClick={() => editAction(params.row)}
+                    showInMenu
+                />,
+                <GridActionsCellItem
+                    key="delete"
+                    label="Delete"
+                    icon={<DeleteIcon />}
+                    // onClick={() => deleteAction(params.row.id)}
+                    showInMenu
+                />
+            ]
+        });
+    };
+    return columns;
 };

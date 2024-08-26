@@ -1,3 +1,5 @@
+import { UserPermissions } from "./enums";
+
 export interface CardData {
     title: string;
     count?: number;
@@ -18,6 +20,7 @@ export interface ClientAttributes {
     name?: string;
     email?: string;
     phoneNumber?: string;
+    fullAddress?: string;
     addressLine?: string;
     suburb?: string;
     state?: string;
@@ -27,6 +30,7 @@ export interface ClientAttributes {
 
 export interface UserContextAttributes {
     fullName: string;
+    permissions: UserPermissions[];
 };
 
 export interface AdminContextAttributes {
