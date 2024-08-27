@@ -6,6 +6,7 @@ import {
     GridActionsCellItem,
     GridRenderCellParams
 } from "@mui/x-data-grid";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 export function getJobsColumns(useViewJob: (id: GridRowId) => void): GridColDef[] {
@@ -17,6 +18,7 @@ export function getJobsColumns(useViewJob: (id: GridRowId) => void): GridColDef[
                 <GridActionsCellItem
                     key="view-action"
                     label="View"
+                    icon={<VisibilityIcon />}
                     showInMenu
                     onClick={() => useViewJob(params.id)}
                 />
