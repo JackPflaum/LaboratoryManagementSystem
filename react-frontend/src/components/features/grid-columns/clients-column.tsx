@@ -1,11 +1,11 @@
-import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { GridActionsCellItem, GridColDef, GridRowId, GridRowParams } from "@mui/x-data-grid";
 import { ClientAttributes } from "../../../types/interfaces";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ClientColumnProps {
     editAction?: (row: ClientAttributes) => void;
-    deleteAction?: (id: number) => void;
+    deleteAction?: (row: ClientAttributes) => void;
 }
 
 
@@ -43,7 +43,8 @@ export function getClientsColumns({ editAction, deleteAction }: ClientColumnProp
 
     if (editAction && deleteAction) {
         columns.unshift({
-            field: "actions",
+            field: 'actions',
+            type: "actions",
             width: 100,
             getActions: (params: GridRowParams<ClientAttributes>) => [
                 <GridActionsCellItem
@@ -57,11 +58,11 @@ export function getClientsColumns({ editAction, deleteAction }: ClientColumnProp
                     key="delete"
                     label="Delete"
                     icon={<DeleteIcon />}
-                    // onClick={() => deleteAction(params.row.id)}
+                    onClick={() => deleteAction(params.row)}
                     showInMenu
                 />
             ]
         });
-    };
+    }
     return columns;
 };
