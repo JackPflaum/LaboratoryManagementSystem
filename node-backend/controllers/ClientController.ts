@@ -38,21 +38,20 @@ export class ClientController {
 
     // retrieve client from database with specified id
     static async getClientDetails(req: Request, res: Response) {
-        const { clientId } = req.params;
+        const { id } = req.params;
         try {
-            const client = await Client.findByPk(clientId);
+            const client = await Client.findByPk(id);
 
             if (!client) {
                 return res.status(404).json({ error: 'Client not found' });
             }
 
             // respond with retieved client details
-            return res.status(200).json({ client });
+            return res.status(200).json(client);
         } catch (error) {
-            console.log('getClientDetails() Error:', error);
             return res.status(500).json({ error: 'Internal server error' });
-        }
-    }
+        };
+    };
 
 
     // add new client details to database 
