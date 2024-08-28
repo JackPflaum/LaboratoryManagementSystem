@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminContextAttributes, ClientAttributes, CreateUserProps, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
+import useDebouncer from "./debouncer";
 
 // all Query Keys in one single object.
 const queryKeys = {
@@ -32,7 +33,7 @@ export const useAdminLoginMutation = () => {
 
             const responseData = await response.json();
 
-            if (response.status !== 200) {
+            if (!response.ok) {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
@@ -63,7 +64,7 @@ export const useLoginMutation = () => {
 
             const responseData = await response.json();
 
-            if (response.status !== 200) {
+            if (!response.ok) {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
@@ -92,7 +93,7 @@ export const useCreateUserMutation = () => {
 
             const responseData = await response.json();
 
-            if (response.status !== 201) {
+            if (!response.ok) {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
@@ -103,34 +104,86 @@ export const useCreateUserMutation = () => {
 
 
 // gets data for Dashboard screen
-export const useGetJobsQuery = () => {
-    // add debouncer here
+export const useGetJobsQuery = (searchFilter: string) => {
+    const debouncedSearch = useDebouncer(searchFilter, 200);
+
     return useQuery({
         queryKey: queryKeys.jobs.getJobsList,
         queryFn: async () => {
-            return await fetch("http://localhost:8000/api/dashboard", {
+            const url = new URL("http://localhost:8000/api/jobs");
+
+            if (debouncedSearch) {
+                url.searchParams.append("search", debouncedSearch);
+            }
+
+            const response = await fetch(url.toString(), {
                 method: "GET"
-            })
-                .then((res) => res.json())
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData;
         },
     });
 };
 
 
-// gets data for Client display grid
-export const useGetClientsQuery = () => {
+// gets list of all Clients
+export const useGetClientsQuery = (
+    searchFilter: string
+) => {
     // TODO: add debouncer here when adding search filter
+    const debouncedSearch = useDebouncer(searchFilter, 200);
+
     return useQuery({
-        queryKey: queryKeys.clients.getClientsList,
+        queryKey: [...queryKeys.clients.getClientsList, debouncedSearch],
         queryFn: async () => {
-            const response = await fetch("http://localhost:8000/api/clients", {
-                method: "GET"
+            const url = new URL("http://localhost:8000/api/clients");
+
+            // add search paramater to URL
+            if (debouncedSearch) {
+                url.searchParams.append("search", debouncedSearch);
+            };
+
+            const response = await fetch(url.toString(), {
+                method: "GET",
             });
 
-            const responseData = response.json();
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
 
             return responseData;
         },
+    });
+};
+
+
+// gets individual Client data
+export const useGetClientQuery = (id: string | undefined) => {
+    return useQuery<ClientAttributes>({
+        queryKey: id ? [...queryKeys.clients.getClient, id] : [],
+        queryFn: async () => {
+            if (!id) {
+                throw new Error("Client ID is required");
+            };
+
+            const response = await fetch(`http://localhost:8000/api/clients/${id}`)
+
+            const responseData = await response.json()
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData;
+        }
     });
 };
 
@@ -151,9 +204,9 @@ export const useCreateClientMutation = () => {
 
             const responseData = await response.json();
 
-            if (response.status !== 201) {
-                throw new Error(responseData.error || "Something went wrong.")
-            }
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
         },
         onSuccess: (res) => {
             // refresh the cached Client list
@@ -177,9 +230,10 @@ export const useUpdateClientMutation = () => {
                 body: JSON.stringify(data),
             });
         },
-        onSuccess: (res) => {
+        onSuccess: (res, variables) => {
             // refresh the cached Client list
             queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClient, variables.id.toString()] })
         },
     });
 };

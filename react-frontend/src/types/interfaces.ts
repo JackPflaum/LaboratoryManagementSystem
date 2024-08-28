@@ -6,11 +6,11 @@ export interface CardData {
 };
 
 export interface JobAttributes {
-    id: number;
+    id?: number;
     client: string;
-    jobNumber: string;
+    jobNumber?: string;
     comments?: string;
-    dueDate: Date;
+    dueDate?: Date;
     completed?: boolean;
     createdAt?: Date;
 };
