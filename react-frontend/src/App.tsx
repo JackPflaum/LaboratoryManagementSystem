@@ -10,6 +10,7 @@ import { useAuthUser } from './context/UserAuthContext';
 import UserLogin from './components/UserLogin';
 import AdminLogin from './components/AdminLogin';
 import { useAuthAdmin } from './context/AdminAuthContext';
+import IndividualClient from './components/IndividualClient';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="jobs" element={<Jobs />} />
                             <Route path="clients" element={<Clients />} />
+                            <Route path="clients/:id" element={<IndividualClient />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
                     ) : null}
