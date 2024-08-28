@@ -38,7 +38,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
     const [error, setError] = useState<string>("");
 
     // get list of clients for dropdown selection
-    const { data: clientsList, isLoading } = useGetClientsQuery();
+    const { data: clientsList, isLoading } = useGetClientsQuery("");
 
     const mapDataToForm = (data?: JobAttributes) => {
         return {
@@ -52,7 +52,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
 
     const { handleSubmit, control, formState: { errors } } = useForm({
         defaultValues: mapDataToForm(data),
-        resolver: yupResolver(jobSchema),
+        // resolver: yupResolver(jobSchema),
     });
 
     const onSubmit = (formData: JobAttributes) => {
@@ -84,9 +84,9 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                                         </Box>
                                     )}
                                 >
-                                    {clientsList.map((client: ClientAttributes) => (
+                                    {/* {clientsList.map((client: ClientAttributes) => (
                                         <MenuItem key={client.id} value={client.name}>{client.name}</MenuItem>
-                                    ))}
+                                    ))} */}
                                 </Select>
                             </FormControl>
                         )}

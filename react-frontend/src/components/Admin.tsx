@@ -168,7 +168,7 @@ const Admin = () => {
                                 labelId="multiple-checkbox-label"
                                 id="multiple-checkbox"
                                 multiple
-                                value={field.value || []}
+                                value={field.value}
                                 onChange={(event) => {
                                     const { target: { value } } = event;
                                     field.onChange(typeof value === "string" ? value.split(",") : value);

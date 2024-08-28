@@ -24,15 +24,15 @@ export class SampleController {
             const { sampleId } = req.params;
             const sampleDetails = Sample.findByPk(sampleId);
 
-            if(!sampleDetails) {
-                res.status(404).json({'error': 'Sample not found.'});
+            if (!sampleDetails) {
+                return res.status(404).json({ 'error': 'Sample not found.' });
             }
 
             // respond with retieved sample data
-            res.status(200).json(sampleDetails);
+            return res.status(200).json(sampleDetails);
         } catch (error) {
             console.log('getSample() Error:', error);
-            res.status(500).json({'error': 'Internal server erorr.'});
+            return res.status(500).json({ 'error': 'Internal server erorr.' });
         }
     }
 
@@ -47,7 +47,7 @@ export class SampleController {
             // do i need to ever change dateReceived?
         } catch (error) {
             console.log('updateSampleDetails() Error:', error);
-            res.status(500).json({'error': 'Internal server erorr.'});
+            return res.status(500).json({ 'error': 'Internal server erorr.' });
         }
     }
 

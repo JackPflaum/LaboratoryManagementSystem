@@ -1,4 +1,4 @@
-import { Drawer, Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { Drawer, Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, CssBaseline } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import React, { useState } from "react";
@@ -58,6 +58,7 @@ const MainContent = styled("main", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen
     }),
+    marginLeft: 0,
     ...(open && {
         transition: theme.transitions.create("margin", {
             easing: theme.transitions.easing.easeOut,
@@ -71,7 +72,6 @@ const MainContent = styled("main", {
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
-
 
 // custom MuiAppBar as AppBar holds navigation links.
 // the sidebar transitions in and out.
@@ -102,6 +102,7 @@ const NavigationSidebar = () => {
 
     return (
         <Box sx={{ display: "flex" }}>
+            <CssBaseline />
             <AppBar position="fixed" open={drawerOpen}>
                 <Toolbar>
                     <IconButton
@@ -150,7 +151,7 @@ const NavigationSidebar = () => {
 
                 </List>
             </Drawer>
-            <MainContent open={drawerOpen}>
+            <MainContent sx={{ backgroundColor: "#f0f6f6" }} open={drawerOpen}>
                 <DrawerHeader />
                 <Outlet />
             </MainContent>

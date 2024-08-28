@@ -1,27 +1,33 @@
 import { Box, Container, Typography } from "@mui/material";
-import { useCallback } from "react";
-import { useGetJobsData } from "../queries/useQueries";
+import { useCallback, useState } from "react";
+import { useGetJobsQuery } from "../queries/useQueries";
 import DisplayGrid from "./features/display-grid";
-import { getJobsColumns } from "./grid-columns/jobs-columns";
+import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { useNavigate } from "react-router-dom";
 import { GridRowId } from "@mui/x-data-grid";
 import { JobAttributes } from "../types/interfaces";
+import { useViewJob } from "../hooks/custom-hooks";
+import JobDialog from "./features/dialogs/job-dialog";
 
 
 const Jobs = () => {
 
-    const useViewJob = () => {
-        const navigate = useNavigate();
-        return useCallback((id: GridRowId) => {
-            navigate(`/jobs/${id}`);
-        }, [navigate]);
-    }
+    const [searchFilter, setSearchFilter] = useState<string>("");
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [editingJob, setEditingJob] = useState<JobAttributes | undefined>(undefined);
+
+    // const useViewJob = () => {
+    //     const navigate = useNavigate();
+    //     return useCallback((id: GridRowId) => {
+    //         navigate(`/jobs/${id}`);
+    //     }, [navigate]);
+    // }
 
     // Data Grid columns
     const columns = getJobsColumns(useViewJob);
 
     // get Grid data
-    const { data, isLoading, error } = useGetJobsData();
+    const { data, isLoading, error } = useGetJobsQuery(searchFilter);
     console.log("Data: ", data);
 
     // const rows = data.map((data: JobAttributes) => ({
@@ -45,6 +51,7 @@ const Jobs = () => {
                 columns={columns}
                 isLoading={isLoading}
             /> */}
+            {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={data} />}
         </Container>
     );
 };

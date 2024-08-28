@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(cookieParser())
 
 // apply JWT authentication to all routes
-app.use(cookieJwtAuth);
+// app.use(cookieJwtAuth);
 
 app.use('/api', routes);
 

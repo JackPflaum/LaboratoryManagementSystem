@@ -47,6 +47,7 @@ export class AuthorizationController {
 
             return res.status(200).json({
                 fullName: `${user.firstName} ${user.lastName}`,
+                permissions: user.permissions,
             });
         } catch (error) {
             console.log(error);

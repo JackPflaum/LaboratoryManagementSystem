@@ -67,7 +67,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
 
     // handle client form submissions
     const onSubmit = (formData: ClientAttributes) => {
-        console.log("Data", formData);
         if (data?.id) {
             // update client database
             updateClient({ data: formData, id: data.id }, {
@@ -76,7 +75,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                 },
                 onError: (error) => {
                     setError(error.message);
-                    console.log("Error:", error.message);
                 }
             });
         } else {

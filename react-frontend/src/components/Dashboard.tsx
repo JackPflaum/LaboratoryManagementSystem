@@ -2,14 +2,14 @@ import { Box, Stack, Typography, Container } from "@mui/material"
 import DashboardCard from "./features/dashboard-cards";
 import DisplayGrid from "./features/display-grid";
 import { GridRowsProp } from "@mui/x-data-grid"
-import { useGetJobsData } from "../queries/useQueries";
+import { useGetJobsQuery } from "../queries/useQueries";
 import { CardData } from "../types/interfaces";
-import { getJobsColumns } from "./grid-columns/jobs-columns";
+import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { useViewJob } from "../hooks/custom-hooks";
 
 const Dashboard = () => {
 
-    const { data, isLoading, error } = useGetJobsData();
+    const { data, isLoading, error } = useGetJobsQuery("");
     console.log("Data: ", data);
 
     const cardData: CardData[] = [
@@ -42,30 +42,28 @@ const Dashboard = () => {
     ];
 
     return (
-        <Container>
-            <Box>
-                <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                    Dashboard
-                </Typography>
-                <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
+        <Box>
+            <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
+                Dashboard
+            </Typography>
+            <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={{ xs: 1, sm: 2, md: 4 }}
 
-                    sx={{
-                        justifyContent: "space-evenly",
-                        alignItems: "center",
-                        marginTop: 4,
-                        marginBottom: 6,
-                    }}>
-                    <DashboardCard cardData={cardData} />
-                </Stack>
-                <DisplayGrid
-                    rows={rows}
-                    columns={columns}
-                    isLoading={isLoading}
-                />
-            </Box>
-        </Container>
+                sx={{
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                    marginTop: 4,
+                    marginBottom: 6,
+                }}>
+                <DashboardCard cardData={cardData} />
+            </Stack>
+            <DisplayGrid
+                rows={rows ?? []}
+                columns={columns}
+                isLoading={isLoading}
+            />
+        </Box>
     );
 };
 

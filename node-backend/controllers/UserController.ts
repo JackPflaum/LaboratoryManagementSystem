@@ -9,11 +9,11 @@ export class UserController {
         const { userId } = req.params;
         try {
             const user = await User.findByPk(userId);
-            
-            res.status(200).json(user);
+
+            return res.status(200).json(user);
         } catch (error) {
             console.log('updateUser() Error:', error);
-            res.status(500).json({'error': 'Internal server erorr'});
+            return res.status(500).json({ 'error': 'Internal server erorr' });
         }
     }
 
@@ -22,10 +22,10 @@ export class UserController {
     static async updateUser(req: Request, res: Response) {
         const { userId } = req.params;
         try {
-            res.status(200).json({'success': 'User profile was successfully updated.'});
+            return res.status(200).json({ 'success': 'User profile was successfully updated.' });
         } catch (error) {
             console.log('updateUser() Error:', error);
-            res.status(500).json({'error': 'Internal server erorr'});
+            return res.status(500).json({ 'error': 'Internal server erorr' });
         }
     }
 }
