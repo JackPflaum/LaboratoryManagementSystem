@@ -9,8 +9,15 @@ export class ClientController {
 
     // retrieve all clients from database
     static async getClients(req: Request, res: Response) {
+        const searchFilter = req.query.search as string;
+
         try {
             const clients = await Client.findAll({
+                where: searchFilter ? {
+                    name: {
+                        [Op.iLike]: `%${searchFilter}%`
+                    }
+                } : {},
                 attributes: [
                     "id",
                     "name",
@@ -30,7 +37,6 @@ export class ClientController {
 
             return res.status(200).json(formattedClients);
         } catch (error) {
-            console.log('getClients() Error:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     };
@@ -73,7 +79,6 @@ export class ClientController {
             await Client.create({ name, email, phoneNumber, addressLine, suburb, state, postcode, purchaseOrderNumber });
             return res.status(201).json({ success: "New Client has been created" });
         } catch (error) {
-            console.log('addNewClient() Error:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     };
@@ -139,7 +144,6 @@ export class ClientController {
                 return res.status(200).json({ result: false });
             };
         } catch (error) {
-            console.log('confirmClientExists() Error:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     };
