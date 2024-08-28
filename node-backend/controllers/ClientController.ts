@@ -81,7 +81,7 @@ export class ClientController {
 
     // update an existing client in the database
     static async updateClientDetails(req: Request, res: Response) {
-        const { clientId } = req.params;
+        const { id } = req.params;
         const {
             name,
             email,
@@ -94,26 +94,26 @@ export class ClientController {
         }: ClientAttributes = req.body;
 
         try {
-            const client = await Client.findByPk(clientId);
+            const client = await Client.findByPk(id);
 
             if (!client) {
                 return res.status(404).json({ error: "Client not found." });
             }
 
             await client.update({
-                name: name !== "" ? name : client.name,
-                email: email !== "" ? email : client.email,
-                phoneNumber: phoneNumber !== "" ? phoneNumber : client.phoneNumber,
-                addressLine: addressLine !== "" ? addressLine : client.addressLine,
-                suburb: suburb !== "" ? suburb : client.suburb,
-                state: state !== "" ? state : client.state,
-                postcode: postcode !== "" ? postcode : client.postcode,
-                purchaseOrderNumber: purchaseOrderNumber !== "" ? purchaseOrderNumber : client.purchaseOrderNumber,
+                name: name,
+                email: email,
+                phoneNumber: phoneNumber,
+                addressLine: addressLine,
+                suburb: suburb,
+                state: state,
+                postcode: postcode,
+                purchaseOrderNumber: purchaseOrderNumber,
             });
 
             return res.status(201).json({ success: "Client Details updated" });
         } catch (error) {
-            console.log('updateClientDetails() Error:', error);
+            return res.status(500).json({ error: 'Internal server error' });
         };
     };
 
