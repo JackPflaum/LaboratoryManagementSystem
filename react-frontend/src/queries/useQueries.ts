@@ -26,8 +26,9 @@ export const useAdminLoginMutation = () => {
             const response = await fetch("http://localhost:8000/api/admin-login", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(data),
             });
 
@@ -59,6 +60,7 @@ export const useLoginMutation = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify(data)
             });
 
@@ -88,6 +90,7 @@ export const useCreateUserMutation = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify(data)
             });
 
@@ -117,7 +120,8 @@ export const useGetJobsQuery = (searchFilter: string) => {
             }
 
             const response = await fetch(url.toString(), {
-                method: "GET"
+                method: "GET",
+                credentials: "include",
             });
 
             const responseData = await response.json();
@@ -151,6 +155,7 @@ export const useGetClientsQuery = (
 
             const response = await fetch(url.toString(), {
                 method: "GET",
+                credentials: "include",
             });
 
             const responseData = await response.json();
@@ -174,7 +179,10 @@ export const useGetClientQuery = (id: string | undefined) => {
                 throw new Error("Client ID is required");
             };
 
-            const response = await fetch(`http://localhost:8000/api/clients/${id}`)
+            const response = await fetch(`http://localhost:8000/api/clients/${id}`, {
+                method: "GET",
+                credentials: "include",
+            })
 
             const responseData = await response.json()
 
@@ -199,6 +207,7 @@ export const useCreateClientMutation = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(data),
             });
 
@@ -227,6 +236,7 @@ export const useUpdateClientMutation = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(data),
             });
         },

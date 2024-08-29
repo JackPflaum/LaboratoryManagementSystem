@@ -12,7 +12,10 @@ const app = express();
 const port = process.env.PORT;
 
 // use CORS (Cross-Origin Resource Sharing) middleware package for secure requests between front and backend.
-app.use(cors({ origin: 'http://localhost:3000' }));    // allowing requests from this origin to access backend resources
+app.use(cors({
+    origin: 'http://localhost:3000',    // allowing requests from this origin to access backend resources
+    credentials: true    // allow cookies and credentials
+}));
 
 // converts incoming JSON payloads in request body to javascript object which becomes available in request.body object
 app.use(express.json());
