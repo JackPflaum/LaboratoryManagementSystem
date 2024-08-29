@@ -26,6 +26,7 @@ const Clients = () => {
     };
 
     const handleCloseDialog = () => {
+        setEditingClient(undefined);
         setOpenDialog(false);
     };
 

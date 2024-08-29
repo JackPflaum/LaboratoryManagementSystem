@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useCreateClientMutation, useUpdateClientMutation } from "../../../queries/useQueries";
 
+
 // client details validation schema
 const clientSchema = yup.object().shape({
     name: yup.string().trim().required("Client name is required"),
@@ -56,7 +57,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
         }
     };
 
-    const { handleSubmit, control, formState: { errors } } = useForm({
+    const { handleSubmit, control, reset, formState: { errors } } = useForm({
         defaultValues: mapDataToForm(data),
         resolver: yupResolver(clientSchema)
     });
@@ -71,6 +72,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
             // update client database
             updateClient({ data: formData, id: data.id }, {
                 onSuccess: () => {
+                    reset();
                     handleClose();
                 },
                 onError: (error) => {
@@ -81,6 +83,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
             // create new client in the database
             createClient(formData, {
                 onSuccess: () => {
+                    reset();
                     handleClose();
                 },
                 onError: (error) => {
