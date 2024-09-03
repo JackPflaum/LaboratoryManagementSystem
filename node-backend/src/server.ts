@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import routes from './routes';
 import cors from 'cors';
-import { cookieJwtAuth } from './middleware/cookieJwtAuth';
+import { cookieJwtAuth, unless } from './middleware/cookieJwtAuth';
 import cookieParser from "cookie-parser";
 
 // load up '.env' file into 'process.env' object of Node.js
@@ -20,10 +20,11 @@ app.use(cors({
 // converts incoming JSON payloads in request body to javascript object which becomes available in request.body object
 app.use(express.json());
 
-app.use(cookieParser())
+// parses cookies attached to client requests into req.cookies property
+app.use(cookieParser());
 
-// apply JWT authentication to all routes
-// app.use(cookieJwtAuth);
+// apply JWT authentication to all routes except login pages
+app.use(unless(cookieJwtAuth, "/api/", "/api/verify-token", "/api/user-login", "/api/admin-login"));
 
 app.use('/api', routes);
 
