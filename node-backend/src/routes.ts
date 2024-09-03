@@ -36,6 +36,7 @@ router.put('/sample-details/:id/update-sample-details', SampleController.updateS
 // User Authorization requests
 router.post('/user-login', AuthorizationController.userlogin);
 router.post('/admin-login', AuthorizationController.adminLogin)
+router.get('/verify-token', AuthorizationController.verifyToken);
 
 // User-Profile related requests
 router.get('/user/:id', UserController.getUser);
