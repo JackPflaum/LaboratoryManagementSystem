@@ -5,3 +5,7 @@ export enum UserPermissions {
     ADD_EDIT_RESULTS = "add_edit_results",
     VIEW_REPORTS = "view_reports"
 };
+
+export enum DEBOUNCER_TIME {
+    TIME = 200
+};

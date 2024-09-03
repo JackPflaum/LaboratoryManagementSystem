@@ -3,6 +3,7 @@ import { AdminContextAttributes, ClientAttributes, CreateUserProps, UserContextA
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
+import { DEBOUNCER_TIME } from "../types/enums";
 
 // all Query Keys in one single object.
 const queryKeys = {
@@ -108,7 +109,7 @@ export const useCreateUserMutation = () => {
 
 // gets data for Dashboard screen
 export const useGetJobsQuery = (searchFilter: string) => {
-    const debouncedSearch = useDebouncer(searchFilter, 200);
+    const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery({
         queryKey: queryKeys.jobs.getJobsList,
@@ -141,7 +142,7 @@ export const useGetClientsQuery = (
     searchFilter: string
 ) => {
     // TODO: add debouncer here when adding search filter
-    const debouncedSearch = useDebouncer(searchFilter, 200);
+    const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery({
         queryKey: [...queryKeys.clients.getClientsList, debouncedSearch],
