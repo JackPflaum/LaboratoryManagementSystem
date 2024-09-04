@@ -13,8 +13,11 @@ import {
     Select,
     Stack,
     TextField,
-    OutlinedInput
+    OutlinedInput,
 } from "@mui/material";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ClientAttributes, JobAttributes } from "../../../types/interfaces";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -22,9 +25,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useGetClientsQuery } from "../../../queries/useQueries";
 
+// calculate 90 days from now
+const currentDate = new Date();
+const maxDate = new Date();
+maxDate.setDate(currentDate.getDate() + 90);
+
 // job details validation schema
 const jobSchema = yup.object().shape({
-    name: yup.string().trim().required(),
+    client: yup.string().trim().required(),
+    comments: yup.string().trim().optional(),
+    dueDate: yup.date()
+        .required("Due date is required.")
+        .min(new Date(), "Due date cannot be in the past.")
+        .max(maxDate, "Due date cannot be more than 90days from now"),
 });
 
 interface JobDialogProps {
@@ -45,7 +58,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
             client: data?.client ?? "",
             // jobNumber: data?.jobNumber ?? "",
             comments: data?.comments ?? "",
-            dueData: data?.dueDate ?? "",
+            dueDate: data?.dueDate ?? null,
             // TODO: add rest of data
         }
     };
@@ -61,7 +74,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-            <DialogTitle>{!data ? "Add Job" : "Edit Job"}</DialogTitle>
+            <DialogTitle>{!data ? "Add Job" : `Edit Job ${data.jobNumber}`}</DialogTitle>
             <Divider />
             <DialogContent>
                 <Stack spacing={2}>
@@ -109,6 +122,22 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                             />
                         )}
                     />
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <Controller
+                            name="dueDate"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                                <DatePicker
+                                    label="Due Date"
+                                    value={field.value}
+                                    onChange={(e) => {
+                                        field.onChange(e)
+                                    }}
+
+                                />
+                            )}
+                        />
+                    </LocalizationProvider>
                 </Stack>
             </DialogContent>
             {error && <Alert severity="error">{error}</Alert>}
