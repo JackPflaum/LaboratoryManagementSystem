@@ -293,6 +293,50 @@ export const useUpdateClientMutation = () => {
 };
 
 
+// handle adding new sample to Job
+export const useAddSample = () => {
+    return useMutation({
+        mutationFn: async (formData: SampleAttributes) => {
+            await fetch("http://localhost:8000/api/add-new-sample", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(formData)
+            })
+        },
+        onSuccess: () => {
+            // invalidate Jobs query?
+            // query.invalidateQueries({queryKeys: [...queryKeys.query.jobs]})
+        }
+    });
+};
+
+
+// handle deleting Sample from database
+export const useDeleteSample = () => {
+    return useMutation({
+        mutationFn: async (id: string) => {
+            await fetch(`http://localhost:8000/api/sample-details/${id}/delete-sample`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(id)
+            })
+        },
+        onSuccess: () => {
+            // invalidate Jobs query?
+            // query.invalidateQueries({queryKeys: [...queryKeys.query.jobs]})
+        }
+    });
+};
+
+
+
+
 // handle changing user password
 export const useUpdatePasswordMutation = () => {
     return useMutation({

@@ -32,6 +32,7 @@ router.put('/jobs/:id/update-job-details', JobController.updateJobDetails);
 // Sample related requests
 router.get('/sample-details/:id', SampleController.getSampleDetails);
 router.put('/sample-details/:id/update-sample-details', SampleController.updateSampleDetails);
+router.delete('/sample-details/:id/delete-sample', SampleController.deleteSample);
 
 // User Authorization requests
 router.post('/user-login', AuthorizationController.userlogin);
