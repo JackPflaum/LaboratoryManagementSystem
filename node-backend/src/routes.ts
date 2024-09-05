@@ -41,5 +41,6 @@ router.get('/verify-token', AuthorizationController.verifyToken);
 // User-Profile related requests
 router.get('/user/:id', UserController.getUser);
 router.put('/user/:id/update-user', UserController.updateUser);
+router.put('/user/:id/update-password', UserController.updatePassword);
 
 export default router;

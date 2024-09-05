@@ -118,7 +118,7 @@ export const useGetJobsQuery = (searchFilter: string) => {
 
             if (debouncedSearch) {
                 url.searchParams.append("search", debouncedSearch);
-            }
+            };
 
             const response = await fetch(url.toString(), {
                 method: "GET",
@@ -231,7 +231,7 @@ export const useUpdateClientMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ data, id }: { data: ClientAttributes; id: number }) => {
+        mutationFn: async ({ data, id }: { data: ClientAttributes, id: number }) => {
             await fetch(`http://localhost:8000/api/clients/${id}/update-client-details`, {
                 method: "PUT",
                 headers: {
@@ -245,6 +245,23 @@ export const useUpdateClientMutation = () => {
             // refresh the cached Client list
             queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
             queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClient, variables.id.toString()] })
+        },
+    });
+};
+
+
+// handle changing user password
+export const useUpdatePasswordMutation = () => {
+    return useMutation({
+        mutationFn: async ({ password, id }: { password: string, id: string }) => {
+            await fetch(`http://localhost:8000/api/profile/${id}/update-password`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(password)
+            });
         },
     });
 };
