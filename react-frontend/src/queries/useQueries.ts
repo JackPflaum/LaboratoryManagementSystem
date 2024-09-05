@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminContextAttributes, ClientAttributes, CreateUserProps, UserContextAttributes } from "../types/interfaces";
+import { AdminContextAttributes, ClientAttributes, CreateUserProps, JobAttributes, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
@@ -132,6 +132,49 @@ export const useGetJobsQuery = (searchFilter: string) => {
             };
 
             return responseData;
+        },
+    });
+};
+
+
+// handles creating new Job
+export const useCreateJob = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (formData: JobAttributes) => {
+            await fetch("http://localhost:8000/api/jobs/add-new-job", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(formData)
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
+        }
+    });
+};
+
+
+// handles updating existing Jobs
+export const useUpdateJob = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ formData, id }: { formData: JobAttributes, id: number }) => {
+            await fetch("http://localhost:8000/api/jobs/update-job", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({ data: formData, id: id })
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob] });
         },
     });
 };
