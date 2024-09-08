@@ -23,7 +23,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useGetClientsQuery } from "../../../queries/useQueries";
+import { useCreateJobMutation, useGetClientsQuery, useUpdateJobMutation } from "../../../queries/useQueries";
 
 // calculate 90 days from now
 const currentDate = new Date();
@@ -31,7 +31,7 @@ const maxDate = new Date();
 maxDate.setDate(currentDate.getDate() + 90);
 
 // job details validation schema
-const jobSchema = yup.object().shape({
+const JobSchema = yup.object().shape({
     client: yup.string().trim().required(),
     comments: yup.string().trim().optional(),
     dueDate: yup.date()
@@ -54,22 +54,48 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
     const { data: clientsList, isLoading } = useGetClientsQuery("");
 
     const mapDataToForm = (data?: JobAttributes) => {
+        const defaultDueDate = new Date();
+        defaultDueDate.setDate(currentDate.getDate() + 7);
         return {
             client: data?.client ?? "",
-            // jobNumber: data?.jobNumber ?? "",
-            comments: data?.comments ?? "",
-            dueDate: data?.dueDate ?? null,
-            // TODO: add rest of data
+            comments: data?.comments ?? undefined,
+            dueDate: data?.dueDate ?? defaultDueDate,
         }
     };
 
-    const { handleSubmit, control, formState: { errors } } = useForm({
+    const { handleSubmit, control, reset, formState: { errors } } = useForm<JobAttributes>({
         defaultValues: mapDataToForm(data),
-        // resolver: yupResolver(jobSchema),
+        resolver: yupResolver(JobSchema),
     });
+
+
+    const { mutate: createJob } = useCreateJobMutation();
+
+    const { mutate: updateJob } = useUpdateJobMutation();
 
     const onSubmit = (formData: JobAttributes) => {
         console.log("Data", formData);
+        if (data?.id) {
+            updateJob({ formData: formData, id: data.id }, {
+                onSuccess: () => {
+                    reset();
+                    handleClose();
+                },
+                onError: (error) => {
+                    setError(error.message);
+                }
+            });
+        } else {
+            createJob(formData, {
+                onSuccess: () => {
+                    reset();
+                    handleClose();
+                },
+                onError: (error) => {
+                    setError(error.message);
+                }
+            });
+        };
     };
 
     return (
@@ -97,9 +123,9 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                                         </Box>
                                     )}
                                 >
-                                    {/* {clientsList.map((client: ClientAttributes) => (
+                                    {clientsList.map((client: ClientAttributes) => (
                                         <MenuItem key={client.id} value={client.name}>{client.name}</MenuItem>
-                                    ))} */}
+                                    ))}
                                 </Select>
                             </FormControl>
                         )}
