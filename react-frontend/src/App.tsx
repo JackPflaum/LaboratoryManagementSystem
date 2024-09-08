@@ -11,12 +11,30 @@ import UserLogin from './components/UserLogin';
 import AdminLogin from './components/AdminLogin';
 import { useAuthAdmin } from './context/AdminAuthContext';
 import IndividualClient from './components/IndividualClient';
+import { Box } from '@mui/material';
 
 function App() {
 
     // get user authorization from UserAuthContext and AdminAuthContext
-    const { user } = useAuthUser();
+    const { user, isLoading } = useAuthUser();
     const { admin } = useAuthAdmin();
+
+    console.log("authUser:", user);
+
+    if (isLoading) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 6
+                }}
+            >
+                ...loading
+            </Box>
+        );
+    };
 
     return (
         <BrowserRouter>
@@ -36,9 +54,7 @@ function App() {
 
                 {/* Admin Routes */}
                 {admin ? (
-                    <>
-                        <Route path="admin" element={<Admin />} />
-                    </>
+                    <Route path="admin" element={<Admin />} />
                 ) : null}
 
                 {/* Public Routes */}
