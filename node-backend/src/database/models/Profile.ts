@@ -8,8 +8,6 @@ class Profile extends Model<ProfileAttributes> implements ProfileAttributes {
     userId!: number;
     personalEmail?: string;
     phoneNumber?: string;
-    position?: string;
-    dateStarted!: Date;
 
     static associate(models: ModelsInterface) {
         Profile.belongsTo(models.User, { foreignKey: "userId", onDelete: "CASCADE" });
@@ -42,16 +40,6 @@ Profile.init({
     },
     phoneNumber: {
         type: DataTypes.STRING
-    },
-    position: {
-        type: DataTypes.STRING
-    },
-    dateStarted: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        validate: {
-            isDate: true,
-        },
     },
 }, {
     sequelize,

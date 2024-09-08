@@ -8,7 +8,9 @@ class User extends Model<UserAttributes> implements UserAttributes {
     firstName!: string;
     lastName!: string;
     workEmail!: string;
+    position!: string;
     permissions!: string[];
+    dateStarted!: Date;
     password!: string;
 
     static async hashPassword(password: string) {
@@ -51,10 +53,24 @@ User.init({
             }
         },
     },
+    position: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
+    },
     permissions: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: false,
         defaultValue: []
+    },
+    dateStarted: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+            isDate: true,
+        },
     },
     password: {
         type: DataTypes.STRING,

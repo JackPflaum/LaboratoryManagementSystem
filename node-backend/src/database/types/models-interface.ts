@@ -44,7 +44,9 @@ export interface UserAttributes {
     firstName: string;
     lastName: string;
     workEmail: string;
+    position: string;
     permissions: string[];
+    dateStarted: Date;
     password: string;
 }
 
@@ -53,8 +55,6 @@ export interface ProfileAttributes {
     userId: number;
     personalEmail?: string;
     phoneNumber?: string;
-    position?: string;
-    dateStarted: Date;
 }
 
 export interface SampleAttributes {
