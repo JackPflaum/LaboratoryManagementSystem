@@ -170,4 +170,22 @@ export class AuthorizationController {
             return res.status(500).json({ error: "Internal server error" });
         };
     };
+
+
+
+    // handles user and admin logout
+    static async logout(req: Request, res: Response) {
+        // TODO: Need to remove user Auth context
+        const { id } = req.params;
+
+        try {
+            // invalidate access token and refresh token from user cookies
+            res.clearCookie("accessToken");
+            res.clearCookie("refrechToken");
+
+            return res.status(200).json({ success: "User has been logged out succefully." });
+        } catch (error) {
+            return res.status(500).json({ error: "Internal server error" });
+        };
+    };
 };

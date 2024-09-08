@@ -38,6 +38,7 @@ router.delete('/sample-details/:id/delete-sample', SampleController.deleteSample
 router.post('/user-login', AuthorizationController.userlogin);
 router.post('/admin-login', AuthorizationController.adminLogin)
 router.get('/verify-token', AuthorizationController.verifyToken);
+router.post('/logout', AuthorizationController.logout);
 
 // User-Profile related requests
 router.get('/user/:id', UserController.getUser);
@@ -45,3 +46,4 @@ router.put('/user/:id/update-user', UserController.updateUser);
 router.put('/user/:id/update-password', UserController.updatePassword);
 
 export default router;
+
