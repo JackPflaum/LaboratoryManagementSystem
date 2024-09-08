@@ -55,7 +55,7 @@ User.init({
     },
     position: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         validate: {
             notEmpty: true
         }
@@ -67,7 +67,7 @@ User.init({
     },
     dateStarted: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
+        allowNull: true,
         validate: {
             isDate: true,
         },
