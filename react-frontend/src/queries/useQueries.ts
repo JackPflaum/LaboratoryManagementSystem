@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminContextAttributes, ClientAttributes, CreateUserProps, JobAttributes, UserContextAttributes } from "../types/interfaces";
+import { AdminContextAttributes, ClientAttributes, CreateUserProps, JobAttributes, SampleAttributes, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
@@ -14,6 +14,10 @@ const queryKeys = {
     clients: {
         getClient: ["getClient"],
         getClientsList: ["getClientsList"],
+    },
+    samples: {
+        getSample: ["getSamples"],
+        getSampleList: ["getSamplesList"],
     }
 };
 
@@ -74,8 +78,38 @@ export const useLoginMutation = () => {
             return responseData;
         },
         onSuccess: (res: UserContextAttributes) => {
-            // TODO: save returned JWT token?
             // set returned authorization data to AuthContext
+            setUser(res);
+        },
+    })
+};
+
+
+// handle user logout
+export const useLogoutMutation = () => {
+    const { setUser } = useAuthUser();
+
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const response = await fetch("http://localhost:8000/api/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(id)
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData;
+        },
+        onSuccess: (res: UserContextAttributes) => {
+            // set returned authorization to null
             setUser(res);
         },
     })
@@ -137,8 +171,33 @@ export const useGetJobsQuery = (searchFilter: string) => {
 };
 
 
+// gets individual Job data
+export const useGetJobQuery = (id: string | undefined) => {
+    return useQuery<JobAttributes>({
+        queryKey: id ? [...queryKeys.jobs.getJob, id] : [],
+        queryFn: async () => {
+            if (!id) {
+                throw new Error("Job ID is required")
+            };
+            const response = await fetch(`http://localhost:8000/api/jobs/${id}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+
+            return responseData;
+        },
+    });
+};
+
+
 // handles creating new Job
-export const useCreateJob = () => {
+export const useCreateJobMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (formData: JobAttributes) => {
@@ -159,7 +218,7 @@ export const useCreateJob = () => {
 
 
 // handles updating existing Jobs
-export const useUpdateJob = () => {
+export const useUpdateJobMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -184,7 +243,6 @@ export const useUpdateJob = () => {
 export const useGetClientsQuery = (
     searchFilter: string
 ) => {
-    // TODO: add debouncer here when adding search filter
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery({
@@ -293,8 +351,66 @@ export const useUpdateClientMutation = () => {
 };
 
 
+// gets list of all Samples
+export const useGetSamplesQuery = (searchFilter: string) => {
+    const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
+
+    return useQuery<SampleAttributes>({
+        queryKey: [...queryKeys.samples.getSampleList, debouncedSearch],
+        queryFn: async () => {
+            const url = new URL("http://localhost/8000/samples");
+
+            if (debouncedSearch) {
+                url.searchParams.append("search", debouncedSearch);
+            };
+
+            const response = await fetch(url.toString(), {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+
+            return responseData;
+        }
+    });
+};
+
+
+// get individual Sample data
+export const useGetSampleQuery = (id: string | undefined) => {
+    return useQuery<SampleAttributes>({
+        queryKey: id ? [...queryKeys.samples.getSample, id] : [],
+        queryFn: async () => {
+            if (!id) {
+                throw new Error("Sample ID is required");
+            };
+
+            const response = await fetch(`http://localhost:8000/api/sample/${id}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+
+            return responseData;
+        },
+    });
+};
+
+
 // handle adding new sample to Job
-export const useAddSample = () => {
+export const useAddSampleMutation = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: async (formData: SampleAttributes) => {
             await fetch("http://localhost:8000/api/add-new-sample", {
@@ -307,15 +423,15 @@ export const useAddSample = () => {
             })
         },
         onSuccess: () => {
-            // invalidate Jobs query?
-            // query.invalidateQueries({queryKeys: [...queryKeys.query.jobs]})
+            // refresh the cached Jobs list
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
         }
     });
 };
 
 
 // handle deleting Sample from database
-export const useDeleteSample = () => {
+export const useDeleteSampleMutation = () => {
     return useMutation({
         mutationFn: async (id: string) => {
             await fetch(`http://localhost:8000/api/sample-details/${id}/delete-sample`, {
