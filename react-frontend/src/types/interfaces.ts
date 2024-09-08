@@ -10,7 +10,7 @@ export interface JobAttributes {
     client: string;
     jobNumber?: string;
     comments?: string;
-    dueDate?: Date;
+    dueDate: Date;
     completed?: boolean;
     createdAt?: Date;
 };
@@ -28,13 +28,41 @@ export interface ClientAttributes {
     purchaseOrderNumber?: string;
 };
 
+enum Type {
+    Liquid = "liquid",
+    Solid = "solid",
+    Gas = "gas"
+};
+
+enum Storage {
+    Shelf1 = "shelf#1",
+    Shelf2 = "shelf#2",
+    Fridge = "fridge"
+};
+
+export interface SampleAttributes {
+    id?: number;
+    jobNumber: string;
+    sampleNumber: string;
+    type: Type[];
+    storage?: Storage[];
+    completed: boolean;
+    comments?: string;
+};
+
 export interface UserContextAttributes {
+    id: number;
     fullName: string;
     permissions: UserPermissions[];
 };
 
 export interface AdminContextAttributes {
     isAuthorized: boolean;
+};
+
+export interface ProfileAttributes {
+    personalEmail: string;
+    phoneNumber?: string;
 };
 
 export interface CreateUserProps {
