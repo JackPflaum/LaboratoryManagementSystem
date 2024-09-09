@@ -69,9 +69,9 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
     });
 
 
-    const { mutate: createJob } = useCreateJobMutation();
+    const { mutate: createJob, isPending: isCreating } = useCreateJobMutation();
 
-    const { mutate: updateJob } = useUpdateJobMutation();
+    const { mutate: updateJob, isPending: isUpdating } = useUpdateJobMutation();
 
     const onSubmit = (formData: JobAttributes) => {
         console.log("Data", formData);
@@ -172,7 +172,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                     Cancel
                 </Button>
                 <Button variant="contained" onClick={handleSubmit(onSubmit)}>
-                    Save
+                    {isCreating || isUpdating ? "Saving Job..." : "Save"}
                 </Button>
             </DialogActions>
         </Dialog>
