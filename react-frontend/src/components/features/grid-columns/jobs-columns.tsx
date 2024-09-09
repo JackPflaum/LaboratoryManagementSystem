@@ -1,4 +1,4 @@
-import { Typography, Chip } from "@mui/material";
+import { Typography } from "@mui/material";
 import {
     GridColDef,
     GridRowParams,
@@ -7,6 +7,8 @@ import {
     GridRenderCellParams
 } from "@mui/x-data-grid";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CompletedChip from "../completed-chip";
+import IncompleteChip from "../incomplete-chip";
 
 
 export function getJobsColumns(useViewJob: (id: GridRowId) => void): GridColDef[] {
@@ -27,49 +29,35 @@ export function getJobsColumns(useViewJob: (id: GridRowId) => void): GridColDef[
         {
             field: "jobNumber",
             headerName: "Job Number",
-            width: 150,
+            width: 200,
         },
         {
             field: "client",
             headerName: "Client",
-            width: 150,
+            width: 200,
         },
         {
             field: "created",
             headerName: "Created",
-            width: 150,
+            width: 200,
         },
         {
             field: "dueDate",
             headerName: "Due Date",
-            width: 150,
+            width: 200,
         },
         {
             field: "completed",
             headerName: "Completed",
-            width: 150,
+            width: 200,
             type: "boolean",
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant="body2">
                     {params.value ? (
-                        <Chip label="Completed"
-                            variant="outlined"
-                            sx={{
-                                color: "green",
-                                backgroundColor: "#c9fdd7",
-                                border: "2px solid green"
-                            }}
-                        />
+                        <CompletedChip />
                     ) : (
-                        <Chip label="Incomplete"
-                            sx={{
-                                color: "#c82121",
-                                backgroundColor: "#ffaaa5",
-                                border: "2px solid red"
-                            }}
-                        />
-                    )
-                    }
+                        <IncompleteChip />
+                    )}
                 </Typography>
             ),
         },
