@@ -17,7 +17,14 @@ const queryKeys = {
     },
     samples: {
         getSample: ["getSamples"],
-        getSampleList: ["getSamplesList"],
+        getSamplesList: ["getSamplesList"],
+    },
+    tests: {
+        getTests: ["getTests"],
+        getTestsList: ["getTestsList"],
+    },
+    users: {
+        getUsers: ["getUsers"],
     }
 };
 
@@ -141,6 +148,30 @@ export const useCreateUserMutation = () => {
 };
 
 
+// handle deleting User and Profile from database
+export const useDeleteUserMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const response = await fetch(`http://localhost:8000/api/admin/delete-user/${id}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+        },
+        onSuccess: (res) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsers] });
+        },
+    });
+};
+
+
 // gets data for Dashboard screen
 export const useGetJobsQuery = (searchFilter: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
@@ -223,17 +254,42 @@ export const useUpdateJobMutation = () => {
 
     return useMutation({
         mutationFn: async ({ formData, id }: { formData: JobAttributes, id: number }) => {
-            await fetch("http://localhost:8000/api/jobs/update-job", {
+            await fetch(`http://localhost:8000/api/jobs/${id}/update-job-details`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
-                body: JSON.stringify({ data: formData, id: id })
+                body: JSON.stringify({ data: formData })
             });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob] });
+        },
+    });
+};
+
+
+// handle deleting Job from database
+export const useDeleteJobMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const response = await fetch(`http://localhost:8000/api/jobs/${id}/delete`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+        },
+        onSuccess: (res, id) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob, id.toString()] });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] });
         },
     });
 };
@@ -321,7 +377,7 @@ export const useCreateClientMutation = () => {
         },
         onSuccess: (res) => {
             // refresh the cached Client list
-            queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClientsList] });
         },
     });
 };
@@ -344,8 +400,32 @@ export const useUpdateClientMutation = () => {
         },
         onSuccess: (res, variables) => {
             // refresh the cached Client list
-            queryClient.invalidateQueries({ queryKey: queryKeys.clients.getClientsList });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClientsList] });
             queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClient, variables.id.toString()] })
+        },
+    });
+};
+
+
+// handle deleting Client from database
+export const useDeleteClientMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const response = await fetch(`http://localhost:8000/api/clients/${id}/delete`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+        },
+        onSuccess: (res) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClientsList] });
         },
     });
 };
@@ -356,7 +436,7 @@ export const useGetSamplesQuery = (searchFilter: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery<SampleAttributes>({
-        queryKey: [...queryKeys.samples.getSampleList, debouncedSearch],
+        queryKey: [...queryKeys.samples.getSamplesList, debouncedSearch],
         queryFn: async () => {
             const url = new URL("http://localhost/8000/samples");
 
@@ -413,7 +493,7 @@ export const useAddSampleMutation = () => {
 
     return useMutation({
         mutationFn: async (formData: SampleAttributes) => {
-            await fetch("http://localhost:8000/api/add-new-sample", {
+            await fetch(`http://localhost:8000/api/sample/add-new-sample`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -430,27 +510,45 @@ export const useAddSampleMutation = () => {
 };
 
 
-// handle deleting Sample from database
-export const useDeleteSampleMutation = () => {
+// handle updating sample
+export const useUpdateSampleMutation = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: async (id: string) => {
-            await fetch(`http://localhost:8000/api/sample-details/${id}/delete-sample`, {
-                method: "DELETE",
+        mutationFn: async ({ formData, id }: { formData: SampleAttributes, id: number }) => {
+            await fetch(`http://localhost:8000/api/sample/${id}/update-sample-details`, {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
-                body: JSON.stringify(id)
+                body: JSON.stringify(formData)
             })
         },
         onSuccess: () => {
-            // invalidate Jobs query?
-            // query.invalidateQueries({queryKeys: [...queryKeys.query.jobs]})
+            // queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
         }
     });
 };
 
 
+// handle deleting Sample from database
+export const useDeleteSampleMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: string) => {
+            await fetch(`http://localhost:8000/api/sample-details/${id}/delete-sample`, {
+                method: "DELETE",
+                credentials: "include",
+            })
+        },
+        onSuccess: (res, variables) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] })
+        }
+    });
+};
 
 
 // handle changing user password
