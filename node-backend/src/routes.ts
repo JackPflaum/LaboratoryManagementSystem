@@ -13,6 +13,7 @@ const router = Router();
 // Admin related requests
 router.post('/admin', AdminController.getUsers);
 router.post('/admin/add-new-user', AdminController.addNewUser);
+router.put('/admin/update-user/:id', AdminController.updateUser);
 router.delete('/admin/delete-user/:id', AdminController.deleteUser);
 
 // Dashboard related requests 
