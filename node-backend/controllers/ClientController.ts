@@ -123,6 +123,25 @@ export class ClientController {
     };
 
 
+    // handle deleting Client
+    static async deleteClient(req: Request, res: Response) {
+        const clientId = req.params.id as string;
+        try {
+            const client = await Client.findByPk(clientId);
+
+            if (!client) {
+                return res.status(404).json({ error: "Client not found" });
+            };
+
+            await client.destroy();
+
+            return res.status(200).json({ success: "Client has been deleted" });
+        } catch (error) {
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+
     // confirms clients existance in the database (called before addNewClient)
     static async confirmClientExists(req: Request, res: Response) {
         const { name, email } = req.query;
