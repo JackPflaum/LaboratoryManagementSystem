@@ -1,4 +1,4 @@
-import { UserPermissions } from "./enums";
+import { Storage, Type, UserPermissions } from "./enums";
 
 export interface CardData {
     title: string;
@@ -28,18 +28,6 @@ export interface ClientAttributes {
     purchaseOrderNumber?: string;
 };
 
-enum Type {
-    Liquid = "liquid",
-    Solid = "solid",
-    Gas = "gas"
-};
-
-enum Storage {
-    Shelf1 = "shelf#1",
-    Shelf2 = "shelf#2",
-    Fridge = "fridge"
-};
-
 export interface SampleAttributes {
     id?: number;
     jobNumber: string;
@@ -65,11 +53,14 @@ export interface ProfileAttributes {
     phoneNumber?: string;
 };
 
-export interface CreateUserProps {
+export interface UserAttributes {
+    id?: number;
     firstName: string;
     lastName: string;
     workEmail: string;
+    position: string;
     permissions: string[];
+    dateStarted: Date;
     password: string;
-    confirmPassword: string;
+    confirmPassword?: string;
 };
