@@ -58,12 +58,12 @@ export interface ProfileAttributes {
 }
 
 export interface SampleAttributes {
-    id: number;
+    id?: number;
     jobNumber: string;
-    sampleNumber: string;
+    sampleNumber?: string;
     type: string;
     storage: string;
-    completed: boolean;
+    completed?: boolean;
     comments?: string;
 }
 
