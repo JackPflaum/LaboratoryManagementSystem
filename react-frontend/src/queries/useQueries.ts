@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminContextAttributes, ClientAttributes, CreateUserProps, JobAttributes, SampleAttributes, UserContextAttributes } from "../types/interfaces";
+import { AdminContextAttributes, ClientAttributes, JobAttributes, SampleAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
@@ -123,12 +123,66 @@ export const useLogoutMutation = () => {
 };
 
 
+// gets list of all Users
+export const useGetUsersQuery = (searchFilter: string) => {
+    const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
+
+    return useQuery({
+        queryKey: [...queryKeys.users.getUsers, debouncedSearch],
+        queryFn: async () => {
+            const url = new URL("http://localhost:8000/api/admin");
+            if (debouncedSearch) {
+                url.searchParams.append("search", debouncedSearch);
+            };
+
+            const response = await fetch(url.toString(), {
+                method: "GET",
+                credentials: "include"
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData;
+        },
+    });
+};
+
+
 // create new User
 export const useCreateUserMutation = () => {
     return useMutation({
-        mutationFn: async (data: CreateUserProps) => {
+        mutationFn: async (data: UserAttributes) => {
             const response = await fetch("http://localhost:8000/api/admin/add-new-user", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(data)
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData;
+        }
+    });
+};
+
+
+// handles updating existing
+export const useUpdateUserMutation = () => {
+    return useMutation({
+        mutationFn: async (data: UserAttributes) => {
+            const response = await fetch(`http://localhost:8000/api/admin/update-user/${data.id}`, {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -177,7 +231,7 @@ export const useGetJobsQuery = (searchFilter: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery({
-        queryKey: queryKeys.jobs.getJobsList,
+        queryKey: [...queryKeys.jobs.getJobsList, debouncedSearch],
         queryFn: async () => {
             const url = new URL("http://localhost:8000/api/jobs");
 
