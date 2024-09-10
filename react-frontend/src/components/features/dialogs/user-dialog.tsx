@@ -22,8 +22,8 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { ref } from "yup";
-import { CreateUserProps } from "../../../types/interfaces";
-import { useCreateUserMutation } from "../../../queries/useQueries";
+import { UserAttributes } from "../../../types/interfaces";
+import { useCreateUserMutation, useUpdateUserMutation } from "../../../queries/useQueries";
 import { useState } from "react";
 
 const currentDate = new Date();
@@ -80,24 +80,42 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
         { name: "View Reports", value: "view_reports" }
     ];
 
+    const mapDataToForm = (data?: UserAttributes) => {
+        return {
+            firstName: data?.firstName ?? "",
+            lastName: data?.lastName ?? "",
+            workEmail: data?.workEmail ?? "",
+            position: data?.position ?? "",
+            permissions: data?.permissions ?? [],
+            dateStarted: data?.dateStarted ?? new Date(currentDate.getDate()),
+            password: data?.password ?? "",
+            confirmPassword: ""
+        };
+    };
+
     const { handleSubmit, control, reset } = useForm({
         resolver: yupResolver(UserSchema),
-        defaultValues: {
-            firstName: "",
-            lastName: "",
-            workEmail: "",
-            position: "",
-            permissions: [],
-            dateStarted: new Date(currentDate.getDate()),
-            password: "",
-            confirmPassword: ""
-        }
+        defaultValues: mapDataToForm(data),
     });
 
-    const { mutate: createUser, isPending } = useCreateUserMutation();
+    const { mutate: createUser, isPending: isCreating } = useCreateUserMutation();
 
-    const onSubmit = (formData: CreateUserProps) => {
-        if (formData) {
+    const { mutate: updateUser, isPending: isUpdating } = useUpdateUserMutation();
+
+    const onSubmit = (formData: UserAttributes) => {
+        if (data?.id) {
+            updateUser(formData, {
+                onSuccess: () => {
+
+                },
+                onError: (error) => {
+                    setError(error.message)
+                    setTimeout(() => {
+                        setError("");
+                    }, 5000);
+                }
+            })
+        } else {
             createUser(formData, {
                 onSuccess: () => {
                     setSuccess("New user has been created successfully.");
@@ -278,7 +296,7 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
                     Cancel
                 </Button>
                 <Button variant="contained" onClick={handleSubmit(onSubmit)}>
-                    {isPending ? "Creating User..." : "Submit"}
+                    {isCreating || isUpdating ? "Submitting..." : "Submit"}
                 </Button>
             </DialogActions>
         </Dialog >
