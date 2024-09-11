@@ -1,4 +1,4 @@
-import { Storage, Type, UserPermissions } from "./enums";
+import { Storage, Test, Type, Unit, UserPermissions } from "./enums";
 
 export interface CardData {
     title: string;
@@ -38,6 +38,16 @@ export interface SampleAttributes {
     comments?: string;
 };
 
+export interface TestAttributes {
+    id?: number;
+    sampleId?: number;
+    profileId?: number;
+    testName: Test[];
+    unit: Unit[];
+    result?: number;
+    comment?: string;
+};
+
 export interface UserContextAttributes {
     id: number;
     fullName: string;
@@ -49,6 +59,7 @@ export interface AdminContextAttributes {
 };
 
 export interface ProfileAttributes {
+    id?: number;
     personalEmail: string;
     phoneNumber?: string;
 };
