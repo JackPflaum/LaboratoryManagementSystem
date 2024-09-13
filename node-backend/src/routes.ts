@@ -6,6 +6,7 @@ import { SampleController } from '../controllers/SampleController';
 import { AuthorizationController } from '../controllers/AuthorizationController';
 import { UserController } from '../controllers/UserController';
 import { AdminController } from '../controllers/AdminController';
+import { ProfileController } from '../controllers/ProfileController';
 
 
 const router = Router();
@@ -47,9 +48,12 @@ router.post('/admin-login', AuthorizationController.adminLogin)
 router.get('/verify-token', AuthorizationController.verifyToken);
 router.post('/logout', AuthorizationController.logout);
 
-// User-Profile related requests
+// User related requests
 router.get('/user/:id', UserController.getUser);
 router.put('/user/:id/update-user', UserController.updateUser);
 router.put('/user/:id/update-password', UserController.updatePassword);
+
+// Profile related requests
+router.put('/profile/:id/update-profile', ProfileController.updateProfile);
 
 export default router;
