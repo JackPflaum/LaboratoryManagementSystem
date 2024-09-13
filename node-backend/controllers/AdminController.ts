@@ -83,13 +83,13 @@ export class AdminController {
 
             // update user attributes
             await user.update({
-                firstName,
-                lastName,
-                workEmail,
-                position,
-                permissions,
-                dateStarted,
-                password,
+                firstName: firstName,
+                lastName: lastName,
+                workEmail: workEmail,
+                position: position,
+                permissions: permissions,
+                dateStarted: dateStarted,
+                password: password,
             });
 
             return res.status(200).json({ success: "User has been updated" });
