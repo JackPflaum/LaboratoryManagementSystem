@@ -2,32 +2,39 @@ import { Box, Stack, Typography, Container } from "@mui/material"
 import DashboardCard from "./features/dashboard-cards";
 import DisplayGrid from "./features/display-grid";
 import { GridRowsProp } from "@mui/x-data-grid"
-import { useGetJobsQuery } from "../queries/useQueries";
-import { CardData } from "../types/interfaces";
+import { useGetDashboardQuery, useGetJobsQuery } from "../queries/useQueries";
+import { CardData, JobAttributes } from "../types/interfaces";
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
-import { useViewJob } from "../hooks/custom-hooks";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
 
+    const { data: dashboardData, isLoading: isPending } = useGetDashboardQuery();
+
     const { data, isLoading, error } = useGetJobsQuery("");
-    console.log("Data: ", data);
 
     const cardData: CardData[] = [
         {
             title: "Pending Jobs",
-            count: data?.pendingJobsCount
+            count: !isPending ? dashboardData?.pendingJobsCount : "-",
         },
         {
             title: "Pending Samples",
-            count: data?.pendingSamplesCount
+            count: !isPending ? dashboardData?.pendingSamplesCount : "-",
         },
         {
             title: "Completed Jobs",
-            count: data?.completedJobsCount
+            count: !isPending ? dashboardData?.completedJobsCount : "-",
         }
     ];
 
-    const columns = getJobsColumns(useViewJob);
+    const navigate = useNavigate();
+
+    const viewAction = (row: JobAttributes) => {
+        navigate(`/jobs/${row.id}`);
+    };
+
+    const columns = getJobsColumns({ viewAction });
 
     const rows: GridRowsProp = [
         { id: 1, jobNumber: 'J001', client: 'Client A', created: '2024-01-10', dueDate: '2024-02-15', completed: true },

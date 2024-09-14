@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { ref } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useUpdatePasswordMutation } from "../queries/useQueries";
-import { UserContextAttributes } from "../types/interfaces";
+import { ChangePasswordAttributes } from "../types/interfaces";
 import { useParams } from "react-router-dom";
 
 
@@ -27,7 +27,7 @@ const ChangePassword = () => {
     const [alert, setAlert] = useState({ message: "", severity: "" });
 
 
-    const { handleSubmit, control, formState: { error } } = useForm<ChangePasswordAttributes>({
+    const { handleSubmit, control } = useForm<ChangePasswordAttributes>({
         defaultValues: { password: "", confirmPassword: "" },
         resolver: yupResolver(updatePasswordSchema)
     });
@@ -37,19 +37,20 @@ const ChangePassword = () => {
 
     const { id } = useParams<{ id: string }>();
 
-    const onSubmit = (password: string) => {
-
-        updatePassword({ password: password, id: id }, {
-            onSuccess: () => {
-                setAlert({ message: "Password has been updated.", severity: "success" });
-                setTimeout(() => {
-                    setAlert({ message: "", severity: "" });
-                }, 3000);
-            },
-            onError: (error: Error) => {
-                setAlert({ message: error.message, severity: "warning" });
-            },
-        });
+    const onSubmit = (passwords: ChangePasswordAttributes) => {
+        if (id) {
+            updatePassword({ password: passwords.password, id: id }, {
+                onSuccess: () => {
+                    setAlert({ message: "Password has been updated.", severity: "success" });
+                    setTimeout(() => {
+                        setAlert({ message: "", severity: "" });
+                    }, 3000);
+                },
+                onError: (error: Error) => {
+                    setAlert({ message: error.message, severity: "warning" });
+                },
+            });
+        }
     };
 
 

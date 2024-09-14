@@ -2,7 +2,13 @@ import { Storage, Test, Type, Unit, UserPermissions } from "./enums";
 
 export interface CardData {
     title: string;
-    count?: number;
+    count?: string;
+};
+
+export interface DashboardAttributes {
+    pendingJobsCount: string;
+    pendingSamplesCount: string;
+    completedJobsCount: string;
 };
 
 export interface JobAttributes {
@@ -74,4 +80,9 @@ export interface UserAttributes {
     dateStarted: Date;
     password: string;
     confirmPassword?: string;
+};
+
+export interface ChangePasswordAttributes {
+    password: string;
+    confirmPassword: string;
 };
