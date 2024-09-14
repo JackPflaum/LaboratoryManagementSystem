@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminContextAttributes, ClientAttributes, JobAttributes, SampleAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
+import { AdminContextAttributes, ClientAttributes, DashboardAttributes, JobAttributes, ProfileAttributes, SampleAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
@@ -24,8 +24,12 @@ const queryKeys = {
         getTestsList: ["getTestsList"],
     },
     users: {
-        getUsers: ["getUsers"],
-    }
+        getUser: ["getUser"],
+        getUsersList: ["getUsersList"],
+    },
+    profile: {
+        getProfile: ["getProfile"],
+    },
 };
 
 
@@ -127,8 +131,8 @@ export const useLogoutMutation = () => {
 export const useGetUsersQuery = (searchFilter: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
-    return useQuery({
-        queryKey: [...queryKeys.users.getUsers, debouncedSearch],
+    return useQuery<UserAttributes[]>({
+        queryKey: [...queryKeys.users.getUsersList, debouncedSearch],
         queryFn: async () => {
             const url = new URL("http://localhost:8000/api/admin");
             if (debouncedSearch) {
@@ -146,7 +150,29 @@ export const useGetUsersQuery = (searchFilter: string) => {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
-            return responseData;
+            return responseData as UserAttributes[];
+        },
+    });
+};
+
+
+// gets User
+export const useGetUserQuery = (id: string | undefined) => {
+    return useQuery<UserAttributes>({
+        queryKey: [...queryKeys.users.getUser, id],
+        queryFn: async () => {
+            const response = await fetch(`http://localhost:8000/api/user/${id}`, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData as UserAttributes;
         },
     });
 };
@@ -220,17 +246,87 @@ export const useDeleteUserMutation = () => {
             };
         },
         onSuccess: (res) => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsers] });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsersList] });
         },
     });
 };
 
 
-// gets data for Dashboard screen
+// get Profile 
+export const useGetUserProfile = (id: string | undefined) => {
+    return useQuery<ProfileAttributes>({
+        queryKey: [...queryKeys.profile.getProfile, id],
+        queryFn: async () => {
+            if (!id) {
+                throw new Error("Profile ID is required");
+            };
+
+            const response = await fetch(`http://localhost:8000/api/user/${id}`, {
+                method: "GET",
+                credentials: "include",
+            })
+
+            const responseData = await response.json()
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData as ProfileAttributes;
+        },
+    });
+};
+
+
+// updates Profile
+export const useUpdateProfileMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ formData, id }: { formData: ProfileAttributes, id: number }) => {
+            await fetch(`http://localhost:8000/api/profile/${id}/update-profile`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({ data: formData })
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.profile.getProfile] });
+        },
+    });
+};
+
+
+// gets dashboard data
+export const useGetDashboardQuery = () => {
+    return useQuery<DashboardAttributes>({
+        queryKey: ["dashboardData"],
+        queryFn: async () => {
+            const response = await fetch("http://localhost:8000/api/dashboard", {
+                method: "GET",
+                credentials: "include",
+            })
+
+            const responseData = await response.json()
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong.");
+            };
+
+            return responseData as DashboardAttributes;
+        },
+    });
+};
+
+
+// gets list of Jobs
 export const useGetJobsQuery = (searchFilter: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
-    return useQuery({
+    return useQuery<JobAttributes[]>({
         queryKey: [...queryKeys.jobs.getJobsList, debouncedSearch],
         queryFn: async () => {
             const url = new URL("http://localhost:8000/api/jobs");
@@ -250,7 +346,7 @@ export const useGetJobsQuery = (searchFilter: string) => {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
-            return responseData;
+            return responseData as JobAttributes[];
         },
     });
 };
@@ -489,7 +585,7 @@ export const useDeleteClientMutation = () => {
 export const useGetSamplesQuery = (searchFilter: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
-    return useQuery<SampleAttributes>({
+    return useQuery<SampleAttributes[]>({
         queryKey: [...queryKeys.samples.getSamplesList, debouncedSearch],
         queryFn: async () => {
             const url = new URL("http://localhost/8000/samples");
@@ -509,7 +605,7 @@ export const useGetSamplesQuery = (searchFilter: string) => {
                 throw new Error(responseData.error || "Something went wrong");
             };
 
-            return responseData;
+            return responseData as SampleAttributes[];
         }
     });
 };
@@ -609,7 +705,7 @@ export const useDeleteSampleMutation = () => {
 export const useUpdatePasswordMutation = () => {
     return useMutation({
         mutationFn: async ({ password, id }: { password: string, id: string }) => {
-            await fetch(`http://localhost:8000/api/profile/${id}/update-password`, {
+            await fetch(`http://localhost:8000/api/user/${id}/update-password`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
