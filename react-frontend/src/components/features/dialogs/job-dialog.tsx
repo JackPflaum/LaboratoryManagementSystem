@@ -1,7 +1,6 @@
 import {
     Alert,
     Button,
-    Box,
     Dialog,
     DialogActions,
     DialogContent,
@@ -14,10 +13,10 @@ import {
     Stack,
     TextField,
     OutlinedInput,
+    FormHelperText,
 } from "@mui/material";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { ClientAttributes, JobAttributes } from "../../../types/interfaces";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -32,12 +31,12 @@ maxDate.setDate(currentDate.getDate() + 90);
 
 // job details validation schema
 const JobSchema = yup.object().shape({
-    client: yup.string().trim().required(),
+    client: yup.string().trim().required("Client is required."),
     comments: yup.string().trim().optional(),
     dueDate: yup.date()
         .required("Due date is required.")
         .min(new Date(), "Due date cannot be in the past.")
-        .max(maxDate, "Due date cannot be more than 90days from now"),
+        .max(maxDate, "Due date cannot be more than 90days from now."),
 });
 
 interface JobDialogProps {
@@ -108,25 +107,26 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                         name="client"
                         control={control}
                         render={({ field, fieldState }) => (
-                            // TODO: Add Clients dropdown options
-                            <FormControl>
+                            <FormControl error={!!fieldState.error}>
                                 <InputLabel>Client</InputLabel>
                                 <Select
                                     value={field.value}
                                     label="Client"
-                                    onChange={(e) => field.onChange(e)}
+                                    onChange={(e) => {
+                                        field.onChange(e)
+                                    }}
                                     autoWidth
                                     input={<OutlinedInput label="Client" />}
-                                    renderValue={() => (
-                                        <Box>
-                                            {field.value}
-                                        </Box>
-                                    )}
                                 >
-                                    {clientsList.map((client: ClientAttributes) => (
-                                        <MenuItem key={client.id} value={client.name}>{client.name}</MenuItem>
-                                    ))}
+                                    {isLoading ? (
+                                        <MenuItem>Loading...</MenuItem>
+                                    ) : (
+                                        clientsList.map((client: ClientAttributes) => (
+                                            <MenuItem key={client.id} value={client.name}>{client.name}</MenuItem>
+                                        ))
+                                    )}
                                 </Select>
+                                <FormHelperText>{fieldState.error?.message}</FormHelperText>
                             </FormControl>
                         )}
                     />
@@ -148,22 +148,24 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                             />
                         )}
                     />
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <Controller
-                            name="dueDate"
-                            control={control}
-                            render={({ field, fieldState }) => (
+                    <Controller
+                        name="dueDate"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl className="custom-datepicker">
+                                <InputLabel htmlFor="dueDate">Due Date</InputLabel>
                                 <DatePicker
-                                    label="Due Date"
-                                    value={field.value}
+                                    selected={field.value}
                                     onChange={(e) => {
                                         field.onChange(e)
+                                        console.log("Date: ", field.value);
                                     }}
-
+                                    dateFormat="d MMMM, yyyy"
                                 />
-                            )}
-                        />
-                    </LocalizationProvider>
+                                <FormHelperText sx={{ color: "red" }}>{fieldState.error?.message}</FormHelperText>
+                            </FormControl>
+                        )}
+                    />
                 </Stack>
             </DialogContent>
             {error && <Alert severity="error">{error}</Alert>}
