@@ -7,12 +7,13 @@ import { AuthorizationController } from '../controllers/AuthorizationController'
 import { UserController } from '../controllers/UserController';
 import { AdminController } from '../controllers/AdminController';
 import { ProfileController } from '../controllers/ProfileController';
+import { TestController } from '../controllers/TestController';
 
 
 const router = Router();
 
 // Admin related requests
-router.post('/admin', AdminController.getUsers);
+router.get('/admin', AdminController.getUsers);
 router.post('/admin/add-new-user', AdminController.addNewUser);
 router.put('/admin/update-user/:id', AdminController.updateUser);
 router.delete('/admin/delete-user/:id', AdminController.deleteUser);
@@ -42,6 +43,13 @@ router.post('/sample/add-new-sample', SampleController.addNewSample);
 router.put('/sample/:id/update-sample-details', SampleController.updateSampleDetails);
 router.delete('/sample/:id/delete-sample', SampleController.deleteSample);
 
+// Tests related requests
+router.get('/tests', TestController.getTests);
+router.get('/tests/:id', TestController.getTestDetails);
+router.post('/tests/add-new-test', TestController.addNewTest);
+router.put('/tests/:id/update-test-details', TestController.updateTestDetails);
+router.delete('/tests/:id/delete-test', TestController.deleteTest);
+
 // User Authorization requests
 router.post('/user-login', AuthorizationController.userlogin);
 router.post('/admin-login', AuthorizationController.adminLogin)
@@ -50,7 +58,6 @@ router.post('/logout', AuthorizationController.logout);
 
 // User related requests
 router.get('/user/:id', UserController.getUser);
-router.put('/user/:id/update-user', UserController.updateUser);
 router.put('/user/:id/update-password', UserController.updatePassword);
 
 // Profile related requests
