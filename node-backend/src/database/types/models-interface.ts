@@ -76,7 +76,7 @@ export interface SamplePhotoAttributes {
 export interface TestAttributes {
     id: number;
     sampleId: number;
-    profileId: number;
+    userId: number;
     testName: string;
     unit: string;
     result?: number;

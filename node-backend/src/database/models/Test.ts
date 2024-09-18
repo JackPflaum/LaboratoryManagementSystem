@@ -1,13 +1,13 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';    // import database instance from database.ts
 import Sample from '../models/Sample';
-import Profile from '../models/Profile';
+import User from '../models/User';
 import { ModelsInterface, TestAttributes } from '../types/models-interface';
 
 class Test extends Model<TestAttributes> implements TestAttributes {
     id!: number;
     sampleId!: number;
-    profileId!: number;
+    userId!: number;
     testName!: string;
     unit!: string;
     result?: number;
@@ -15,7 +15,7 @@ class Test extends Model<TestAttributes> implements TestAttributes {
 
     static associate(models: ModelsInterface) {
         Test.belongsTo(models.Sample, { foreignKey: 'sampleId', onDelete: 'CASCADE' });
-        Test.belongsTo(models.Profile, { foreignKey: 'profileId' });
+        Test.belongsTo(models.User, { foreignKey: 'userId' });
     }
 }
 
@@ -35,11 +35,11 @@ Test.init({
             key: 'id',
         }
     },
-    profileId: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Profile,
+            model: User,
             key: 'id',
         },
     },
