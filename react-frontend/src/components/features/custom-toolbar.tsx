@@ -4,12 +4,13 @@ import { ReactNode } from "react";
 interface ClientToolbarProps {
     buttonTitle: string;
     buttonIcon: ReactNode;
+    searchLabel?: string;
     searchFilter: string;
     handleSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     setOpenDialog: (open: boolean) => void;
 };
 
-const ClientToolbar = ({ buttonTitle, buttonIcon, searchFilter, handleSearchChange, setOpenDialog }: ClientToolbarProps) => {
+const CustomToolbar = ({ buttonTitle, buttonIcon, searchLabel, searchFilter, handleSearchChange, setOpenDialog }: ClientToolbarProps) => {
     return (
         <Box
             sx={{
@@ -20,7 +21,7 @@ const ClientToolbar = ({ buttonTitle, buttonIcon, searchFilter, handleSearchChan
             }}
         >
             <TextField
-                label="Search"
+                label={searchLabel ?? "Search"}
                 type="search"
                 variant="outlined"
                 value={searchFilter}
@@ -34,4 +35,4 @@ const ClientToolbar = ({ buttonTitle, buttonIcon, searchFilter, handleSearchChan
     );
 };
 
-export default ClientToolbar;
+export default CustomToolbar;
