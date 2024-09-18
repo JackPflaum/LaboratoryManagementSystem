@@ -9,7 +9,7 @@ import {
     MenuItem,
     Select,
     TextField,
-    Typography,
+    Stack,
     OutlinedInput,
     FormControl,
     Chip,
@@ -17,7 +17,8 @@ import {
     DialogTitle,
     Divider,
     DialogContent,
-    DialogActions
+    DialogActions,
+    FormHelperText
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -25,6 +26,7 @@ import { ref } from "yup";
 import { UserAttributes } from "../../../types/interfaces";
 import { useCreateUserMutation, useUpdateUserMutation } from "../../../queries/useQueries";
 import { useState } from "react";
+import DatePicker from "react-datepicker";
 
 const currentDate = new Date();
 
@@ -88,8 +90,8 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
             position: data?.position ?? "",
             permissions: data?.permissions ?? [],
             dateStarted: data?.dateStarted ?? new Date(currentDate.getDate()),
-            password: data?.password ?? "",
-            confirmPassword: ""
+            password: data ? "!1xXXXXXXXX" : "",
+            confirmPassword: data ? "!1xXXXXXXXX" : "",
         };
     };
 
@@ -106,7 +108,8 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
         if (data?.id) {
             updateUser(formData, {
                 onSuccess: () => {
-
+                    setSuccess("User has been updated successfully.");
+                    handleClose();
                 },
                 onError: (error) => {
                     setError(error.message)
@@ -119,6 +122,7 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
             createUser(formData, {
                 onSuccess: () => {
                     setSuccess("New user has been created successfully.");
+                    handleClose();
                     reset();
                 },
                 onError: (error) => {
@@ -133,162 +137,169 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-            {/* {success && <Alert severity="success" onClose={() => setSuccess("")}>{success}</Alert>} */}
-            <DialogTitle>Add User</DialogTitle>
+            {success && <Alert severity="success" onClose={() => setSuccess("")}>{success}</Alert>}
+            <DialogTitle>{!data ? "Add User" : "Edit User"}</DialogTitle>
             <Divider />
             <DialogContent>
-                <Controller
-                    name="firstName"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="First Name"
-                            {...field}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            size="small"
-                            fullWidth
-                        />
-                    )}
-                />
-                <Controller
-                    name="lastName"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Last Name"
-                            {...field}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            size="small"
-                            fullWidth
-                        />
-                    )}
-                />
-                <Controller
-                    name="workEmail"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Work Email"
-                            {...field}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            size="small"
-                            fullWidth
-                        />
-                    )}
-                />
-                <Controller
-                    name="position"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Employee Position"
-                            {...field}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            size="small"
-                            fullWidth
-                        />
-                    )}
-                />
-                <Controller
-                    name="permissions"
-                    control={control}
-                    render={({ field }) => (
-                        <FormControl fullWidth>
-                            <InputLabel id="multiple-checkbox-label">Permissions</InputLabel>
-                            <Select
-                                labelId="multiple-checkbox-label"
-                                id="multiple-checkbox"
-                                multiple
-                                value={field.value}
-                                onChange={(event) => {
-                                    const { target: { value } } = event;
-                                    field.onChange(typeof value === "string" ? value.split(",") : value);
-                                    console.log("field.value: ", field.value);
-
-                                }}
-                                input={<OutlinedInput label="Permissions" />}
-                                renderValue={(selected) => {
-                                    // map the names from permissionOptions into
-                                    // selectedNames if the permissionOptions value
-                                    // is included in the current selection
-                                    const selectedNames = permissionOptions
-                                        .filter(option => {
-                                            return selected.includes(option.value)
-                                        })
-                                        .map(option => {
-                                            return option.name
-                                        })
-
-                                    return (
-                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                                            {selectedNames.map((value) => (
-                                                <Chip key={value} label={value} />
-                                            ))}
-                                        </Box>
-                                    )
-                                }}
+                <Stack spacing={2}>
+                    <Controller
+                        name="firstName"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="First Name"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
                                 size="small"
                                 fullWidth
-                                MenuProps={MenuProps}
-                            >
-                                {permissionOptions.map((permission) => (
-                                    <MenuItem key={permission.name} value={permission.value}>
-                                        <Checkbox checked={field.value.indexOf(permission.value) > -1} />
-                                        <ListItemText primary={permission.name} />
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
-                />
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="lastName"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Last Name"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                size="small"
+                                fullWidth
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="workEmail"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Work Email"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                size="small"
+                                fullWidth
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="position"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Employee Position"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                size="small"
+                                fullWidth
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="permissions"
+                        control={control}
+                        render={({ field }) => (
+                            <FormControl fullWidth>
+                                <InputLabel id="multiple-checkbox-label">Permissions</InputLabel>
+                                <Select
+                                    labelId="multiple-checkbox-label"
+                                    id="multiple-checkbox"
+                                    multiple
+                                    value={field.value}
+                                    onChange={(event) => {
+                                        const { target: { value } } = event;
+                                        field.onChange(typeof value === "string" ? value.split(",") : value);
+                                        console.log("field.value: ", field.value);
 
+                                    }}
+                                    input={<OutlinedInput label="Permissions" />}
+                                    renderValue={(selected) => {
+                                        // map the names from permissionOptions into
+                                        // selectedNames if the permissionOptions value
+                                        // is included in the current selection
+                                        const selectedNames = permissionOptions
+                                            .filter(option => {
+                                                return selected.includes(option.value)
+                                            })
+                                            .map(option => {
+                                                return option.name
+                                            })
 
-                {/* // DATE PICKER REQUIRED HERE------------------------------------> */}
-                <Controller
-                    name="dateStarted"
-                    control={control}
-                    render={({ field, fieldState }) => (
-
-                    )}
-                />
-
-
-
-
-                <Controller
-                    name="password"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Password"
-                            {...field}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            type="password"
-                            size="small"
-                            fullWidth
-                        />
-                    )}
-                />
-                <Controller
-                    name="confirmPassword"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Confirm Password"
-                            {...field}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            type="password"
-                            size="small"
-                            fullWidth
-                        />
-                    )}
-                />
+                                        return (
+                                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                                {selectedNames.map((value) => (
+                                                    <Chip key={value} label={value} />
+                                                ))}
+                                            </Box>
+                                        )
+                                    }}
+                                    size="small"
+                                    fullWidth
+                                    MenuProps={MenuProps}
+                                >
+                                    {permissionOptions.map((permission) => (
+                                        <MenuItem key={permission.name} value={permission.value}>
+                                            <Checkbox checked={field.value.indexOf(permission.value) > -1} />
+                                            <ListItemText primary={permission.name} />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )}
+                    />
+                    <Controller
+                        name="dateStarted"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl className="custom-datepicker">
+                                <InputLabel htmlFor="dateStarted">Date Started</InputLabel>
+                                <DatePicker
+                                    selected={field.value}
+                                    onChange={(e) => {
+                                        field.onChange(e)
+                                    }}
+                                    dateFormat="d MMMM, yyyy"
+                                />
+                                <FormHelperText sx={{ color: "red" }}>{fieldState.error?.message}</FormHelperText>
+                            </FormControl>
+                        )}
+                    />
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Password"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                type="password"
+                                size="small"
+                                fullWidth
+                                disabled={!!data}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="confirmPassword"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Confirm Password"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                type="password"
+                                size="small"
+                                fullWidth
+                                disabled={!!data}
+                            />
+                        )}
+                    />
+                </Stack>
             </DialogContent>
             {error && <Alert severity="error">{error}</Alert>}
             <DialogActions>
