@@ -71,7 +71,6 @@ export class AdminController {
             position,
             permissions,
             dateStarted,
-            password
         }: UserAttributes = req.body;
 
         try {
@@ -89,7 +88,6 @@ export class AdminController {
                 position: position,
                 permissions: permissions,
                 dateStarted: dateStarted,
-                password: password,
             });
 
             return res.status(200).json({ success: "User has been updated" });
