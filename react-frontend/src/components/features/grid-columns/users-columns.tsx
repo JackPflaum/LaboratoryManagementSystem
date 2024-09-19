@@ -12,8 +12,13 @@ interface UserColumnProps {
 export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
     const columns: GridColDef[] = [
         {
-            field: "name",
-            headerName: "Name",
+            field: "firstName",
+            headerName: "First Name",
+            width: 200,
+        },
+        {
+            field: "lastName",
+            headerName: "Last Name",
             width: 200,
         },
         {
