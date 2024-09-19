@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminContextAttributes, ClientAttributes, DashboardAttributes, JobAttributes, ProfileAttributes, SampleAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
+import { AdminContextAttributes, ClientAttributes, DashboardAttributes, JobAttributes, ProfileAttributes, SampleAttributes, TestAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
@@ -20,7 +20,7 @@ const queryKeys = {
         getSamplesList: ["getSamplesList"],
     },
     tests: {
-        getTests: ["getTests"],
+        getTest: ["getTests"],
         getTestsList: ["getTestsList"],
     },
     users: {
@@ -57,7 +57,6 @@ export const useAdminLoginMutation = () => {
             return responseData;
         },
         onSuccess: (res: AdminContextAttributes) => {
-            // TODO: save returned JWT token?
             // set returned authorization data to AdminAuthContext
             setAdmin(res);
         }
@@ -180,6 +179,8 @@ export const useGetUserQuery = (id: string | undefined) => {
 
 // create new User
 export const useCreateUserMutation = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: async (data: UserAttributes) => {
             const response = await fetch("http://localhost:8000/api/admin/add-new-user", {
@@ -198,16 +199,21 @@ export const useCreateUserMutation = () => {
             };
 
             return responseData;
-        }
+        },
+        onSuccess: (res) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsersList] });
+        },
     });
 };
 
 
 // handles updating existing
 export const useUpdateUserMutation = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: async (data: UserAttributes) => {
-            const response = await fetch(`http://localhost:8000/api/admin/update-user/${data.id}`, {
+        mutationFn: async ({ data, id }: { data: UserAttributes, id: number }) => {
+            const response = await fetch(`http://localhost:8000/api/admin/update-user/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -223,7 +229,10 @@ export const useUpdateUserMutation = () => {
             };
 
             return responseData;
-        }
+        },
+        onSuccess: (res) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsersList] });
+        },
     });
 };
 
@@ -620,7 +629,7 @@ export const useGetSampleQuery = (id: string | undefined) => {
                 throw new Error("Sample ID is required");
             };
 
-            const response = await fetch(`http://localhost:8000/api/sample/${id}`, {
+            const response = await fetch(`http://localhost:8000/api/samples/${id}`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -638,12 +647,12 @@ export const useGetSampleQuery = (id: string | undefined) => {
 
 
 // handle adding new sample to Job
-export const useAddSampleMutation = () => {
+export const useCreateSampleMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (formData: SampleAttributes) => {
-            await fetch(`http://localhost:8000/api/sample/add-new-sample`, {
+            await fetch(`http://localhost:8000/api/samples/add-new-sample`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -666,7 +675,7 @@ export const useUpdateSampleMutation = () => {
 
     return useMutation({
         mutationFn: async ({ formData, id }: { formData: SampleAttributes, id: number }) => {
-            await fetch(`http://localhost:8000/api/sample/${id}/update-sample-details`, {
+            await fetch(`http://localhost:8000/api/samples/${id}/update-sample-details`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -688,7 +697,7 @@ export const useDeleteSampleMutation = () => {
 
     return useMutation({
         mutationFn: async (id: string) => {
-            await fetch(`http://localhost:8000/api/sample-details/${id}/delete-sample`, {
+            await fetch(`http://localhost:8000/api/samples/${id}/delete-sample`, {
                 method: "DELETE",
                 credentials: "include",
             })
@@ -697,6 +706,131 @@ export const useDeleteSampleMutation = () => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
             queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] })
         }
+    });
+};
+
+
+// get list of all Tests
+export const useGetTestsQuery = (searchFilter: string) => {
+    const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
+
+    return useQuery<TestAttributes[]>({
+        queryKey: [...queryKeys.tests.getTestsList, debouncedSearch],
+        queryFn: async () => {
+            const url = new URL("http://localhost:8000/api/tests");
+
+            if (debouncedSearch) {
+                url.searchParams.append("search", debouncedSearch);
+            };
+
+            const response = await fetch(url.toString(), {
+                method: "GET",
+                credentials: "include"
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+
+            return responseData as TestAttributes[];
+        },
+    });
+};
+
+
+// get individual Test data
+export const useGetTestQuery = (id: string | undefined) => {
+    return useQuery<TestAttributes>({
+        queryKey: id ? [...queryKeys.tests.getTest, id] : [],
+        queryFn: async () => {
+            if (!id) {
+                throw new Error("Test ID is required");
+            };
+
+            const response = await fetch(`http://localhost:8000/api/tests/${id}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+
+            return responseData as TestAttributes;
+        },
+    });
+};
+
+
+// creating new Test for particular sample
+export const useCreateTestMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (data: TestAttributes) => {
+            await fetch(`http://localhost:8000/api/tests/add-new-test`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(data)
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
+        },
+    });
+};
+
+
+// updating existing Test
+export const useUpdateTestMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ data, id }: { data: TestAttributes, id: number }) => {
+            await fetch(`http://localhost:8000/api/tests/${id}/update-test-details`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(data)
+            });
+        },
+        onSuccess: (res, id) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList, id.toString()] });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
+        },
+    });
+};
+
+
+// deleting Test
+export const useDeleteTestMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: number) => {
+            const response = await fetch(`http://localhost:8000/api/tests/${id}/delete-test`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.error || "Something went wrong");
+            };
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
+        },
     });
 };
 
