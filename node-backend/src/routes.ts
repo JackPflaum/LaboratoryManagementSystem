@@ -38,10 +38,10 @@ router.get('/jobs/:id/delete', JobController.deleteJob);
 
 // Sample related requests
 router.get('/samples', SampleController.getSamples);
-router.get('/sample/:id', SampleController.getSampleDetails);
-router.post('/sample/add-new-sample', SampleController.addNewSample);
-router.put('/sample/:id/update-sample-details', SampleController.updateSampleDetails);
-router.delete('/sample/:id/delete-sample', SampleController.deleteSample);
+router.get('/samples/:id', SampleController.getSampleDetails);
+router.post('/samples/add-new-sample', SampleController.addNewSample);
+router.put('/samples/:id/update-sample-details', SampleController.updateSampleDetails);
+router.delete('/samples/:id/delete-sample', SampleController.deleteSample);
 
 // Tests related requests
 router.get('/tests', TestController.getTests);
