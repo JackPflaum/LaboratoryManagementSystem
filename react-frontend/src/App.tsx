@@ -5,22 +5,22 @@ import Dashboard from './components/Dashboard';
 import NoMatch from './components/NoMatch';
 import Jobs from './components/Jobs';
 import Clients from './components/Clients';
-import Admin from './components/Admin';
 import { useAuthUser } from './context/UserAuthContext';
 import UserLogin from './components/UserLogin';
 import AdminLogin from './components/AdminLogin';
 import { useAuthAdmin } from './context/AdminAuthContext';
 import IndividualClient from './components/IndividualClient';
 import { Box } from '@mui/material';
+import Admin from './components/Admin';
+import ProfilePage from './components/ProfilePage';
 
 function App() {
 
     // get user authorization from UserAuthContext and AdminAuthContext
     const { user, isLoading } = useAuthUser();
-    const { admin } = useAuthAdmin();
+    const { admin, isRefreshing } = useAuthAdmin();
 
-    console.log("authUser:", user);
-
+    // if (isLoading || isRefreshing) {
     if (isLoading) {
         return (
             <Box
@@ -48,6 +48,7 @@ function App() {
                             <Route path="jobs" element={<Jobs />} />
                             <Route path="clients" element={<Clients />} />
                             <Route path="clients/:id" element={<IndividualClient />} />
+                            <Route path="user/:id" element={<ProfilePage />} />
                             <Route path="*" element={<NoMatch />} />
                         </Route>
                     ) : null}
