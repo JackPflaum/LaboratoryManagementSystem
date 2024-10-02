@@ -32,6 +32,7 @@ export class AuthorizationController {
                     // respond with user details
                     return res.status(200).json({
                         user: {
+                            id: user.id,
                             fullName: `${user.firstName} ${user.lastName}`,
                             permissions: user.permissions
                         }
@@ -58,6 +59,7 @@ export class AuthorizationController {
                 // token is valid, send back user details
                 return res.status(200).json({
                     user: {
+                        id: user.id,
                         fullName: `${user.firstName} ${user.lastName}`,
                         permissions: user.permissions
                     }
@@ -76,6 +78,7 @@ export class AuthorizationController {
 
                         return res.status(200).json({
                             user: {
+                                id: user.id,
                                 fullName: `${user.firstName} ${user.lastName}`,
                                 permissions: user.permissions
                             }
@@ -162,22 +165,45 @@ export class AuthorizationController {
         try {
             if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
                 return res.status(401).json({ error: "Invalid email or password." })
-            }
+            };
+
+            // // generate JWT access token
+            // const accessToken = jwt.sign(
+            //     { id: process.env.ADMIN_ID, email: process.env.ADMIN_EMAIL },
+            //     process.env.JWT_SECRET ?? "default_secret_key",
+            //     { expiresIn: "15m" }
+            // );
+
+            // // generate refresh token
+            // const refreshToken = jwt.sign(
+            //     { id: process.env.ADMIN_ID, email: process.env.ADMIN_EMAIL },
+            //     process.env.REFRESH_SECRET_KEY ?? "default_secret_key",
+            //     { expiresIn: "1d" }
+            // );
+
+            // // store access token in cookie
+            // res.cookie("accessToken", accessToken, {
+            //     httpOnly: true,
+            //     secure: process.env.NODE_ENV === "production",    // uses https if in production mode
+            //     maxAge: 15 * 60 * 1000,    // 15 minutes
+            // });
+
+            // // store refresh token in cookie
+            // res.cookie("refreshToken", refreshToken, {
+            //     httpOnly: true,
+            //     secure: process.env.NODE_ENV === "production",
+            //     maxAge: 24 * 60 * 60 * 1000,    // 1 day
+            // });
 
             return res.status(200).json({ isAuthorized: true });
-
         } catch (error) {
             return res.status(500).json({ error: "Internal server error" });
         };
     };
 
 
-
     // handles user and admin logout
     static async logout(req: Request, res: Response) {
-        // TODO: Need to remove user Auth context
-        const { id } = req.params;
-
         try {
             // invalidate access token and refresh token from user cookies
             res.clearCookie("accessToken");
