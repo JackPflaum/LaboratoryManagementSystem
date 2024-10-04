@@ -9,6 +9,7 @@ import { useAuthUser } from "../context/UserAuthContext";
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { AppProvider } from "@toolpad/core";
 import type { Navigation } from '@toolpad/core';
+import { darkTheme, lightTheme } from "../themes/theme";
 
 const NavigationSidebar = () => {
 
@@ -56,6 +57,7 @@ const NavigationSidebar = () => {
                 // logo: <BiotechIcon />,
                 title: "Laboratory Management System"
             }}
+            theme={{ light: lightTheme, dark: darkTheme }}
         >
             <DashboardLayout disableCollapsibleSidebar>
                 <Outlet />
