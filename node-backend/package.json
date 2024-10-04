@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ts-node src/appTests.ts",
     "syncDatabase": "npx tsc src/initDb.ts --outDir dist && node dist/initDb.js",
     "start": "nodemon --watch src/**/*.ts --exec ts-node src/server.ts",
     "build": "tsc"
