@@ -19,17 +19,17 @@ const Dashboard = () => {
         {
             title: "Pending Jobs",
             count: !isPending ? dashboardData?.pendingJobsCount : "-",
-            colour: "#ff5a5f"
+            colour: "#fbc3bc"
         },
         {
             title: "Pending Samples",
             count: !isPending ? dashboardData?.pendingSamplesCount : "-",
-            colour: "#52b788",
+            colour: "#b7e4c7",
         },
         {
             title: "Completed Jobs",
             count: !isPending ? dashboardData?.completedJobsCount : "-",
-            colour: "#48cae4",
+            colour: "#ade8f4",
         }
     ];
 

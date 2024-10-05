@@ -19,7 +19,8 @@ const DashboardCard = ({ cardData }: DashboardCardProps) => {
                         display: "flex",
                         justifyContent: "center",
                         marginTop: 2,
-                        borderRadius: 6
+                        backgroundColor: `${data.colour}`,
+                        borderRadius: 2,
                     }}
                     elevation={2}
                 >
@@ -31,11 +32,11 @@ const DashboardCard = ({ cardData }: DashboardCardProps) => {
                             marginTop: 1
                         }}
                     >
+                        <Typography variant="h4" mt={2}>
+                            {data.count}
+                        </Typography>
                         <Typography variant="h6" component="div">
                             {data.title}
-                        </Typography>
-                        <Typography variant="body1" mt={2}>
-                            {data.count}
                         </Typography>
                     </CardContent>
                 </Card>
