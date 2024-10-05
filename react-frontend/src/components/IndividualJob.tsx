@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Typography, Box } from "@mui/material";
 import DisplayGrid from "./features/display-grid";
 import { useNavigate, useParams } from "react-router-dom";
-import ClientToolbar from "./features/client-toolbar";
+import CustomToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
 import { useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
 import JobDialog from "./features/dialogs/job-dialog";
@@ -10,6 +10,7 @@ import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { JobAttributes, SampleAttributes } from "../types/interfaces";
+import PageTitle from "./features/page-title";
 
 
 const IndividualJob = () => {
@@ -58,16 +59,14 @@ const IndividualJob = () => {
     return (
         <>
             <Box>
-                <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                    {jobData?.jobNumber}
-                </Typography>
+                <PageTitle title={jobData?.jobNumber} />
                 <Box>
                     <p>Client: {jobData?.client}</p>
                     <p>Due Date: {jobData?.dueDate.toString()}</p>
                     <p>Completed: {jobData?.completed}</p>
                     <p>Comments: {jobData?.comments}</p>
                 </Box>
-                <ClientToolbar
+                <CustomToolbar
                     buttonTitle="Edit Job"
                     buttonIcon={<EditIcon />}
                     searchFilter={searchFilter}

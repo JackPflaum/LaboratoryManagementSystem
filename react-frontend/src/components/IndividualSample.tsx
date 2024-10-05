@@ -4,12 +4,13 @@ import DisplayGrid from "./features/display-grid";
 import { useParams } from "react-router-dom";
 import ClientToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
-import { useGetJobQuery, useGetSampleQuery, useGetSamplesQuery } from "../queries/useQueries";
+import { useGetJobQuery, useGetSampleQuery, useGetTestsQuery } from "../queries/useQueries";
 import SampleDialog from "./features/dialogs/sample-dialog";
 import { getTestsColumns } from "./features/grid-columns/tests-columns";
 import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { JobAttributes, SampleAttributes, TestAttributes } from "../types/interfaces";
+import PageTitle from "./features/page-title";
 
 
 const IndividualSample = () => {
@@ -50,9 +51,7 @@ const IndividualSample = () => {
     return (
         <>
             <Box>
-                <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                    Sample: {sampleData?.sampleNumber}
-                </Typography>
+                <PageTitle title={`Sample: ${sampleData?.sampleNumber}`} />
                 <Box>
                     <p>Job Number: {sampleData?.jobNumber}</p>
                     <p>Type: {sampleData?.type}</p>

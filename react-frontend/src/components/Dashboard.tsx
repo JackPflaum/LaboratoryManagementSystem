@@ -6,6 +6,8 @@ import { useGetDashboardQuery, useGetJobsQuery } from "../queries/useQueries";
 import { CardData, JobAttributes } from "../types/interfaces";
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { useNavigate } from "react-router-dom";
+import { generalStyling } from "../mui-styling";
+import PageTitle from "./features/page-title";
 
 const Dashboard = () => {
 
@@ -17,14 +19,17 @@ const Dashboard = () => {
         {
             title: "Pending Jobs",
             count: !isPending ? dashboardData?.pendingJobsCount : "-",
+            colour: "#ff5a5f"
         },
         {
             title: "Pending Samples",
             count: !isPending ? dashboardData?.pendingSamplesCount : "-",
+            colour: "#52b788",
         },
         {
             title: "Completed Jobs",
             count: !isPending ? dashboardData?.completedJobsCount : "-",
+            colour: "#48cae4",
         }
     ];
 
@@ -50,9 +55,7 @@ const Dashboard = () => {
 
     return (
         <Box>
-            <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                Dashboard
-            </Typography>
+            <PageTitle title="Dashboard" />
             <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={{ xs: 1, sm: 2, md: 4 }}
