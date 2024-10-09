@@ -1,11 +1,11 @@
 import sequelize from "./database/models/db";
+import User from './database/models/User';
+import Profile from './database/models/Profile';
 import Client from './database/models/Client';
 import Job from './database/models/Job';
-import Profile from './database/models/Profile';
 import Sample from './database/models/Sample';
 import SamplePhoto from './database/models/SamplePhoto';
 import Test from './database/models/Test';
-import User from './database/models/User';
 
 const models = {
     User,
@@ -14,23 +14,30 @@ const models = {
     Job,
     Sample,
     SamplePhoto,
-    Test
-}
-
-// initialize model associations
-Object.values(models).forEach(model => model.associate && model.associate(models))
-
-
-// synchronize all models to connect database.
-const syncDatabase = async () => {
-    try {
-        await sequelize.sync({ alter: true });
-        console.log('Database synchronized successfully');
-    } catch (error) {
-        console.log('Error synchronizing database:', error);
-    };
+    Test,
 };
 
-syncDatabase();
+// synchronize all models to database.
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log("Database connection established.");
 
-export default syncDatabase;
+        try {
+            await sequelize.sync({ force: true });
+
+            // Initialize model associations
+            Object.values(models).forEach((model) => {
+                if (model.associate) {
+                    model.associate(models);
+                }
+            });
+
+            console.log("Database synchronized successfully");
+        } catch (error) {
+            console.log("Error synchronizing database:", error);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+})();
