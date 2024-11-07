@@ -26,7 +26,7 @@ const models = {
 // synchronize all models to database.
 (async () => {
     try {
-        await sequelize.sync({ force: true });
+        await sequelize.sync({ force: false });
 
         // initialize model associations
         Object.values(models).forEach(
