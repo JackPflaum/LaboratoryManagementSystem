@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { Op } from 'sequelize';
+import { literal, Op } from 'sequelize';
 import Job from '../src/database/models/Job';
+import Client from '../src/database/models/Client';
 
 
 // maybe import from Job
@@ -16,40 +17,6 @@ interface JobAttributes {
 // handles requests related to job information
 export class JobController {
 
-    // retrieve number of completed jobs
-    static async getCompletedJobsCount() {
-        try {
-            const count = await Job.count({
-                where: {
-                    completed: true,
-                }
-            });
-
-            return count;
-
-        } catch (error) {
-            return -1;
-        };
-    };
-
-
-    // retrieve number of pending jobs
-    static async getPendingJobs() {
-        try {
-            const count = await Job.count({
-                where: {
-                    completed: false,
-                }
-            });
-
-            return count;
-
-        } catch (error) {
-            return -1;
-        };
-    };
-
-
     // retrieve all jobs from the database
     static async getJobs(req: Request, res: Response) {
         const searchFilter = req.query.search as string;
@@ -61,9 +28,28 @@ export class JobController {
                         [Op.iLike]: `%${searchFilter}%`,
                     },
                 } : {},
+                include: [
+                    {
+                        model: Client,
+                        as: "Client",
+                        attributes: ["name"],
+                    }
+                ],
+                // using sequelize.literal to add the client name as a direct field
+                attributes: {
+                    include: [
+                        [literal(`"Client"."name"`), "client"]
+                    ]
+                }
             });
+
+            // check if samples related to job are all completed
+            // const allCompleted = await samplesCompleted(job);
+
+            console.log("JOBS: ", jobs);
             return res.status(200).json(jobs);
         } catch (error) {
+            console.error('Error retrieving JOBS:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     };
@@ -73,11 +59,33 @@ export class JobController {
     static async getJobDetails(req: Request, res: Response) {
         const { id } = req.params;
         try {
-            const job = await Job.findByPk(id);
+            // const job = await Job.findByPk(id);
+
+            console.log("getJobDetails: ", id);
+            const job = await Job.findOne({
+                where: {
+                    id: id,
+                },
+                include: [
+                    {
+                        model: Client,
+                        as: "Client",
+                        attributes: ["name"],
+                    }
+                ],
+                attributes: {
+                    include: [
+                        [literal(`"Client"."name"`), "client"]
+                    ]
+                }
+            });
 
             if (!job) {
                 return res.status(404).json({ error: 'Job not found' });
-            }
+            };
+
+            // check if samples related to job are all completed
+            // const allCompleted = await samplesCompleted(job);
 
             return res.status(200).json(job);
         } catch (error) {
@@ -89,10 +97,17 @@ export class JobController {
     // add new job to the database
     static async addNewJob(req: Request, res: Response) {
         // retrieve job details from request body
-        const { clientId, comments, dueDate }: JobAttributes = req.body;
+        const { client, comments, dueDate }: JobAttributes = req.body;
 
         try {
-            // need to confirm client exists?
+            // need to get client id
+            const selectedClient = await Client.findOne({ where: { name: client } });
+
+            if (!selectedClient) {
+                return res.status(404).json({ error: 'Client not found' });
+            };
+
+            const clientId = selectedClient.id;
 
             // create a new job number incremented up from most recently created job
             const jobNumber = await Job.createJobNumber();
@@ -108,25 +123,34 @@ export class JobController {
     // update an existing job in the database
     static async updateJobDetails(req: Request, res: Response) {
         const { id } = req.params;
-        const { clientId, comments, dueDate }: JobAttributes = req.body;
+        const { client, comments, dueDate }: JobAttributes = req.body;
 
         try {
-
+            // find job in database
             const job = await Job.findByPk(id);
 
             if (!job) {
                 return res.status(404).json({ error: 'Job not found' });
             };
 
+            // need to get client id
+            const selectedClient = await Client.findOne({ where: { name: client } });
+
+            if (!selectedClient) {
+                return res.status(404).json({ error: 'Client not found' });
+            };
+
+            const clientId = selectedClient.id;
+
             // check if samples related to job are all completed
-            const completed = await samplesCompleted(job);
+            // const allCompleted = await samplesCompleted(job);
 
             job.update({
                 clientId: clientId,
                 jobNumber: job.jobNumber,
                 comments: comments,
                 dueDate: dueDate,
-                completed: completed,
+                // completed: allCompleted,
             });
 
             return res.status(200).json({ success: "Job Details updated" });
