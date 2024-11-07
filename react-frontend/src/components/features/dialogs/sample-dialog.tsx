@@ -7,29 +7,27 @@ import {
     DialogTitle,
     Divider,
     FormControl,
+    FormHelperText,
     InputLabel,
     MenuItem,
     Select,
     Stack,
     TextField,
-    OutlinedInput,
-    FormHelperText,
 } from "@mui/material";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ClientAttributes, JobAttributes, SampleAttributes } from "../../../types/interfaces";
+import { SampleAttributes } from "../../../types/interfaces";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useCreateJobMutation, useGetClientsQuery, useUpdateJobMutation } from "../../../queries/useQueries";
+import { useCreateSampleMutation, useUpdateSampleMutation } from "../../../queries/useQueries";
 import { Type } from "../../../types/enums";
 
 
 // sample details validation schema
 const SampleSchema = yup.object().shape({
-    type: yup.string().required("Sample type is required."),
-    storage: yup.string().required("Storage location is required."),
+    type: yup.array().required("Sample type is required."),
+    storage: yup.array().required("Storage location is required."),
     comments: yup.string().optional(),
 });
 
@@ -45,13 +43,13 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
 
     const mapDataToForm = (data?: SampleAttributes) => {
         return {
-            type: data?.type ?? "",
-            storage: data?.storage ?? "",
+            type: data?.type ?? undefined,
+            storage: data?.storage ?? undefined,
             comments: data?.comments ?? undefined,
         }
     };
 
-    const { handleSubmit, control, reset, formState: { errors } } = useForm<SampleAttributes>({
+    const { handleSubmit, control, reset } = useForm<SampleAttributes>({
         defaultValues: mapDataToForm(data),
         resolver: yupResolver(SampleSchema),
     });
@@ -93,8 +91,6 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
             <Divider />
             <DialogContent>
                 <Stack spacing={2}>
-
-                    // ------------------------------------------------------------------> TYPE
                     <Controller
                         name="type"
                         control={control}
@@ -105,7 +101,6 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
                                     label="Type"
                                     {...field}
                                     error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
                                     size="small"
                                 >
                                     {Object.values(Type).map((type) => (
@@ -113,19 +108,11 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
                                             {type}
                                         </MenuItem>
                                     ))}
-
-                                    // {sampleType.map((type) => (
-                                    //     <MenuItem key={type.value} value={type.value}>
-                                    //         {type.label}
-                                    //     </MenuItem>
-                                    // ))}
                                 </Select>
+                                <FormHelperText>{fieldState.error?.message}</FormHelperText>
                             </FormControl>
                         )}
                     />
-
-
-                    // ------------------------------------------------------------------> STORAGE
                     <Controller
                         name="storage"
                         control={control}
@@ -136,7 +123,6 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
                                     label="Storage"
                                     {...field}
                                     error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
                                     size="small"
                                 >
                                     {Object.values(Storage).map((storage) => (
@@ -144,20 +130,11 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
                                             {storage}
                                         </MenuItem>
                                     ))}
-
-
-                                    // {storageLocation.map((storage) => (
-                                    //     <MenuItem key={storage.value} value={storage.value}>
-                                    //         {storage.label}
-                                    //     </MenuItem>
-                                    // ))}
                                 </Select>
+                                <FormHelperText>{fieldState.error?.message}</FormHelperText>
                             </FormControl>
                         )}
                     />
-
-
-                    // ------------------------------------------------------------------>
                     <Controller
                         name="comments"
                         control={control}
