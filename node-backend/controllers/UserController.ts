@@ -12,21 +12,8 @@ export class UserController {
 
             return res.status(200).json(user);
         } catch (error) {
-            console.log('updateUser() Error:', error);
             return res.status(500).json({ 'error': 'Internal server erorr' });
-        }
-    }
-
-
-    // update user profile
-    static async updateUser(req: Request, res: Response) {
-        const { userId } = req.params;
-        try {
-            return res.status(200).json({ 'success': 'User profile was successfully updated.' });
-        } catch (error) {
-            console.log('updateUser() Error:', error);
-            return res.status(500).json({ 'error': 'Internal server erorr' });
-        }
+        };
     };
 
 
@@ -42,7 +29,6 @@ export class UserController {
         };
 
         try {
-            // TODO: 
             const user = await User.findOne({ where: { id: id } });
 
             if (!user) {
