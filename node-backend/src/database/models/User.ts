@@ -2,6 +2,8 @@ import { DataTypes, Model } from "sequelize";
 import { ModelsInterface, UserAttributes } from "../types/models-interface";
 import sequelize from "./db";
 import * as bcrypt from "bcrypt";
+import Profile from "./Profile";
+import Test from "./Test";
 
 class User extends Model<UserAttributes> implements UserAttributes {
     id!: number;
@@ -20,8 +22,8 @@ class User extends Model<UserAttributes> implements UserAttributes {
 
     static associate(models: ModelsInterface) {
         User.hasOne(models.Profile, { foreignKey: "userId" });
-    }
-}
+    };
+};
 
 User.init({
     id: {

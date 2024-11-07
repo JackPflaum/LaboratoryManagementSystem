@@ -16,9 +16,8 @@ class Test extends Model<TestAttributes> implements TestAttributes {
     static associate(models: ModelsInterface) {
         Test.belongsTo(models.Sample, { foreignKey: 'sampleId', onDelete: 'CASCADE' });
         Test.belongsTo(models.User, { foreignKey: 'userId' });
-    }
-}
-
+    };
+};
 
 Test.init({
     id: {
@@ -63,6 +62,5 @@ Test.init({
     tableName: 'tests',
     timestamps: true,
 });
-
 
 export default Test;

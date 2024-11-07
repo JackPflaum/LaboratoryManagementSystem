@@ -2,6 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';
 import { ModelsInterface, SampleAttributes } from '../types/models-interface';
 import Job from './Job';
+import Test from './Test';
+import SamplePhoto from './SamplePhoto';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
     id!: number;
@@ -16,8 +18,10 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
         Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', onDelete: 'CASCADE' });
         Sample.hasMany(models.Test, { foreignKey: "testId" });
         Sample.hasMany(models.SamplePhoto, { foreignKey: "sampleId" });
-    }
-}
+    };
+
+    // Need to create automatic sampleNumber on Sample creation
+};
 
 
 Sample.init({
@@ -61,6 +65,5 @@ Sample.init({
     tableName: 'samples',
     timestamps: true,
 });
-
 
 export default Sample;

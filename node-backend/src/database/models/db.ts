@@ -20,10 +20,9 @@ if (!database || !username || !password || !host || !dialect) {
 
 // create sequelize instance to establish connection to database
 const sequelize = new Sequelize(database, username, password, {
-        host: host,
-        dialect: 'postgres',
-    }
-);
+    host: host,
+    dialect: 'postgres',
+});
 
 // test whether database connection is successful
 const testDatabaseConnection = async () => {

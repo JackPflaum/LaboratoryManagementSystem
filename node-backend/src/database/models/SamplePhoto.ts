@@ -10,9 +10,8 @@ class SamplePhoto extends Model<SamplePhotoAttributes> implements SamplePhotoAtt
 
     static associate(models: ModelsInterface) {
         SamplePhoto.belongsTo(models.Sample, { foreignKey: 'sampleId' });
-    }
-}
-
+    };
+};
 
 SamplePhoto.init({
     id: {
@@ -40,6 +39,5 @@ SamplePhoto.init({
     tableName: 'sample_photos',
     timestamps: true,
 });
-
 
 export default SamplePhoto;

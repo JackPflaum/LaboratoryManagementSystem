@@ -14,7 +14,7 @@ class Job extends Model<JobAttributes> implements JobAttributes {
     static associate(models: ModelsInterface) {
         Job.belongsTo(models.Client, { foreignKey: "clientId" });
         Job.hasMany(models.Sample, { foreignKey: "jobNumber" });
-    }
+    };
 
     // create a new job number based on the most recent job number
     static async createJobNumber(): Promise<string> {
@@ -27,13 +27,13 @@ class Job extends Model<JobAttributes> implements JobAttributes {
             // split jobNumber into year and number
             const [year, number] = latestJobNumber.jobNumber.split("-");
             const newNumber = parseInt(number, 10) + 1;  // using 10 base to ensure unexpected behavior e.g. leading zeroes.
-            return `${year}-${newNumber}`;
+            return `${year}-JOB-${newNumber}`;
         } else {
             const currentYear = new Date().getFullYear().toString();
-            return `${currentYear}-1`;
-        }
-    }
-}
+            return `${currentYear}-JOB-1`;
+        };
+    };
+};
 
 Job.init({
     id: {

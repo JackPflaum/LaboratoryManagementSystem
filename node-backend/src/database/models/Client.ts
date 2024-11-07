@@ -18,8 +18,7 @@ class Client extends Model<ClientAttributes> implements ClientAttributes {
     static associate(models: ModelsInterface) {
         Client.hasMany(models.Job, { foreignKey: "clientId" });    // establish hasMany relationship with Job model
     }
-}
-
+};
 
 Client.init({
     id: {
