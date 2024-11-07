@@ -32,7 +32,7 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
             width: 200,
         },
         {
-            field: "created",
+            field: "createdAt",
             headerName: "Created",
             width: 200,
         },
