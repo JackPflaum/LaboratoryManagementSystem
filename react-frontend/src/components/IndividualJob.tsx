@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
 import DisplayGrid from "./features/display-grid";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
 import { useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
 import JobDialog from "./features/dialogs/job-dialog";
+import SampleDialog from "./features/dialogs/sample-dialog";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
@@ -19,6 +20,7 @@ const IndividualJob = () => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [editingJob, setEditingJob] = useState<JobAttributes | undefined>(undefined);
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+    const [sampleDialog, setSampleDialog] = useState<boolean>(false);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -63,9 +65,13 @@ const IndividualJob = () => {
                 <Box>
                     <p>Client: {jobData?.client}</p>
                     <p>Due Date: {jobData?.dueDate.toString()}</p>
-                    <p>Completed: {jobData?.completed}</p>
-                    <p>Comments: {jobData?.comments}</p>
+                    <p>Completed: {jobData?.completed ? "Yes" : "No"}</p>
+                    <p>Comments: {jobData?.comments ?? "No comments"}</p>
                 </Box>
+                <Button variant="contained" startIcon={<EditIcon />} onClick={() => setSampleDialog(true)}>
+                    Add Sample
+                </Button>
+                {sampleDialog && <SampleDialog open={sampleDialog} handleClose={() => setSampleDialog(false)} />}
                 <CustomToolbar
                     buttonTitle="Edit Job"
                     buttonIcon={<EditIcon />}
