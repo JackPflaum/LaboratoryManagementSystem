@@ -3,6 +3,7 @@ import { Storage, Test, Type, Unit, UserPermissions } from "./enums";
 export interface CardData {
     title: string;
     count?: string;
+    colour?: string;
 };
 
 export interface DashboardAttributes {
@@ -36,11 +37,11 @@ export interface ClientAttributes {
 
 export interface SampleAttributes {
     id?: number;
-    jobNumber: string;
-    sampleNumber: string;
-    type: Type[];
-    storage?: Storage[];
-    completed: boolean;
+    jobNumber?: string;
+    sampleNumber?: string;
+    type: string;
+    storage: string;
+    completed?: boolean;
     comments?: string;
 };
 
@@ -78,7 +79,7 @@ export interface UserAttributes {
     position: string;
     permissions: string[];
     dateStarted: Date;
-    password: string;
+    password?: string;
     confirmPassword?: string;
 };
 
