@@ -18,7 +18,7 @@ const IndividualJob = () => {
 
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [openDialog, setOpenDialog] = useState<boolean>(false);
-    const [editingJob, setEditingJob] = useState<JobAttributes | undefined>(undefined);
+    const [editingSample, setEditingSample] = useState<SampleAttributes | undefined>(undefined);
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [sampleDialog, setSampleDialog] = useState<boolean>(false);
 
@@ -43,8 +43,8 @@ const IndividualJob = () => {
 
     // edit existing sample
     const editAction = (row: SampleAttributes) => {
-        // setEditingSamples(row);
-        setOpenDialog(true);
+        setEditingSample(row);
+        setSampleDialog(true);
     };
 
     // delete existing sample
@@ -71,7 +71,7 @@ const IndividualJob = () => {
                 <Button variant="contained" startIcon={<EditIcon />} onClick={() => setSampleDialog(true)}>
                     Add Sample
                 </Button>
-                {sampleDialog && <SampleDialog open={sampleDialog} handleClose={() => setSampleDialog(false)} />}
+                <SampleDialog open={sampleDialog} handleClose={() => setSampleDialog(false)} data={editingSample} />
                 <CustomToolbar
                     buttonTitle="Edit Job"
                     buttonIcon={<EditIcon />}
@@ -85,7 +85,7 @@ const IndividualJob = () => {
                 columns={columns}
                 isLoading={isLoading}
             />
-            {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={editingJob} />}
+            {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={jobData} />}
         </>
     );
 };
