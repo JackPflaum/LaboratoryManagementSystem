@@ -21,13 +21,13 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCreateSampleMutation, useUpdateSampleMutation } from "../../../queries/useQueries";
-import { Type } from "../../../types/enums";
+import { Storage, Type } from "../../../types/enums";
 
 
 // sample details validation schema
 const SampleSchema = yup.object().shape({
-    type: yup.array().required("Sample type is required."),
-    storage: yup.array().required("Storage location is required."),
+    type: yup.string().required("Sample type is required."),
+    storage: yup.string().required("Storage location is required."),
     comments: yup.string().optional(),
 });
 
@@ -61,6 +61,7 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
 
     const onSubmit = (formData: SampleAttributes) => {
         console.log("Data", formData);
+        // TODO: add job number and completed data to formData
         if (data?.id) {
             updateSample({ formData: formData, id: data.id }, {
                 onSuccess: () => {
