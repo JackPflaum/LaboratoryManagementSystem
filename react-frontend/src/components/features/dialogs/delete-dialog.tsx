@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Typ
 interface DeleteDialogProps {
     open: boolean;
     handleClose: () => void;
-    handleDelete: (id: number) => void;
+    handleDelete?: (id: string) => void;
     isPending: boolean;
     id?: number;
     description?: string
@@ -20,7 +20,7 @@ const DeleteDialog = ({
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-            <DialogTitle>Delete {description}</DialogTitle>
+            <DialogTitle>Deleting "{description}"</DialogTitle>
             <Divider />
             <DialogContent>
                 <Typography>Are you sure you want to delete?</Typography>
@@ -29,7 +29,12 @@ const DeleteDialog = ({
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={handleDelete(id)}>
+                <Button variant="contained" onClick={() => {
+                    if (handleDelete && id !== undefined) {
+                        handleDelete(id.toString());    // Convert the id to string for the delete mutation function
+                    }
+                    handleClose();
+                }}>
                     {isPending ? "Deleting..." : "Delete"}
                 </Button>
             </DialogActions>

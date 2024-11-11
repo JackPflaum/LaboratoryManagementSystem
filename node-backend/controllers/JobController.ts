@@ -46,10 +46,8 @@ export class JobController {
             // check if samples related to job are all completed
             // const allCompleted = await samplesCompleted(job);
 
-            console.log("JOBS: ", jobs);
             return res.status(200).json(jobs);
         } catch (error) {
-            console.error('Error retrieving JOBS:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     };
@@ -59,9 +57,6 @@ export class JobController {
     static async getJobDetails(req: Request, res: Response) {
         const { id } = req.params;
         try {
-            // const job = await Job.findByPk(id);
-
-            console.log("getJobDetails: ", id);
             const job = await Job.findOne({
                 where: {
                     id: id,
@@ -123,7 +118,7 @@ export class JobController {
     // update an existing job in the database
     static async updateJobDetails(req: Request, res: Response) {
         const { id } = req.params;
-        const { client, comments, dueDate }: JobAttributes = req.body;
+        const { client, comments, dueDate }: JobAttributes = req.body.data;
 
         try {
             // find job in database
