@@ -34,7 +34,7 @@ router.get('/jobs', JobController.getJobs);
 router.get('/jobs/:id', JobController.getJobDetails);
 router.post('/jobs/add-new-job', JobController.addNewJob);
 router.put('/jobs/:id/update-job-details', JobController.updateJobDetails);
-router.get('/jobs/:id/delete', JobController.deleteJob);
+router.delete('/jobs/:id/delete', JobController.deleteJob);
 
 // Sample related requests
 router.get('/samples', SampleController.getSamples);
