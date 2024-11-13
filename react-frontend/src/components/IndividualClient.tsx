@@ -2,12 +2,15 @@ import { useState } from "react";
 import { Typography, Box } from "@mui/material";
 import DisplayGrid from "./features/display-grid";
 import { useGetClientQuery, useGetJobsQuery } from "../queries/useQueries";
-import { useParams } from "react-router-dom";
-import ClientToolbar from "./features/client-toolbar";
+import { useNavigate, useParams } from "react-router-dom";
+import CustomToolbar from "./features/custom-toolbar";
 import ClientDialog from "./features/dialogs/client-dialog";
 import EditIcon from '@mui/icons-material/Edit';
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
-import { useViewJob } from "../hooks/custom-hooks";
+import { JobAttributes } from "../types/interfaces";
+import { useHasPermission } from "../hooks/custom-hooks";
+import { UserPermissions } from "../types/enums";
+import PageTitle from "./features/page-title";
 
 
 const IndividualClient = () => {
@@ -25,23 +28,29 @@ const IndividualClient = () => {
     const { data: clientData, isLoading: loading } = useGetClientQuery(id);
 
     // get list of jobs for currently selected client
-    const { data: jobsData, isLoading } = useGetJobsQuery(searchFilter);
+    const { data: jobsData, isLoading } = useGetJobsQuery(searchFilter, id);
 
-    const columns = getJobsColumns(useViewJob);
+    const navigate = useNavigate();
+
+    const viewAction = (row: JobAttributes) => {
+        navigate(`/jobs/${row.id}`);
+    };
+
+    const columns = getJobsColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
+        viewAction,
+    } : { viewAction });
 
     return (
         <>
             <Box>
-                <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                    {clientData?.name}
-                </Typography>
+                <PageTitle title={clientData?.name} />
                 <Box>
                     <p>Email: {clientData?.email}</p>
                     <p>Phone Number: {clientData?.phoneNumber}</p>
                     <p>Address: {clientData?.fullAddress}</p>
                     <p>Purchase Order Number: {clientData?.purchaseOrderNumber}</p>
                 </Box>
-                <ClientToolbar
+                <CustomToolbar
                     buttonTitle="Edit Client"
                     buttonIcon={<EditIcon />}
                     searchFilter={searchFilter}

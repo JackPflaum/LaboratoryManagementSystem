@@ -332,7 +332,7 @@ export const useGetDashboardQuery = () => {
 
 
 // gets list of Jobs
-export const useGetJobsQuery = (searchFilter: string) => {
+export const useGetJobsQuery = (searchFilter: string, id?: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery<JobAttributes[]>({
@@ -343,6 +343,14 @@ export const useGetJobsQuery = (searchFilter: string) => {
             if (debouncedSearch) {
                 url.searchParams.append("search", debouncedSearch);
             };
+
+            // Check if 'id' is provided, and parse it as an integer if so
+            if (id) {
+                const parsedId = parseInt(id, 10);
+                if (!isNaN(parsedId)) {
+                    url.searchParams.append("clientId", parsedId.toString()); // Append to URL as query parameter
+                }
+            }
 
             const response = await fetch(url.toString(), {
                 method: "GET",

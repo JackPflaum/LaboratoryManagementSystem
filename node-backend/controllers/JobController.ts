@@ -20,14 +20,24 @@ export class JobController {
     // retrieve all jobs from the database
     static async getJobs(req: Request, res: Response) {
         const searchFilter = req.query.search as string;
+        const clientId = parseInt(req.query.clientId as string, 10);
+
+        // search Job based on below conditions
+        const whereCondition: any = {};
+
+        if (searchFilter) {
+            whereCondition.jobNumber = {
+                [Op.iLike]: `%${searchFilter}%`
+            }
+        };
+
+        if (clientId) {
+            whereCondition.clientId = clientId
+        }
 
         try {
             const jobs = await Job.findAll({
-                where: searchFilter ? {
-                    jobNumber: {
-                        [Op.iLike]: `%${searchFilter}%`,
-                    },
-                } : {},
+                where: whereCondition,
                 include: [
                     {
                         model: Client,
