@@ -56,11 +56,6 @@ const Jobs = () => {
         setOpenDeleteDialog(true);
     };
 
-    // invoke delete job mutation
-    const handleDelete = (id: string) => {
-        deleteJob(id);
-    };
-
     // Data Grid columns
     const columns = getJobsColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
         viewAction,
