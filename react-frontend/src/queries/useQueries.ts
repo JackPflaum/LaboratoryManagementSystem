@@ -98,16 +98,16 @@ export const useLoginMutation = () => {
 // handle user logout
 export const useLogoutMutation = () => {
     const { setUser } = useAuthUser();
+    const { setAdmin } = useAuthAdmin();
 
     return useMutation({
-        mutationFn: async (id: string) => {
+        mutationFn: async () => {
             const response = await fetch("http://localhost:8000/api/logout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
-                body: JSON.stringify(id)
             });
 
             const responseData = await response.json();
@@ -118,11 +118,11 @@ export const useLogoutMutation = () => {
 
             return responseData;
         },
-        onSuccess: (res: UserContextAttributes) => {
-            // set returned authorization to null
-            setUser(res);
+        onSuccess: () => {
+            setUser(null);
+            setAdmin(null);
         },
-    })
+    });
 };
 
 
@@ -380,6 +380,7 @@ export const useGetJobQuery = (id: string | undefined) => {
                 throw new Error(responseData.error || "Something went wrong");
             };
 
+            console.log("responseData:", responseData);
             return responseData;
         },
     });
@@ -401,7 +402,8 @@ export const useCreateJobMutation = () => {
             });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
         }
     });
 };
