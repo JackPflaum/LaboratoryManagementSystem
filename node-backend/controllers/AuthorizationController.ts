@@ -122,14 +122,24 @@ export class AuthorizationController {
 
             // generate JWT access token
             const accessToken = jwt.sign(
-                { id: user.id, email: user.workEmail },
+                {
+                    id: user.id,
+                    email: user.workEmail,
+                    permissions: user.permissions,
+                    fullname: `${user.firstName} ${user.lastName}`
+                },
                 process.env.JWT_SECRET ?? "default_secret_key",
                 { expiresIn: "15m" }
             );
 
             // generate refresh token
             const refreshToken = jwt.sign(
-                { id: user.id, email: user.workEmail },
+                {
+                    id: user.id,
+                    email: user.workEmail,
+                    permissions: user.permissions,
+                    fullname: `${user.firstName} ${user.lastName}`
+                },
                 process.env.REFRESH_SECRET_KEY ?? "default_secret_key",
                 { expiresIn: "1d" }
             );
@@ -148,11 +158,7 @@ export class AuthorizationController {
                 maxAge: 24 * 60 * 60 * 1000,    // 1 day
             });
 
-            return res.status(200).json({
-                id: user.id,
-                fullName: `${user.firstName} ${user.lastName}`,
-                permissions: user.permissions,
-            });
+            return res.status(200).json({ message: "Loged in successfully." });
         } catch (error) {
             return res.status(500).json({ error: "Internal server error" });
         }
@@ -208,7 +214,7 @@ export class AuthorizationController {
         try {
             // invalidate access token and refresh token from user cookies
             res.clearCookie("accessToken");
-            res.clearCookie("refrechToken");
+            res.clearCookie("refreshToken");
 
             return res.status(200).json({ success: "User has been logged out succefully." });
         } catch (error) {
