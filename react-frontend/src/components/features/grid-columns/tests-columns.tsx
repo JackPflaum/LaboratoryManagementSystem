@@ -1,12 +1,12 @@
 import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { SampleAttributes } from "../../../types/interfaces";
+import { TestAttributes } from "../../../types/interfaces";
 
 
 interface TestColumnProps {
-    editAction?: (row: SampleAttributes) => void;
-    deleteAction?: (row: SampleAttributes) => void;
+    editAction?: (row: TestAttributes) => void;
+    deleteAction?: (row: TestAttributes) => void;
 };
 
 
@@ -39,7 +39,7 @@ export function getTestsColumns({ editAction, deleteAction }: TestColumnProps) {
         field: "actions",
         type: "actions",
         width: 100,
-        getActions: (params: GridRowParams<SampleAttributes>) => {
+        getActions: (params: GridRowParams<TestAttributes>) => {
             const actions = [];
 
             if (editAction) {

@@ -1,17 +1,17 @@
 import { GridActionsCellItem, GridColDef, GridRowParams, GridRenderCellParams } from "@mui/x-data-grid";
-import { Typography, Chip } from "@mui/material";
+import { Typography } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CompletedChip from "../completed-chip";
 import IncompleteChip from "../incomplete-chip";
-import { ClientAttributes, SampleAttributes } from "../../../types/interfaces";
+import { SampleAttributes } from "../../../types/interfaces";
 
 
 interface SampleColumnProps {
-    viewAction: (row: ClientAttributes) => void;
-    editAction?: (row: ClientAttributes) => void;
-    deleteAction?: (row: ClientAttributes) => void;
+    viewAction: (row: SampleAttributes) => void;
+    editAction?: (row: SampleAttributes) => void;
+    deleteAction?: (row: SampleAttributes) => void;
 };
 
 
