@@ -1,24 +1,14 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import BiotechIcon from '@mui/icons-material/Biotech';
+import { Link, Outlet } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ScienceIcon from '@mui/icons-material/Science';
 import BusinessIcon from '@mui/icons-material/Business';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuthUser } from "../context/UserAuthContext";
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { AppProvider } from "@toolpad/core";
-import type { Navigation } from '@toolpad/core';
-import { darkTheme, lightTheme } from "../themes/theme";
-import { UserContextAttributes } from "../types/interfaces";
 import { useLogoutMutation } from "../queries/useQueries";
-import { AppBar, Box, Button, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
 
-interface NavigationProps {
-    user?: UserContextAttributes | null,
-}
 
-const NavigationSidebar = ({ user }: NavigationProps) => {
+const NavigationSidebar = () => {
 
     const navigationLinks = [
         {
@@ -43,8 +33,7 @@ const NavigationSidebar = ({ user }: NavigationProps) => {
         {
             title: "User",
             icon: <PersonIcon />,
-            // to: `user/${user.id}`,
-            to: "/"
+            to: "user",
         },
         {
             title: "Logout",
@@ -53,14 +42,7 @@ const NavigationSidebar = ({ user }: NavigationProps) => {
         }
     ];
 
-    const navigate = useNavigate();
-
     const { mutate: logoutUser } = useLogoutMutation();
-
-    const handleLogout = () => {
-        logoutUser();
-        navigate("/user-login");
-    };
 
     const drawerWidth = 240;
 
@@ -100,7 +82,7 @@ const NavigationSidebar = ({ user }: NavigationProps) => {
                     <List>
                         {userLinks.map((item) => (
                             item.title === "Logout" ? (
-                                <ListItemButton key={item.title} onClick={handleLogout}>
+                                <ListItemButton key={item.title} onClick={() => logoutUser()}>
                                     <ListItemIcon>
                                         {item.icon}
                                     </ListItemIcon>
