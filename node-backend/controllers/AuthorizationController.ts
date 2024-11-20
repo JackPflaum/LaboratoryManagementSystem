@@ -158,7 +158,12 @@ export class AuthorizationController {
                 maxAge: 24 * 60 * 60 * 1000,    // 1 day
             });
 
-            return res.status(200).json({ message: "Loged in successfully." });
+            return res.status(200).json({
+                id: user.id,
+                email: user.workEmail,
+                permissions: user.permissions,
+                fullname: `${user.firstName} ${user.lastName}`
+            });
         } catch (error) {
             return res.status(500).json({ error: "Internal server error" });
         }
@@ -174,33 +179,33 @@ export class AuthorizationController {
                 return res.status(401).json({ error: "Invalid email or password." })
             };
 
-            // // generate JWT access token
-            // const accessToken = jwt.sign(
-            //     { id: process.env.ADMIN_ID, email: process.env.ADMIN_EMAIL },
-            //     process.env.JWT_SECRET ?? "default_secret_key",
-            //     { expiresIn: "15m" }
-            // );
+            // generate JWT access token
+            const accessToken = jwt.sign(
+                { id: process.env.ADMIN_ID, email: process.env.ADMIN_EMAIL },
+                process.env.JWT_SECRET ?? "default_secret_key",
+                { expiresIn: "15m" }
+            );
 
-            // // generate refresh token
-            // const refreshToken = jwt.sign(
-            //     { id: process.env.ADMIN_ID, email: process.env.ADMIN_EMAIL },
-            //     process.env.REFRESH_SECRET_KEY ?? "default_secret_key",
-            //     { expiresIn: "1d" }
-            // );
+            // generate refresh token
+            const refreshToken = jwt.sign(
+                { id: process.env.ADMIN_ID, email: process.env.ADMIN_EMAIL },
+                process.env.REFRESH_SECRET_KEY ?? "default_secret_key",
+                { expiresIn: "1d" }
+            );
 
-            // // store access token in cookie
-            // res.cookie("accessToken", accessToken, {
-            //     httpOnly: true,
-            //     secure: process.env.NODE_ENV === "production",    // uses https if in production mode
-            //     maxAge: 15 * 60 * 1000,    // 15 minutes
-            // });
+            // store access token in cookie
+            res.cookie("accessToken", accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",    // uses https if in production mode
+                maxAge: 15 * 60 * 1000,    // 15 minutes
+            });
 
-            // // store refresh token in cookie
-            // res.cookie("refreshToken", refreshToken, {
-            //     httpOnly: true,
-            //     secure: process.env.NODE_ENV === "production",
-            //     maxAge: 24 * 60 * 60 * 1000,    // 1 day
-            // });
+            // store refresh token in cookie
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 24 * 60 * 60 * 1000,    // 1 day
+            });
 
             return res.status(200).json({ isAuthorized: true });
         } catch (error) {
