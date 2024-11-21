@@ -106,7 +106,9 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
 
     const onSubmit = (formData: UserAttributes) => {
         if (data?.id) {
-            updateUser(formData, {
+            const { password, confirmPassword, ...restOfData } = formData;
+            const updatedData = { ...restOfData };
+            updateUser({ data: updatedData, id: data.id }, {
                 onSuccess: () => {
                     setSuccess("User has been updated successfully.");
                     handleClose();
