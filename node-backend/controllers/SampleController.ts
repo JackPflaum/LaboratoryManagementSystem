@@ -9,8 +9,9 @@ export class SampleController {
     // get list of Samples
     static async getSamples(req: Request, res: Response) {
         const searchFilter = req.query.search as string;
+
         try {
-            const samples = Sample.findAll({
+            const samples = await Sample.findAll({
                 where: searchFilter ? {
                     sampleNumber: {
                         [Op.iLike]: `%${searchFilter}%`
@@ -43,8 +44,7 @@ export class SampleController {
             // respond with retieved sample data
             return res.status(200).json(sampleDetails);
         } catch (error) {
-            console.log('getSample() Error:', error);
-            return res.status(500).json({ 'error': 'Internal server erorr.' });
+            return res.status(500).json({ error: 'Internal server erorr.' });
         };
     };
 
@@ -58,7 +58,12 @@ export class SampleController {
             completed,
             comments }: SampleAttributes = req.body;
         try {
-            await Sample.create({ jobNumber, type, storage, completed, comments });
+
+            // create a new job number incremented up from most recently created job
+            const sampleNumber = await Sample.createSampleNumber(jobNumber);
+
+            await Sample.create({ jobNumber, sampleNumber, type, storage, completed, comments });
+
             return res.status(201).json({ success: "New Sample has been created" });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error.' });
@@ -81,7 +86,13 @@ export class SampleController {
                 return res.status(404).json({ error: 'Sample not found' });
             };
 
-            await sample.update({ type, storage, completed, comments });
+            await sample.update({
+                type: type,
+                storage: storage,
+                completed: completed,
+                comments: comments
+            });
+
             return res.status(201).json({ success: "Sample Details updated" });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error.' });

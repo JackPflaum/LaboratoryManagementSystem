@@ -20,7 +20,31 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
         Sample.hasMany(models.SamplePhoto, { foreignKey: "sampleId" });
     };
 
-    // Need to create automatic sampleNumber on Sample creation
+    // creates a unique sample number
+    static async createSampleNumber(jobNumber: string): Promise<string> {
+
+        const sample = await Sample.findOne({
+            where: { jobNumber: jobNumber },
+            order: [["sampleNumber", "DESC"]],
+        });
+
+        if (sample) {
+            // need to increment upwards, therefore next sample number "2024-1-001" becomes "2024-1-002"
+            const parts = sample.sampleNumber.split("-");   // e.g. ["2024", "1", "001"]
+            const yearAndJob = parts.slice(0, 2).join("-")    // e.g. "2024-1"
+
+            const numberPart = parseInt(parts[2], 10)    // convert "001" to 1
+            const nextNumber = numberPart + 1;
+
+            // format new number with leading zeroes
+            const formattedNumber = nextNumber.toString().padStart(3, "0");
+
+            return `${yearAndJob}-${formattedNumber}`;
+        } else {
+            // no existing samples, therefore return with first number increment
+            return jobNumber + "-001"
+        };
+    };
 };
 
 
@@ -55,6 +79,7 @@ Sample.init({
     completed: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
     },
     comments: {
         type: DataTypes.TEXT,
