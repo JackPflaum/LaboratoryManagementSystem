@@ -4,6 +4,7 @@ import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
 import { DEBOUNCER_TIME } from "../types/enums";
+import { useNavigate } from "react-router-dom";
 
 // all Query Keys in one single object.
 const queryKeys = {
@@ -97,6 +98,7 @@ export const useLoginMutation = () => {
 
 // handle user logout
 export const useLogoutMutation = () => {
+    const navigate = useNavigate();
     const { setUser } = useAuthUser();
     const { setAdmin } = useAuthAdmin();
 
@@ -121,6 +123,7 @@ export const useLogoutMutation = () => {
         onSuccess: () => {
             setUser(null);
             setAdmin(null);
+            navigate("/user-login");
         },
     });
 };
@@ -157,6 +160,7 @@ export const useGetUsersQuery = (searchFilter: string) => {
 
 // gets User
 export const useGetUserQuery = (id: string | undefined) => {
+    console.log("userId: ", id);
     return useQuery<UserAttributes>({
         queryKey: [...queryKeys.users.getUser, id],
         queryFn: async () => {
@@ -388,7 +392,6 @@ export const useGetJobQuery = (id: string | undefined) => {
                 throw new Error(responseData.error || "Something went wrong");
             };
 
-            console.log("responseData:", responseData);
             return responseData;
         },
     });
@@ -607,7 +610,7 @@ export const useGetSamplesQuery = (searchFilter: string) => {
     return useQuery<SampleAttributes[]>({
         queryKey: [...queryKeys.samples.getSamplesList, debouncedSearch],
         queryFn: async () => {
-            const url = new URL("http://localhost/8000/samples");
+            const url = new URL("http://localhost:8000/api/samples");
 
             if (debouncedSearch) {
                 url.searchParams.append("search", debouncedSearch);
@@ -672,8 +675,8 @@ export const useCreateSampleMutation = () => {
             })
         },
         onSuccess: () => {
-            // refresh the cached Jobs list
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
+            // refresh the cached samples list
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
         }
     });
 };
