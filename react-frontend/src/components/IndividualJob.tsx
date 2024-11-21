@@ -4,7 +4,7 @@ import DisplayGrid from "./features/display-grid";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
-import { useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
+import { useDeleteSampleMutation, useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
 import JobDialog from "./features/dialogs/job-dialog";
 import SampleDialog from "./features/dialogs/sample-dialog";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
@@ -12,6 +12,7 @@ import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { JobAttributes, SampleAttributes } from "../types/interfaces";
 import PageTitle from "./features/page-title";
+import DeleteDialog from "./features/dialogs/delete-dialog";
 
 
 const IndividualJob = () => {
@@ -47,8 +48,16 @@ const IndividualJob = () => {
         setSampleDialog(true);
     };
 
+    const handleCloseDeleteDialog = () => {
+        setEditingSample(undefined);
+        setOpenDeleteDialog(false);
+    };
+
+    const { mutate: deleteSample, isPending } = useDeleteSampleMutation();
+
     // delete existing sample
     const deleteAction = (row: SampleAttributes) => {
+        setEditingSample(row);
         setOpenDeleteDialog(true);
     };
 
@@ -56,7 +65,7 @@ const IndividualJob = () => {
         viewAction,
         editAction,
         deleteAction
-    } : { viewAction });
+    } : { viewAction, deleteAction });
 
     return (
         <>
@@ -71,7 +80,7 @@ const IndividualJob = () => {
                 <Button variant="contained" startIcon={<EditIcon />} onClick={() => setSampleDialog(true)}>
                     Add Sample
                 </Button>
-                <SampleDialog open={sampleDialog} handleClose={() => setSampleDialog(false)} data={editingSample} />
+                {sampleDialog && <SampleDialog open={sampleDialog} handleClose={() => setSampleDialog(false)} data={editingSample} jobNumber={jobData?.jobNumber} />}
                 <CustomToolbar
                     buttonTitle="Edit Job"
                     buttonIcon={<EditIcon />}
@@ -86,6 +95,15 @@ const IndividualJob = () => {
                 isLoading={isLoading}
             />
             {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={jobData} />}
+            {openDeleteDialog && (
+                <DeleteDialog
+                    open={openDeleteDialog}
+                    handleClose={handleCloseDeleteDialog}
+                    handleDelete={deleteSample}
+                    isPending={isPending}
+                    id={editingSample?.id}
+                    description={editingSample?.sampleNumber} />
+            )}
         </>
     );
 };
