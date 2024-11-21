@@ -12,7 +12,7 @@ class Job extends Model<JobAttributes> implements JobAttributes {
     completed?: boolean;
 
     static associate(models: ModelsInterface) {
-        Job.belongsTo(models.Client, { foreignKey: "clientId" });
+        Job.belongsTo(models.Client, { foreignKey: "clientId", onDelete: "CASCADE" });
         Job.hasMany(models.Sample, { foreignKey: "jobNumber" });
     };
 
@@ -22,15 +22,16 @@ class Job extends Model<JobAttributes> implements JobAttributes {
         const latestJobNumber = await Job.findOne({
             order: [['createdAt', 'DESC']],
         });
+        console.log("latestJobNumber: ", latestJobNumber);
 
         if (latestJobNumber) {
             // split jobNumber into year and number
             const [year, number] = latestJobNumber.jobNumber.split("-");
             const newNumber = parseInt(number, 10) + 1;  // using 10 base to ensure unexpected behavior e.g. leading zeroes.
-            return `${year}-JOB-${newNumber}`;
+            return `${year}-${newNumber}`;
         } else {
             const currentYear = new Date().getFullYear().toString();
-            return `${currentYear}-JOB-1`;
+            return `${currentYear}-1`;
         };
     };
 };
