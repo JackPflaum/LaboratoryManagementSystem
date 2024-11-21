@@ -33,18 +33,20 @@ const SampleSchema = yup.object().shape({
 
 interface SampleDialogProps {
     data?: SampleAttributes;
+    jobNumber?: string;
     open: boolean;
     handleClose: () => void;
 }
 
-const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
+const SampleDialog = ({ data, jobNumber, open, handleClose }: SampleDialogProps) => {
     // set error messages when submitting form
     const [error, setError] = useState<string>("");
 
     const mapDataToForm = (data?: SampleAttributes) => {
         return {
-            type: data?.type ?? undefined,
-            storage: data?.storage ?? undefined,
+            jobNumber: jobNumber,
+            type: data?.type ?? "liquid",
+            storage: data?.storage ?? "shelf#1",
             comments: data?.comments ?? undefined,
         }
     };
@@ -60,7 +62,7 @@ const SampleDialog = ({ data, open, handleClose }: SampleDialogProps) => {
     const { mutate: updateSample, isPending: isUpdating } = useUpdateSampleMutation();
 
     const onSubmit = (formData: SampleAttributes) => {
-        console.log("Data", formData);
+        console.log("Sample Data", formData);
         // TODO: add job number and completed data to formData
         if (data?.id) {
             updateSample({ formData: formData, id: data.id }, {
