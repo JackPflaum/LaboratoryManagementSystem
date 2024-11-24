@@ -33,7 +33,7 @@ const IndividualJob = () => {
     const { data: jobData, isLoading: loading } = useGetJobQuery(id);
 
     // get list of samples for currently selected Job
-    const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter);
+    const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter, id);
 
     const navigate = useNavigate();
 

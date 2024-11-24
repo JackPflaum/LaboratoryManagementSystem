@@ -348,13 +348,9 @@ export const useGetJobsQuery = (searchFilter: string, id?: string) => {
                 url.searchParams.append("search", debouncedSearch);
             };
 
-            // Check if 'id' is provided, and parse it as an integer if so
             if (id) {
-                const parsedId = parseInt(id, 10);
-                if (!isNaN(parsedId)) {
-                    url.searchParams.append("clientId", parsedId.toString()); // Append to URL as query parameter
-                }
-            }
+                url.searchParams.append("clientId", id);
+            };
 
             const response = await fetch(url.toString(), {
                 method: "GET",
@@ -604,7 +600,7 @@ export const useDeleteClientMutation = () => {
 
 
 // gets list of all Samples
-export const useGetSamplesQuery = (searchFilter: string) => {
+export const useGetSamplesQuery = (searchFilter: string, id?: string) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery<SampleAttributes[]>({
@@ -614,6 +610,10 @@ export const useGetSamplesQuery = (searchFilter: string) => {
 
             if (debouncedSearch) {
                 url.searchParams.append("search", debouncedSearch);
+            };
+
+            if (id) {
+                url.searchParams.append("jobId", id);
             };
 
             const response = await fetch(url.toString(), {
