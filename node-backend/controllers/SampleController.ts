@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Sample from '../src/database/models/Sample';
 import { Op } from 'sequelize';
 import { SampleAttributes } from '../src/database/types/models-interface';
+import Job from '../src/database/models/Job';
 
 // handles requests related to samples
 export class SampleController {
@@ -9,23 +10,32 @@ export class SampleController {
     // get list of Samples
     static async getSamples(req: Request, res: Response) {
         const searchFilter = req.query.search as string;
+        const jobId = req.query.jobId as string;
+
+        const whereCondition: any = {};
+
+        if (jobId) {
+            const job = await Job.findByPk(jobId)
+            whereCondition.jobNumber = {
+                [Op.iLike]: job?.jobNumber
+            };
+        };
+
+        if (searchFilter) {
+            whereCondition.sampleNumber = {
+                [Op.iLike]: `%${searchFilter}%`
+            };
+        };
 
         try {
             const samples = await Sample.findAll({
-                where: searchFilter ? {
-                    sampleNumber: {
-                        [Op.iLike]: `%${searchFilter}%`
-                    }
-                } : {}
+                where: whereCondition
             });
-
-            if (!samples) {
-                return res.status(404).json({ error: "No sample found." });
-            };
 
             // respond with retieved sample data
             return res.status(200).json(samples);
         } catch (error) {
+            console.error("Error fetching samples:", error);
             return res.status(500).json({ error: 'Internal server error.' });
         }
     };
@@ -56,13 +66,18 @@ export class SampleController {
             type,
             storage,
             completed,
-            comments }: SampleAttributes = req.body;
+            comments,
+            numberOfSamples }: SampleAttributes = req.body;
         try {
 
-            // create a new job number incremented up from most recently created job
-            const sampleNumber = await Sample.createSampleNumber(jobNumber);
+            if (numberOfSamples) {
+                for (let i = 0; i <= numberOfSamples; i++) {
+                    // create a new job number incremented up from most recently created job
+                    const sampleNumber = await Sample.createSampleNumber(jobNumber);
 
-            await Sample.create({ jobNumber, sampleNumber, type, storage, completed, comments });
+                    await Sample.create({ jobNumber, sampleNumber, type, storage, completed, comments });
+                };
+            };
 
             return res.status(201).json({ success: "New Sample has been created" });
         } catch (error) {
