@@ -25,15 +25,15 @@ export class JobController {
         // search Job based on below conditions
         const whereCondition: any = {};
 
+        if (clientId) {
+            whereCondition.clientId = clientId
+        }
+
         if (searchFilter) {
             whereCondition.jobNumber = {
                 [Op.iLike]: `%${searchFilter}%`
             }
         };
-
-        if (clientId) {
-            whereCondition.clientId = clientId
-        }
 
         try {
             const jobs = await Job.findAll({
