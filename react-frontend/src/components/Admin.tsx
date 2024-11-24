@@ -1,12 +1,15 @@
 import { Add } from "@mui/icons-material";
-import ClientToolbar from "./features/client-toolbar";
+import CustomToolbar from "./features/custom-toolbar";
 import DeleteDialog from "./features/dialogs/delete-dialog";
 import DisplayGrid from "./features/display-grid";
-import { Typography } from "@mui/material";
-import { useDeleteUserMutation } from "../queries/useQueries";
-import { useNavigate } from "react-router-dom";
+import { Button, Typography, Box } from "@mui/material";
+import { useDeleteUserMutation, useGetUsersQuery, useLogoutMutation } from "../queries/useQueries";
 import { useState } from "react";
 import UserDialog from "./features/dialogs/user-dialog";
+import { UserAttributes } from "../types/interfaces";
+import { getUsersColumns } from "./features/grid-columns/users-columns";
+import { useAuthAdmin } from "../context/AdminAuthContext";
+import PageTitle from "./features/page-title";
 
 
 const Admin = () => {
@@ -15,6 +18,9 @@ const Admin = () => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [editingUser, setEditingUser] = useState<UserAttributes | undefined>(undefined);
+
+    // const { handleLogout } = useAuthAdmin();
+    const { mutate: logout } = useLogoutMutation();
 
     // get list of users
     const { data, isLoading } = useGetUsersQuery(searchFilter);
@@ -33,15 +39,13 @@ const Admin = () => {
         setOpenDeleteDialog(false);
     };
 
-    const navigate = useNavigate();
-
     // edit existing user
     const editAction = (row: UserAttributes) => {
-        setEditingAdmin(row);
+        setEditingUser(row);
         setOpenDialog(true);
     };
 
-    const { mutate: deleteUser } = useDeleteUserMutation();
+    const { mutate: deleteUser, isPending } = useDeleteUserMutation();
 
     // delete existing user
     const deleteAction = (row: UserAttributes) => {
@@ -55,18 +59,20 @@ const Admin = () => {
 
     return (
         <>
-            <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                Admin
-            </Typography>
-            <ClientToolbar
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button onClick={() => logout()}>Logout</Button>
+            </Box>
+            <PageTitle title="Admin" />
+            <CustomToolbar
                 buttonTitle="Add"
                 buttonIcon={<Add />}
+                searchLabel="Search Email"
                 searchFilter={searchFilter}
                 handleSearchChange={handleSearchChange}
                 setOpenDialog={setOpenDialog}
             />
             <DisplayGrid
-                rows={data}
+                rows={data ?? []}
                 columns={columns}
                 isLoading={isLoading}
             />
@@ -75,10 +81,10 @@ const Admin = () => {
                 <DeleteDialog
                     open={openDeleteDialog}
                     handleClose={handleCloseDeleteDialog}
-                    handleDelete={deleteUser}
+                    // handleDelete={deleteUser}
                     isPending={isPending}
-                    id={editingUser.id}
-                    description={editingUser.fullname} />
+                    id={editingUser?.id}
+                    description={editingUser?.workEmail} />
             )}
         </>
     )
