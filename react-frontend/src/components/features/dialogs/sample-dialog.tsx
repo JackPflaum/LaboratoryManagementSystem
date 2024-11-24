@@ -26,6 +26,7 @@ import { Storage, Type } from "../../../types/enums";
 
 // sample details validation schema
 const SampleSchema = yup.object().shape({
+    numberOfSamples: yup.number().required("Number of samples is required."),
     type: yup.string().required("Sample type is required."),
     storage: yup.string().required("Storage location is required."),
     comments: yup.string().optional(),
@@ -45,6 +46,7 @@ const SampleDialog = ({ data, jobNumber, open, handleClose }: SampleDialogProps)
     const mapDataToForm = (data?: SampleAttributes) => {
         return {
             jobNumber: jobNumber,
+            numberOfSamples: 1,
             type: data?.type ?? "liquid",
             storage: data?.storage ?? "shelf#1",
             comments: data?.comments ?? undefined,
@@ -62,8 +64,6 @@ const SampleDialog = ({ data, jobNumber, open, handleClose }: SampleDialogProps)
     const { mutate: updateSample, isPending: isUpdating } = useUpdateSampleMutation();
 
     const onSubmit = (formData: SampleAttributes) => {
-        console.log("Sample Data", formData);
-        // TODO: add job number and completed data to formData
         if (data?.id) {
             updateSample({ formData: formData, id: data.id }, {
                 onSuccess: () => {
@@ -87,13 +87,34 @@ const SampleDialog = ({ data, jobNumber, open, handleClose }: SampleDialogProps)
         };
     };
 
-
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
             <DialogTitle>{!data ? "Add Sample" : "Edit Sample"}</DialogTitle>
             <Divider />
             <DialogContent>
                 <Stack spacing={2}>
+                    <Controller
+                        name="numberOfSamples"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl>
+                                <InputLabel>Number of Samples</InputLabel>
+                                <Select
+                                    label="Number of Samples"
+                                    {...field}
+                                    error={!!fieldState.error}
+                                    size="small"
+                                >
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                                        <MenuItem key={value} value={value}>
+                                            {value}
+                                        </MenuItem>
+                                    ))}
+
+                                </Select>
+                            </FormControl>
+                        )}
+                    />
                     <Controller
                         name="type"
                         control={control}
