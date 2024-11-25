@@ -3,19 +3,22 @@ import { Typography } from "@mui/material"
 import { useState } from "react";
 import ClientDialog from "./features/dialogs/client-dialog";
 import DisplayGrid from "./features/display-grid";
-import { useGetClientsQuery } from "../queries/useQueries";
+import { useDeleteClientMutation, useGetClientsQuery } from "../queries/useQueries";
 import { getClientsColumns } from "./features/grid-columns/clients-column";
 import { ClientAttributes } from "../types/interfaces";
 import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { useNavigate } from "react-router-dom";
-import ClientToolbar from "./features/client-toolbar";
+import CustomToolbar from "./features/custom-toolbar";
+import DeleteDialog from "./features/dialogs/delete-dialog";
+import PageTitle from "./features/page-title";
 
 
 const Clients = () => {
 
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [editingClient, setEditingClient] = useState<ClientAttributes | undefined>(undefined);
 
     // get list of clients
@@ -28,6 +31,11 @@ const Clients = () => {
     const handleCloseDialog = () => {
         setEditingClient(undefined);
         setOpenDialog(false);
+    };
+
+    const handleCloseDeleteDialog = () => {
+        setEditingClient(undefined);
+        setOpenDeleteDialog(false);
     };
 
     const navigate = useNavigate();
@@ -43,24 +51,24 @@ const Clients = () => {
         setOpenDialog(true);
     };
 
+    const { mutate: deleteClient, isPending } = useDeleteClientMutation();
+
     // delete existing client
     const deleteAction = (row: ClientAttributes) => {
-        // TODO: delete client
-        console.log("Delete Client with Id: ", row.id);
+        setEditingClient(row);
+        setOpenDeleteDialog(true);
     };
 
     const columns = getClientsColumns(useHasPermission(UserPermissions.ADD_EDIT_CLIENTS) ? {
         viewAction,
         editAction,
         deleteAction
-    } : { viewAction })
+    } : { viewAction, deleteAction })
 
     return (
         <>
-            <Typography variant="h4" sx={{ display: "flex", justifyContent: "center" }}>
-                Clients
-            </Typography>
-            <ClientToolbar
+            <PageTitle title="Clients" />
+            <CustomToolbar
                 buttonTitle="Add"
                 buttonIcon={<Add />}
                 searchFilter={searchFilter}
@@ -68,11 +76,20 @@ const Clients = () => {
                 setOpenDialog={setOpenDialog}
             />
             <DisplayGrid
-                rows={data}
+                rows={data ?? []}
                 columns={columns}
                 isLoading={isLoading}
             />
             {openDialog && <ClientDialog open={openDialog} handleClose={handleCloseDialog} data={editingClient} />}
+            {openDeleteDialog && (
+                <DeleteDialog
+                    open={openDeleteDialog}
+                    handleClose={handleCloseDeleteDialog}
+                    handleDelete={deleteClient}
+                    isPending={isPending}
+                    id={editingClient?.id}
+                    description={editingClient?.name} />
+            )}
         </>
     )
 };
