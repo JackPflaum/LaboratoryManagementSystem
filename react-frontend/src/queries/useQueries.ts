@@ -469,7 +469,7 @@ export const useGetClientsQuery = (
 ) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
-    return useQuery({
+    return useQuery<ClientAttributes[]>({
         queryKey: [...queryKeys.clients.getClientsList, debouncedSearch],
         queryFn: async () => {
             const url = new URL("http://localhost:8000/api/clients");
@@ -490,7 +490,7 @@ export const useGetClientsQuery = (
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
-            return responseData;
+            return responseData as ClientAttributes[];
         },
     });
 };
@@ -724,16 +724,15 @@ export const useDeleteSampleMutation = () => {
 
 
 // get list of all Tests
-export const useGetTestsQuery = (searchFilter: string) => {
-    const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
+export const useGetTestsQuery = (id?: number) => {
 
     return useQuery<TestAttributes[]>({
-        queryKey: [...queryKeys.tests.getTestsList, debouncedSearch],
+        queryKey: [...queryKeys.tests.getTestsList, id],
         queryFn: async () => {
             const url = new URL("http://localhost:8000/api/tests");
 
-            if (debouncedSearch) {
-                url.searchParams.append("search", debouncedSearch);
+            if (id) {
+                url.searchParams.append("id", id.toString());
             };
 
             const response = await fetch(url.toString(), {
