@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { Typography, Box, Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import DisplayGrid from "./features/display-grid";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
 import { useDeleteSampleMutation, useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
 import JobDialog from "./features/dialogs/job-dialog";
-import SampleDialog from "./features/dialogs/sample-dialog";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
-import { JobAttributes, SampleAttributes } from "../types/interfaces";
+import { SampleAttributes } from "../types/interfaces";
 import PageTitle from "./features/page-title";
 import DeleteDialog from "./features/dialogs/delete-dialog";
+import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 
 
 const IndividualJob = () => {
@@ -65,7 +65,7 @@ const IndividualJob = () => {
         viewAction,
         editAction,
         deleteAction
-    } : { viewAction, deleteAction });
+    } : { viewAction, deleteAction, editAction });
 
     return (
         <>
@@ -80,7 +80,7 @@ const IndividualJob = () => {
                 <Button variant="contained" startIcon={<EditIcon />} onClick={() => setSampleDialog(true)}>
                     Add Sample
                 </Button>
-                {sampleDialog && <SampleDialog open={sampleDialog} handleClose={() => setSampleDialog(false)} data={editingSample} jobNumber={jobData?.jobNumber} />}
+                {sampleDialog && <SampleFormProvider open={sampleDialog} handleClose={() => setSampleDialog(false)} data={editingSample} jobNumber={jobData?.jobNumber} />}
                 <CustomToolbar
                     buttonTitle="Edit Job"
                     buttonIcon={<EditIcon />}
