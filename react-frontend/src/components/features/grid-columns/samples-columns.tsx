@@ -9,13 +9,12 @@ import { SampleAttributes } from "../../../types/interfaces";
 
 
 interface SampleColumnProps {
-    viewAction: (row: SampleAttributes) => void;
     editAction?: (row: SampleAttributes) => void;
     deleteAction?: (row: SampleAttributes) => void;
 };
 
 
-export function getSamplesColumns({ viewAction, editAction, deleteAction }: SampleColumnProps) {
+export function getSamplesColumns({ editAction, deleteAction }: SampleColumnProps) {
     const columns: GridColDef[] = [
         {
             field: "sampleNumber",
@@ -61,15 +60,7 @@ export function getSamplesColumns({ viewAction, editAction, deleteAction }: Samp
         type: "actions",
         width: 100,
         getActions: (params: GridRowParams<SampleAttributes>) => {
-            const actions = [
-                <GridActionsCellItem
-                    key="view"
-                    label="View"
-                    icon={<VisibilityIcon />}
-                    onClick={() => viewAction(params.row)}
-                    showInMenu
-                />
-            ];
+            const actions = [];
 
             if (editAction) {
                 actions.push(

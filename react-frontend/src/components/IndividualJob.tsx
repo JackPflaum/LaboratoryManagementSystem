@@ -35,13 +35,6 @@ const IndividualJob = () => {
     // get list of samples for currently selected Job
     const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter, id);
 
-    const navigate = useNavigate();
-
-    // view selected sample on dedicated page
-    const viewAction = (row: SampleAttributes) => {
-        navigate(`/samples/${row.id}`);
-    };
-
     // edit existing sample
     const editAction = (row: SampleAttributes) => {
         setEditingSample(row);
@@ -62,10 +55,9 @@ const IndividualJob = () => {
     };
 
     const columns = getSamplesColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
-        viewAction,
         editAction,
         deleteAction
-    } : { viewAction, deleteAction, editAction });
+    } : { deleteAction, editAction });
 
     return (
         <>
