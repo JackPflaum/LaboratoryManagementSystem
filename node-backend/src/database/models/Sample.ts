@@ -2,8 +2,6 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';
 import { ModelsInterface, SampleAttributes } from '../types/models-interface';
 import Job from './Job';
-import Test from './Test';
-import SamplePhoto from './SamplePhoto';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
     id!: number;
@@ -16,8 +14,8 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
 
     static associate(models: ModelsInterface) {
         Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', onDelete: 'CASCADE' });
-        Sample.hasMany(models.Test, { foreignKey: "testId" });
-        Sample.hasMany(models.SamplePhoto, { foreignKey: "sampleId" });
+        Sample.hasMany(models.Test, { foreignKey: "sampleId", as: "tests" });
+        Sample.hasMany(models.SamplePhoto, { foreignKey: "sampleId", as: "samplePhotos" });
     };
 
     // creates a unique sample number
