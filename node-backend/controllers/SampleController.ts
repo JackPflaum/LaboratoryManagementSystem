@@ -95,8 +95,12 @@ export class SampleController {
                             transaction: t
                         });
 
+                        if (lastSample === null) {
+                            throw new SampleNotFoundError(jobNumber);
+                        };
+
                         // Increment the sample number from the last sample number
-                        let newSampleNumber = incrementSampleNumber(lastSample, jobNumber);
+                        let newSampleNumber = incrementSampleNumber(jobNumber, lastSample);
 
                         // Create the new sample with the incremented sample number
                         const createdSample = await Sample.create(
@@ -149,7 +153,13 @@ export class SampleController {
             // update tests
             // TODO: update both samples and tests in one transaction?
             for (let test of tests) {
-                await Test.update({ id: id, sampleId: sample.id, userId: test.userId, testName: test.testName, unit: test.unit },)
+                await Test.update({
+                    id: id,
+                    sampleId: sample.id,
+                    userId: test.userId,
+                    testName: test.testName,
+                    unit: test.unit
+                })
             };
 
             return res.status(201).json({ success: "Sample Details updated" });
