@@ -2,6 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';
 import { ModelsInterface, SampleAttributes } from '../types/models-interface';
 import Job from './Job';
+import { incrementSampleNumber } from '../../functions/miscellaneousFunctions';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
     id!: number;
@@ -26,22 +27,11 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
             order: [["sampleNumber", "DESC"]],
         });
 
-        if (sample) {
-            // need to increment upwards, therefore next sample number "2024-1-001" becomes "2024-1-002"
-            const parts = sample.sampleNumber.split("-");   // e.g. ["2024", "1", "001"]
-            const yearAndJob = parts.slice(0, 2).join("-")    // e.g. "2024-1"
-
-            const numberPart = parseInt(parts[2], 10)    // convert "001" to 1
-            const nextNumber = numberPart + 1;
-
-            // format new number with leading zeroes
-            const formattedNumber = nextNumber.toString().padStart(3, "0");
-
-            return `${yearAndJob}-${formattedNumber}`;
-        } else {
-            // no existing samples, therefore return with first number increment
-            return jobNumber + "-001"
+        if (sample === null) {
+            throw new Error(`No Sample found for Job Number: ${jobNumber}`);
         };
+
+        return incrementSampleNumber(jobNumber, sample);
     };
 };
 

@@ -65,6 +65,7 @@ export interface SampleAttributes {
     storage: string;
     completed?: boolean;
     comments?: string;
+    numberOfSamples?: number;
 }
 
 export interface SamplePhotoAttributes {
@@ -74,7 +75,8 @@ export interface SamplePhotoAttributes {
 }
 
 export interface TestAttributes {
-    id: number;
+    id?: number;
+    testId?: number;
     sampleId: number;
     userId: number;
     testName: string;
