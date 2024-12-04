@@ -86,6 +86,8 @@ export const useLoginMutation = () => {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
+            localStorage.setItem("user", JSON.stringify(responseData));
+
             return responseData;
         },
         onSuccess: (res: UserContextAttributes) => {
@@ -121,6 +123,7 @@ export const useLogoutMutation = () => {
             return responseData;
         },
         onSuccess: () => {
+            localStorage.removeItem("user");
             setUser(null);
             setAdmin(null);
             navigate("/user-login");
@@ -842,6 +845,27 @@ export const useDeleteTestMutation = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
+        },
+    });
+};
+
+// save test results
+export const useSaveResultsMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (data: TestAttributes) => {
+            await fetch("http://localhost:8000/api/save-results", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(data),
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
         },
     });
 };
