@@ -43,17 +43,26 @@ export interface SampleAttributes {
     storage: string;
     completed?: boolean;
     comments?: string;
+    numberOfSamples: number;
+    tests: TestAttributes[];
 };
 
 export interface TestAttributes {
     id?: number;
     sampleId?: number;
-    profileId?: number;
-    testName: Test[];
-    unit: Unit[];
+    userId: number;
+    testName: string;
+    unit: string;
     result?: number;
     comment?: string;
 };
+
+export interface ResultsAttributes {
+    id?: number;
+    userId: number;
+    result?: string;
+    unit: string;
+}
 
 export interface UserContextAttributes {
     id: number;

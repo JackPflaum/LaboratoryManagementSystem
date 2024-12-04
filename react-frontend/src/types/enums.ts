@@ -1,41 +1,41 @@
 export enum UserPermissions {
-    ADD_EDIT_CLIENTS = "add_edit_clients",
-    ADD_EDIT_JOBS = "add_edit_jobs",
-    ADD_EDIT_RESULTS = "add_edit_results",
-    VIEW_REPORTS = "view_reports"
+    ADD_EDIT_CLIENTS = "Add/Edit Clients",
+    ADD_EDIT_JOBS = "Add/Edit Jobs",
+    ADD_EDIT_RESULTS = "Add/Edit Results",
+    VIEW_REPORTS = "View Reports"
 };
 
 export enum Type {
-    Liquid = "liquid",
-    Solid = "solid",
-    Gas = "gas"
+    Liquid = "Liquid",
+    Solid = "Solid",
+    Gas = "Gas"
 };
 
 export enum Storage {
-    Shelf1 = "shelf#1",
-    Shelf2 = "shelf#2",
-    Fridge = "fridge"
+    Shelf1 = "Shelf#1",
+    Shelf2 = "Shelf#2",
+    Fridge = "Fridge"
 };
 
 export enum Test {
-    EOM = "extractable_organic_matter",
-    GLYCOL = "glycol",
-    METHANE = "methane",
-    ETHANE = "ethane",
-    PROPANE = "propane",
-    BUTANE = "butane",
-    PENTANE = "pentane",
-    HEXANE = "hexane",
-    SODIUM = "sodium",
-    POTASSIUM = "potassium",
-    IRON = "iron",
-    MAGNESIUM = "magnesium",
-    CALCIUM = "calcium",
-    CHLORIDE = "chloride",
-    FLUORIDE = "fluoride",
-    SULPHATE = "sulphate",
-    NITRATE = "nitrate",
-    NITRITE = "nitrite",
+    EOM = "Extractable Organic Matter",
+    GLYCOL = "Glycol",
+    METHANE = "Methane",
+    ETHANE = "Ethane",
+    PROPANE = "Propane",
+    BUTANE = "Butane",
+    PENTANE = "Pentane",
+    HEXANE = "Hexane",
+    SODIUM = "Sodium",
+    POTASSIUM = "Potassium",
+    IRON = "Iron",
+    MAGNESIUM = "Magnesium",
+    CALCIUM = "Calcium",
+    CHLORIDE = "Chloride",
+    FLUORIDE = "Fluoride",
+    SULPHATE = "Sulphate",
+    NITRATE = "Nitrate",
+    NITRITE = "Nitrite",
 };
 
 export enum Unit {
