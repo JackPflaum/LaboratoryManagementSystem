@@ -11,12 +11,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CompletedChip from "../completed-chip";
 import IncompleteChip from "../incomplete-chip";
 import { JobAttributes } from "../../../types/interfaces";
+import { format } from "date-fns";
 
 
 interface JobColumnProps {
     viewAction: (row: JobAttributes) => void;
     editAction?: (row: JobAttributes) => void;
     deleteAction?: (row: JobAttributes) => void;
+};
+
+const formatDate = (date: Date) => {
+    const formattedDate = format(new Date(date), "dd-MM-yyyy");
+    return formattedDate;
 };
 
 export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColumnProps) {
@@ -35,11 +41,17 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
             field: "createdAt",
             headerName: "Created",
             width: 200,
+            renderCell: (params) => {
+                return formatDate(params.value);
+            }
         },
         {
             field: "dueDate",
             headerName: "Due Date",
             width: 200,
+            renderCell: (params) => {
+                return formatDate(params.value);
+            }
         },
         {
             field: "completed",
