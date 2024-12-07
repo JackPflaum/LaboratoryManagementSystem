@@ -5,12 +5,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CompletedChip from "../completed-chip";
 import IncompleteChip from "../incomplete-chip";
-import { SampleAttributes } from "../../../types/interfaces";
+import { ResultsAttributes, SampleAttributes } from "../../../types/interfaces";
 
 
 interface SampleColumnProps {
     editAction?: (row: SampleAttributes) => void;
     deleteAction?: (row: SampleAttributes) => void;
+    viewJobAction?: (sample: SampleAttributes) => void;
+    editResultsAction?: (row: ResultsAttributes) => void;
 };
 
 
@@ -19,27 +21,27 @@ export function getSamplesColumns({ editAction, deleteAction }: SampleColumnProp
         {
             field: "sampleNumber",
             headerName: "Sample Number",
-            width: 200
+            flex: 1,
         },
         {
             field: "jobNumber",
             headerName: "Job Number",
-            width: 200
+            flex: 1,
         },
         {
             field: "type",
             headerName: "Type",
-            width: 200
+            flex: 1,
         },
         {
             field: "storage",
             headerName: "Storage",
-            width: 200
+            flex: 1,
         },
         {
             field: "completed",
             headerName: "Completed",
-            width: 200,
+            flex: 1,
             type: "boolean",
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant="body2">

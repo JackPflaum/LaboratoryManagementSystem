@@ -30,17 +30,17 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
         {
             field: "jobNumber",
             headerName: "Job Number",
-            width: 200,
+            flex: 1,
         },
         {
             field: "client",
             headerName: "Client",
-            width: 200,
+            flex: 1,
         },
         {
             field: "createdAt",
             headerName: "Created",
-            width: 200,
+            flex: 1,
             renderCell: (params) => {
                 return formatDate(params.value);
             }
@@ -48,7 +48,7 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
         {
             field: "dueDate",
             headerName: "Due Date",
-            width: 200,
+            flex: 1,
             renderCell: (params) => {
                 return formatDate(params.value);
             }
@@ -56,7 +56,7 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
         {
             field: "completed",
             headerName: "Completed",
-            width: 200,
+            flex: 1,
             type: "boolean",
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant="body2">

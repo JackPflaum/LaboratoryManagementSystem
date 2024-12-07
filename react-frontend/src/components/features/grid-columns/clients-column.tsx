@@ -18,27 +18,27 @@ export function getClientsColumns({ viewAction, editAction, deleteAction }: Clie
         {
             field: "name",
             headerName: "Client Name",
-            width: 200
+            flex: 1,
         },
         {
             field: "email",
             headerName: "Email",
-            width: 200
+            flex: 1,
         },
         {
             field: "phoneNumber",
             headerName: "Phone number",
-            width: 200
+            flex: 1,
         },
         {
             field: "fullAddress",
             headerName: "Address",
-            width: 200,
+            flex: 1,
         },
         {
             field: "purchaseOrderNumber",
             headerName: "Purchase Order Number",
-            width: 200
+            flex: 1,
         }
     ];
 

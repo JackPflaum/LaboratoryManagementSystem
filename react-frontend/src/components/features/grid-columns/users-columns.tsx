@@ -14,32 +14,32 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
         {
             field: "firstName",
             headerName: "First Name",
-            width: 200,
+            flex: 1,
         },
         {
             field: "lastName",
             headerName: "Last Name",
-            width: 200,
+            flex: 1,
         },
         {
             field: "workEmail",
             headerName: "Work Email",
-            width: 200,
+            flex: 1,
         },
         {
             field: "position",
             headerName: "Position",
-            width: 200,
+            flex: 1,
         },
         {
             field: "permissions",
             headerName: "Permissions",
-            width: 200,
+            flex: 1,
         },
         {
             field: "dateStarted",
             headerName: "Date Started",
-            width: 200,
+            flex: 1,
         },
     ];
 
