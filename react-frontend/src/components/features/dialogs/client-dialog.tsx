@@ -17,7 +17,21 @@ const clientSchema = yup.object().shape({
     state: yup.string().optional(),
     postcode: yup.string().optional(),
     purchaseOrderNumber: yup.string().trim().optional(),
-});
+})
+//     .test(
+//     "address-required",
+//     "All address fields must be filled if one is filled",
+//     (value) => {
+//         const { addressLine, suburb, state, postcode } = value;
+
+//         // If any address field is filled, check that all other address fields are also filled
+//         if (addressLine || suburb || state || postcode) {
+//             return false;
+//         };
+
+//         return true; // If none of the address fields are filled, pass the validation
+//     }
+// );
 
 interface ClientDialogProps {
     data?: ClientAttributes;
@@ -163,6 +177,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                             error={!!fieldState.error}
                                             helperText={fieldState.error?.message}
                                             size="small"
+                                            sx={{ marginBottom: 2 }}
                                         />
                                     )}
                                 />
@@ -196,7 +211,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                             {...field}
                                             error={!!fieldState.error}
                                             placeholder={fieldState.error?.message}
-                                            sx={{ minWidth: "100px" }}
+                                            sx={{ minWidth: "100px", marginBottom: 2 }}
                                         >
                                             {australianStates.map((state) => (
                                                 <MenuItem key={state.value} value={state.value}>
