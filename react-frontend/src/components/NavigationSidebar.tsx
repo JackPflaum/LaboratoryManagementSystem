@@ -5,7 +5,11 @@ import BusinessIcon from '@mui/icons-material/Business';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useLogoutMutation } from "../queries/useQueries";
-import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Toolbar, Typography } from "@mui/material";
+import { createTheme, PaletteMode } from "@mui/material/styles";
+import { useEffect, useMemo, useState } from "react";
+import LightModeIcon from '@mui/icons-material/LightMode';
+import NightlightIcon from '@mui/icons-material/Nightlight';
 
 
 const NavigationSidebar = () => {
@@ -44,15 +48,44 @@ const NavigationSidebar = () => {
 
     const { mutate: logoutUser } = useLogoutMutation();
 
+    // get saved theme from storage or default to "light"
+    const [themeMode, setThemeMode] = useState<PaletteMode>("light");
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("theme") ?? "light";
+        setThemeMode(savedTheme as PaletteMode);
+    }, []);
+
+    const theme = useMemo(() => createTheme({
+        palette: {
+            mode: themeMode,
+            primary: { main: themeMode === "light" ? "#1976d2" : "#90caf9" },
+        },
+    }), [themeMode]);
+
+    const toggleTheme = () => {
+        const newTheme: PaletteMode = themeMode === "light" ? "dark" : "light";
+        setThemeMode(newTheme);
+        localStorage.setItem("theme", newTheme);
+    };
+
     const drawerWidth = 240;
 
     return (
         <Box sx={{ display: "flex" }}>
             <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                <Toolbar>
+                <Toolbar sx={{ justifyContent: "space-between" }}>
                     <Typography variant="h6" noWrap component="div">
                         Laboratory Management System
                     </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {themeMode === "light" ? (
+                            <LightModeIcon />
+                        ) : (
+                            <NightlightIcon />
+                        )}
+                        <Switch checked={themeMode === "dark"} onChange={toggleTheme} />
+                    </Box>
                 </Toolbar>
             </AppBar>
             <Drawer
