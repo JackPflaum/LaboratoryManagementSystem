@@ -65,15 +65,17 @@ const Clients = () => {
         deleteAction
     } : { viewAction, deleteAction })
 
+    const toolbarButtons = [
+        { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
+    ];
+
     return (
         <>
             <PageTitle title="Clients" />
             <CustomToolbar
-                buttonTitle="Add"
-                buttonIcon={<Add />}
+                toolbarButtons={toolbarButtons}
                 searchFilter={searchFilter}
                 handleSearchChange={handleSearchChange}
-                setOpenDialog={setOpenDialog}
             />
             <DisplayGrid
                 rows={data ?? []}

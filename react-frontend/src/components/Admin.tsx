@@ -57,6 +57,10 @@ const Admin = () => {
 
     const columns = getUsersColumns({ editAction, deleteAction });
 
+    const toolbarButtons = [
+        { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
+    ];
+
     return (
         <>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -64,12 +68,10 @@ const Admin = () => {
             </Box>
             <PageTitle title="Admin" />
             <CustomToolbar
-                buttonTitle="Add"
-                buttonIcon={<Add />}
+                toolbarButtons={toolbarButtons}
                 searchLabel="Search Email"
                 searchFilter={searchFilter}
                 handleSearchChange={handleSearchChange}
-                setOpenDialog={setOpenDialog}
             />
             <DisplayGrid
                 rows={data ?? []}

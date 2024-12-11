@@ -1,16 +1,20 @@
 import { Box, TextField, Button } from "@mui/material";
 import { ReactNode } from "react";
 
+interface ButtonConfig {
+    label: string;
+    icon: ReactNode;
+    onClick: () => void;
+};
+
 interface ClientToolbarProps {
-    buttonTitle: string;
-    buttonIcon: ReactNode;
+    toolbarButtons: ButtonConfig[];
     searchLabel?: string;
     searchFilter: string;
     handleSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    setOpenDialog: (open: boolean) => void;
 };
 
-const CustomToolbar = ({ buttonTitle, buttonIcon, searchLabel, searchFilter, handleSearchChange, setOpenDialog }: ClientToolbarProps) => {
+const CustomToolbar = ({ toolbarButtons, searchLabel, searchFilter, handleSearchChange }: ClientToolbarProps) => {
     return (
         <Box
             sx={{
@@ -28,9 +32,18 @@ const CustomToolbar = ({ buttonTitle, buttonIcon, searchLabel, searchFilter, han
                 onChange={handleSearchChange}
                 size="small"
             />
-            <Button variant="contained" startIcon={buttonIcon} onClick={() => setOpenDialog(true)}>
-                {buttonTitle}
-            </Button>
+            <Box sx={{ display: "flex", gap: 1 }}>
+                {toolbarButtons.map((button, index) => (
+                    <Button
+                        key={index}
+                        variant="contained"
+                        startIcon={button.icon}
+                        onClick={button.onClick}
+                    >
+                        {button.label}
+                    </Button>
+                ))}
+            </Box>
         </Box>
     );
 };

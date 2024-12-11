@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Card, CardContent, CardHeader } from "@mui/material";
 import DisplayGrid from "./features/display-grid";
 import { useGetClientQuery, useGetJobsQuery } from "../queries/useQueries";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import { JobAttributes } from "../types/interfaces";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { UserPermissions } from "../types/enums";
 import PageTitle from "./features/page-title";
+import CustomInformationCard from "./features/custom-information-card";
 
 
 const IndividualClient = () => {
@@ -40,22 +41,25 @@ const IndividualClient = () => {
         viewAction,
     } : { viewAction });
 
+    const clientInformation = [
+        { label: "Email", data: clientData?.email ?? "" },
+        { label: "Phone Number", data: clientData?.phoneNumber ?? "" },
+        { label: "Address", data: clientData?.fullAddress ?? "" },
+        { label: "Purchase Order Number", data: clientData?.purchaseOrderNumber ?? "" },
+    ];
+
+    const toolbarButtons = [
+        { label: "Edit Client", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
+    ];
+
     return (
         <>
             <Box>
-                <PageTitle title={clientData?.name} />
-                <Box>
-                    <p>Email: {clientData?.email}</p>
-                    <p>Phone Number: {clientData?.phoneNumber}</p>
-                    <p>Address: {clientData?.fullAddress}</p>
-                    <p>Purchase Order Number: {clientData?.purchaseOrderNumber}</p>
-                </Box>
+                <CustomInformationCard title={clientData?.name} data={clientInformation} />
                 <CustomToolbar
-                    buttonTitle="Edit Client"
-                    buttonIcon={<EditIcon />}
+                    toolbarButtons={toolbarButtons}
                     searchFilter={searchFilter}
                     handleSearchChange={handleSearchChange}
-                    setOpenDialog={setOpenDialog}
                 />
             </Box>
             <DisplayGrid

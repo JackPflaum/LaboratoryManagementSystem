@@ -75,17 +75,18 @@ const Jobs = () => {
     //     completed: data?.completed,
     // }));
 
+    const toolbarButtons = [
+        { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
+    ];
 
     return (
-        <Container>
+        <Box>
             <Box>
                 <PageTitle title="Jobs" />
                 <CustomToolbar
-                    buttonTitle="Add"
-                    buttonIcon={<Add />}
+                    toolbarButtons={toolbarButtons}
                     searchFilter={searchFilter}
                     handleSearchChange={handleSearchChange}
-                    setOpenDialog={setOpenDialog}
                 />
             </Box>
             <DisplayGrid
@@ -103,7 +104,7 @@ const Jobs = () => {
                     id={editingJob?.id}
                     description={editingJob?.jobNumber} />
             )}
-        </Container>
+        </Box>
     );
 };
 

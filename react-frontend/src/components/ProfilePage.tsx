@@ -11,9 +11,16 @@ import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { UserPermissions } from "../types/enums";
 import { format } from "date-fns";
+import CustomInformationCard from "./features/custom-information-card";
+import CustomToolbar from "./features/custom-toolbar";
 
 const ProfilePage = () => {
     const [editingProfile, setEditingProfile] = useState<boolean>(false);
+    const [searchFilter, setSearchFilter] = useState<string>("");
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchFilter(event.target.value);
+    };
 
     const handleCloseDialog = () => {
         setEditingProfile(false);
@@ -45,17 +52,31 @@ const ProfilePage = () => {
         editResultsAction
     } : { editResultsAction });
 
+    const profileInformation = [
+        { label: "User ID", data: userDetails?.id ?? "" },
+        { label: "Laboratory Position", data: userDetails?.position ?? "" },
+        { label: "Email", data: userDetails?.workEmail ?? "" },
+        { label: "Phone Number", data: profileDetails?.phoneNumber ?? "" },
+        {
+            label: "Date started",
+            data: userDetails?.dateStarted
+                ? format(new Date(userDetails.dateStarted), "dd-MM-yyyy")
+                : 'N/A',
+        },
+    ];
+
+    const toolbarButtons = [
+        { label: "Edit Profile", icon: <EditIcon />, onClick: () => setEditingProfile(true) }
+    ];
+
     return (
         <Box>
-            <Typography component="h2">{`${userDetails?.firstName} ${userDetails?.lastName}`}</Typography>
-            <p>User ID: {userDetails?.id}</p>
-            <p>Laboratory Position: {userDetails?.position}</p>
-            <p>Email: {userDetails?.workEmail}</p>
-            <p>Phone Number: {profileDetails?.phoneNumber}</p>
-            <p>Date started: {userDetails?.dateStarted ? format(new Date(userDetails.dateStarted), "dd-MM-yyyy") : 'N/A'}</p>
-            <Button sx={{ marginBottom: 2 }} variant="contained" startIcon={<EditIcon />} onClick={() => setEditingProfile(true)}>
-                Edit Profile
-            </Button>
+            <CustomInformationCard title={`${userDetails?.firstName} ${userDetails?.lastName}`} data={profileInformation} />
+            <CustomToolbar
+                toolbarButtons={toolbarButtons}
+                searchFilter={searchFilter}
+                handleSearchChange={handleSearchChange}
+            />
             {editingProfile && <ProfileDialog data={profileDetails} open={!!editingProfile} handleClose={handleCloseDialog} />}
             <DisplayGrid
                 rows={samplesData ?? []}

@@ -13,6 +13,7 @@ import { SampleAttributes } from "../types/interfaces";
 import PageTitle from "./features/page-title";
 import DeleteDialog from "./features/dialogs/delete-dialog";
 import SampleFormProvider from "./features/dialogs/SampleFormProvider";
+import CustomInformationCard from "./features/custom-information-card";
 
 
 const IndividualJob = () => {
@@ -59,27 +60,28 @@ const IndividualJob = () => {
         deleteAction
     } : { deleteAction, editAction });
 
+    const jobInformation = [
+        { label: "Client", data: jobData?.client ?? "" },
+        { label: "Due Date", data: jobData?.dueDate.toString() ?? "" },
+        { label: "Completed", data: jobData?.completed ? "Yes" : "No" },
+        { label: "Comments", data: jobData?.comments ?? "No comments" },
+    ];
+
     return (
         <>
             <Box>
-                <PageTitle title={jobData?.jobNumber} />
                 <Box>
-                    <p>Client: {jobData?.client}</p>
-                    <p>Due Date: {jobData?.dueDate.toString()}</p>
-                    <p>Completed: {jobData?.completed ? "Yes" : "No"}</p>
-                    <p>Comments: {jobData?.comments ?? "No comments"}</p>
+                    <CustomInformationCard title={jobData?.jobNumber} data={jobInformation} />
                 </Box>
                 <Button variant="contained" startIcon={<EditIcon />} onClick={() => setSampleDialog(true)}>
                     Add Sample
                 </Button>
-                {sampleDialog && <SampleFormProvider open={sampleDialog} handleClose={() => setSampleDialog(false)} data={editingSample} jobNumber={jobData?.jobNumber} />}
-                <CustomToolbar
-                    buttonTitle="Edit Job"
-                    buttonIcon={<EditIcon />}
-                    searchFilter={searchFilter}
-                    handleSearchChange={handleSearchChange}
-                    setOpenDialog={setOpenDialog}
-                />
+                {sampleDialog &&
+                    <SampleFormProvider
+                        open={sampleDialog}
+                        handleClose={() => setSampleDialog(false)}
+                        data={editingSample} jobNumber={jobData?.jobNumber} />
+                }
             </Box>
             <DisplayGrid
                 rows={samplesData ?? []}
