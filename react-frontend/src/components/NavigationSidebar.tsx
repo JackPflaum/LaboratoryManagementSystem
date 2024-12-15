@@ -71,6 +71,11 @@ const NavigationSidebar = () => {
 
     const drawerWidth = 240;
 
+    const listItemButtonStyle = (itemTo: string) => ({
+        listDecoration: "none",
+        color: itemTo ? theme.palette.primary.main : "inherit"
+    });
+
     return (
         <Box sx={{ display: "flex" }}>
             <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -84,7 +89,7 @@ const NavigationSidebar = () => {
                         ) : (
                             <NightlightIcon />
                         )}
-                        <Switch checked={themeMode === "dark"} onChange={toggleTheme} />
+                        <Switch checked={themeMode === "dark"} onChange={toggleTheme} defaultChecked color="default" />
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -103,7 +108,9 @@ const NavigationSidebar = () => {
                 <Box sx={{ overflow: "auto", padding: 2 }}>
                     <List>
                         {navigationLinks.map((item) => (
-                            <ListItem key={item.title} component={Link} to={item.to}>
+                            <ListItem key={item.title} component={Link} to={item.to}
+                                style={listItemButtonStyle(`/${item.to}`)}
+                            >
                                 <ListItemIcon>
                                     {item.icon}
                                 </ListItemIcon>
@@ -115,14 +122,18 @@ const NavigationSidebar = () => {
                     <List>
                         {userLinks.map((item) => (
                             item.title === "Logout" ? (
-                                <ListItemButton key={item.title} onClick={() => logoutUser()}>
+                                <ListItemButton key={item.title} onClick={() => logoutUser()}
+                                    style={listItemButtonStyle(`/${item.to}`)}
+                                >
                                     <ListItemIcon>
                                         {item.icon}
                                     </ListItemIcon>
                                     <ListItemText primary={item.title} />
                                 </ListItemButton>
                             ) : (
-                                <ListItem key={item.title} component={Link} to={item.to}>
+                                <ListItem key={item.title} component={Link} to={item.to}
+                                    style={listItemButtonStyle(`/${item.to}`)}
+                                >
                                     <ListItemIcon>
                                         {item.icon}
                                     </ListItemIcon>
@@ -133,7 +144,13 @@ const NavigationSidebar = () => {
                     </List>
                 </Box>
             </Drawer>
-            <Box sx={{ flexGrow: 1, p: 3 }}>
+            <Box sx={{
+                flexGrow: 1,
+                // p: 3,
+                background: "rgb(30, 85, 92)",
+                height: `calc(100vh - 32px)`,
+                padding: 2,
+            }}>
                 <Toolbar />
                 <Outlet />
             </Box>
