@@ -2,6 +2,7 @@ import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid
 import { UserAttributes } from "../../../types/interfaces";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { formatDate } from "./jobs-columns";
 
 
 interface UserColumnProps {
@@ -40,6 +41,9 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
             field: "dateStarted",
             headerName: "Date Started",
             flex: 1,
+            renderCell: (params) => {
+                return formatDate(params.value);
+            }
         },
     ];
 

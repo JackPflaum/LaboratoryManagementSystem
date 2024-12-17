@@ -20,7 +20,7 @@ interface JobColumnProps {
     deleteAction?: (row: JobAttributes) => void;
 };
 
-const formatDate = (date: Date) => {
+export const formatDate = (date: Date) => {
     const formattedDate = format(new Date(date), "dd-MM-yyyy");
     return formattedDate;
 };
