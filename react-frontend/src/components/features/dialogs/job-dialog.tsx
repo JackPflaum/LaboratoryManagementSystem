@@ -35,7 +35,7 @@ const JobSchema = yup.object().shape({
     comments: yup.string().trim().optional(),
     dueDate: yup.date()
         .required("Due date is required.")
-        .min(new Date(), "Due date cannot be in the past.")
+        // .min(new Date(), "Due date cannot be in the past.")
         .max(maxDate, "Due date cannot be more than 90days from now."),
 });
 
@@ -117,13 +117,14 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                                     }}
                                     autoWidth
                                     input={<OutlinedInput label="Client" />}
+                                    disabled={!!data}
                                 >
                                     {isLoading ? (
                                         <MenuItem>Loading...</MenuItem>
                                     ) : (
-                                        clientsList.map((client: ClientAttributes) => (
+                                        clientsList?.map((client: ClientAttributes) => (
                                             <MenuItem key={client.id} value={client.name}>{client.name}</MenuItem>
-                                        ))
+                                        )) ?? <MenuItem>No Clients Found</MenuItem>
                                     )}
                                 </Select>
                                 <FormHelperText>{fieldState.error?.message}</FormHelperText>
