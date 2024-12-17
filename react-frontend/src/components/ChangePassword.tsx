@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useUpdatePasswordMutation } from "../queries/useQueries";
 import { ChangePasswordAttributes } from "../types/interfaces";
 import { useParams } from "react-router-dom";
+import { useAuthUser } from "../context/UserAuthContext";
 
 
 const updatePasswordSchema = yup.object().shape({
@@ -35,11 +36,11 @@ const ChangePassword = () => {
 
     const { mutate: updatePassword, isPending } = useUpdatePasswordMutation();
 
-    const { id } = useParams<{ id: string }>();
+    const { user } = useAuthUser();
 
     const onSubmit = (passwords: ChangePasswordAttributes) => {
-        if (id) {
-            updatePassword({ password: passwords.password, id: id }, {
+        if (user?.id) {
+            updatePassword({ password: passwords.password, id: user.id }, {
                 onSuccess: () => {
                     setAlert({ message: "Password has been updated.", severity: "success" });
                     setTimeout(() => {
