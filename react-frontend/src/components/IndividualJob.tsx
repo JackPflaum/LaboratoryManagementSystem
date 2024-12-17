@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import DisplayGrid from "./features/display-grid";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CustomToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
 import { useDeleteSampleMutation, useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
@@ -10,7 +10,6 @@ import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { SampleAttributes } from "../types/interfaces";
-import PageTitle from "./features/page-title";
 import DeleteDialog from "./features/dialogs/delete-dialog";
 import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 import CustomInformationCard from "./features/custom-information-card";
@@ -67,15 +66,20 @@ const IndividualJob = () => {
         { label: "Comments", data: jobData?.comments ?? "No comments" },
     ];
 
+    const toolbarButtons = [
+        { label: "Add Sample", icon: <EditIcon />, onClick: () => setSampleDialog(true) },
+        { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
+    ];
+
     return (
         <>
             <Box>
-                <Box>
-                    <CustomInformationCard title={jobData?.jobNumber} data={jobInformation} />
-                </Box>
-                <Button variant="contained" startIcon={<EditIcon />} onClick={() => setSampleDialog(true)}>
-                    Add Sample
-                </Button>
+                <CustomInformationCard title={jobData?.jobNumber} data={jobInformation} />
+                <CustomToolbar
+                    toolbarButtons={toolbarButtons}
+                    searchFilter={searchFilter}
+                    handleSearchChange={handleSearchChange}
+                />
                 {sampleDialog &&
                     <SampleFormProvider
                         open={sampleDialog}
