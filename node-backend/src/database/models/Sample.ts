@@ -3,6 +3,7 @@ import sequelize from './db';
 import { ModelsInterface, SampleAttributes } from '../types/models-interface';
 import Job from './Job';
 import { incrementSampleNumber } from '../../functions/miscellaneousFunctions';
+import Test from './Test';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
     id!: number;
@@ -12,6 +13,7 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
     storage!: string;
     completed!: boolean;
     comments?: string;
+    tests?: Test[];
 
     static associate(models: ModelsInterface) {
         Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', onDelete: 'CASCADE' });
