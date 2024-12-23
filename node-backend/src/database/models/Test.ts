@@ -6,7 +6,6 @@ import { ModelsInterface, TestAttributes } from '../types/models-interface';
 
 class Test extends Model<TestAttributes> implements TestAttributes {
     id!: number;
-    testId!: number;
     sampleId!: number;
     userId!: number;
     testName!: string;
@@ -26,10 +25,6 @@ Test.init({
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-    },
-    testId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
     },
     sampleId: {
         type: DataTypes.INTEGER,
@@ -66,10 +61,6 @@ Test.init({
     modelName: 'Test',
     tableName: 'tests',
     timestamps: true,
-    // defaultScope: {
-    //     // Exclude the `testId` field by default
-    //     attributes: { exclude: ['testId'] },
-    // },
 });
 
 export default Test;

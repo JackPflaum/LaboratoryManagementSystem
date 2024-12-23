@@ -1,8 +1,7 @@
 import { Model, DataTypes } from "sequelize"
 import sequelize from "./db";
 import { ModelsInterface, ProfileAttributes } from "../types/models-interface";
-import User from "../models/User"
-import Test from "./Test";
+import User from "../models/User";
 
 class Profile extends Model<ProfileAttributes> implements ProfileAttributes {
     id!: number;
@@ -12,7 +11,6 @@ class Profile extends Model<ProfileAttributes> implements ProfileAttributes {
 
     static associate(models: ModelsInterface) {
         Profile.belongsTo(models.User, { foreignKey: "userId", onDelete: "CASCADE" });
-        Profile.hasMany(models.Test, { foreignKey: "testId" });
     }
 };
 

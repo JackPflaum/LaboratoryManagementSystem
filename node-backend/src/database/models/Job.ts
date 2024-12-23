@@ -2,6 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import { ModelsInterface, JobAttributes } from "../types/models-interface";
 import sequelize from "./db";
 import Client from "./Client";
+import Sample from "./Sample";
 
 class Job extends Model<JobAttributes> implements JobAttributes {
     id!: number;
@@ -10,6 +11,7 @@ class Job extends Model<JobAttributes> implements JobAttributes {
     comments?: string;
     dueDate!: Date;
     completed?: boolean;
+    samples?: Sample[];
 
     static associate(models: ModelsInterface) {
         Job.belongsTo(models.Client, { foreignKey: "clientId", onDelete: "CASCADE" });
@@ -22,7 +24,6 @@ class Job extends Model<JobAttributes> implements JobAttributes {
         const latestJobNumber = await Job.findOne({
             order: [['createdAt', 'DESC']],
         });
-        console.log("latestJobNumber: ", latestJobNumber);
 
         if (latestJobNumber) {
             // split jobNumber into year and number

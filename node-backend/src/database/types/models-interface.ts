@@ -9,11 +9,11 @@ import User from '../models/User';
 export interface ModelsInterface {
     Client: typeof Client;
     Job: typeof Job;
+    User: typeof User;
     Profile: typeof Profile;
     Sample: typeof Sample;
     SamplePhoto: typeof SamplePhoto;
     Test: typeof Test;
-    User: typeof User;
 }
 
 export interface ClientAttributes {
@@ -27,6 +27,7 @@ export interface ClientAttributes {
     postcode?: string;
     fullAddress?: string;
     purchaseOrderNumber?: string;
+    jobs?: Job[];
 }
 
 export interface JobAttributes {
@@ -37,6 +38,7 @@ export interface JobAttributes {
     dueDate: Date;
     completed?: boolean;
     createdAt?: Date;
+    samples?: Sample[];
 }
 
 export interface UserAttributes {
@@ -48,6 +50,9 @@ export interface UserAttributes {
     permissions: string[];
     dateStarted: Date;
     password: string;
+    activeEmployee: boolean;
+    profile?: Profile;
+    userTests?: Test[];
 }
 
 export interface ProfileAttributes {
@@ -67,6 +72,7 @@ export interface SampleAttributes {
     comments?: string;
     numberOfSamples?: number;
     tests?: Test[];
+    samplePhotos?: SamplePhoto[]
 }
 
 export interface SamplePhotoAttributes {

@@ -26,17 +26,19 @@ const models = {
 // synchronize all models to database.
 (async () => {
     try {
-        await sequelize.sync({ force: false });
+        console.log("Starting database synchronization...");
 
         // initialize model associations
         Object.values(models).forEach(
             (model) => model.associate && model.associate(models)
         );
 
+        await sequelize.sync({ force: false });
+
         console.log("Database synchronized successfully");
     } catch (error) {
-        console.log("Error synchronizing database:", error);
-    }
+        console.error("Error synchronizing database:", error);
+    };
 })(); // Added this line to immediately invoke the async function
 
 // load up '.env' file into 'process.env' object of Node.js

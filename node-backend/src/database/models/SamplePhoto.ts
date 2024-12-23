@@ -23,7 +23,6 @@ SamplePhoto.init({
     sampleId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
             model: Sample,
             key: 'id',

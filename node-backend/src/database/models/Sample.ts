@@ -1,9 +1,10 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';
 import { ModelsInterface, SampleAttributes } from '../types/models-interface';
-import Job from './Job';
+import Job from '../models/Job';
 import { incrementSampleNumber } from '../../functions/miscellaneousFunctions';
-import Test from './Test';
+import Test from '../models/Test';
+import SamplePhoto from './SamplePhoto';
 
 class Sample extends Model<SampleAttributes> implements SampleAttributes {
     id!: number;
@@ -14,6 +15,7 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
     completed!: boolean;
     comments?: string;
     tests?: Test[];
+    samplePhotos?: SamplePhoto[];
 
     static associate(models: ModelsInterface) {
         Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', onDelete: 'CASCADE' });

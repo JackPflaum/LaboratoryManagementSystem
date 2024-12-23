@@ -14,6 +14,9 @@ class User extends Model<UserAttributes> implements UserAttributes {
     permissions!: string[];
     dateStarted!: Date;
     password!: string;
+    activeEmployee!: boolean;
+    profile?: Profile;
+    userTests?: Test[];
 
     static async hashPassword(password: string) {
         const saltRounds = 10;
@@ -22,6 +25,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
 
     static associate(models: ModelsInterface) {
         User.hasOne(models.Profile, { foreignKey: "userId" });
+        User.hasMany(models.Test, { foreignKey: "userId", as: "userTests" });
     };
 };
 
@@ -78,6 +82,11 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    activeEmployee: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+    }
 }, {
     sequelize,
     modelName: "User",
