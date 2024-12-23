@@ -45,6 +45,18 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
                 return formatDate(params.value);
             }
         },
+        {
+            field: "activeEmployee",
+            headerName: "Currently Employed",
+            flex: 1,
+            renderCell: (params) => {
+                if (params.value === true) {
+                    return "Yes"
+                } else {
+                    return "No Longer"
+                };
+            }
+        }
     ];
 
     const actionColumn: GridColDef = {
