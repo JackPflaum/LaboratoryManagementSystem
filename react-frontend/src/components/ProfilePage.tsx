@@ -13,6 +13,7 @@ import { UserPermissions } from "../types/enums";
 import { format } from "date-fns";
 import CustomInformationCard from "./features/custom-information-card";
 import CustomToolbar from "./features/custom-toolbar";
+import { formatDate } from "./features/grid-columns/jobs-columns";
 
 const ProfilePage = () => {
     const [editingProfile, setEditingProfile] = useState<boolean>(false);
@@ -59,8 +60,8 @@ const ProfilePage = () => {
         {
             label: "Date started",
             data: userDetails?.dateStarted
-                ? format(new Date(userDetails.dateStarted), "dd-MM-yyyy")
-                : 'N/A',
+                ? formatDate(userDetails?.dateStarted)
+                : 'N/A'
         },
     ];
 

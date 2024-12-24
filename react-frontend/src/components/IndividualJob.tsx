@@ -13,6 +13,9 @@ import { SampleAttributes } from "../types/interfaces";
 import DeleteDialog from "./features/dialogs/delete-dialog";
 import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 import CustomInformationCard from "./features/custom-information-card";
+import { Add } from "@mui/icons-material";
+import { format } from "date-fns";
+import { formatDate } from "./features/grid-columns/jobs-columns";
 
 
 const IndividualJob = () => {
@@ -61,13 +64,17 @@ const IndividualJob = () => {
 
     const jobInformation = [
         { label: "Client", data: jobData?.client ?? "" },
-        { label: "Due Date", data: jobData?.dueDate.toString() ?? "" },
+        {
+            label: "Due Date", data: jobData?.dueDate
+                ? formatDate(jobData?.dueDate)
+                : "N/A"
+        },
         { label: "Completed", data: jobData?.completed ? "Yes" : "No" },
         { label: "Comments", data: jobData?.comments ?? "No comments" },
     ];
 
     const toolbarButtons = [
-        { label: "Add Sample", icon: <EditIcon />, onClick: () => setSampleDialog(true) },
+        { label: "Add Sample", icon: <Add />, onClick: () => setSampleDialog(true) },
         { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
     ];
 
@@ -84,7 +91,9 @@ const IndividualJob = () => {
                     <SampleFormProvider
                         open={sampleDialog}
                         handleClose={() => setSampleDialog(false)}
-                        data={editingSample} jobNumber={jobData?.jobNumber} />
+                        data={editingSample}
+                        jobNumber={jobData?.jobNumber}
+                    />
                 }
             </Box>
             <DisplayGrid

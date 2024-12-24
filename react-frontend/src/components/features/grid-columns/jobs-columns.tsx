@@ -21,7 +21,7 @@ interface JobColumnProps {
 };
 
 export const formatDate = (date: Date) => {
-    const formattedDate = format(new Date(date), "dd-MM-yyyy");
+    const formattedDate = format(new Date(date), "dd/MM/yyyy");
     return formattedDate;
 };
 
