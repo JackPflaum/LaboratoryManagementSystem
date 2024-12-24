@@ -1,7 +1,7 @@
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DisplayGrid from "../display-grid";
-import { SampleAttributes, UserAttributes } from "../../../types/interfaces";
+import { EditDeleteTestAttributes, SampleAttributes, UserAttributes } from "../../../types/interfaces";
 import { useGetUsersQuery } from "../../../queries/useQueries";
 import { getTestsColumns } from "../grid-columns/tests-columns";
 import { Test, Unit } from "../../../types/enums";
@@ -18,18 +18,18 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
 
     const { fields, append, remove } = useFieldArray({ control, name: "tests" });
 
-    const watchUserId = watch("userId");
-    const watchTestName = watch("testName");
-    const watchUnit = watch("unit");
-
-    // const { data: rows, isLoading } = useGetTestsQuery(sampleData?.id);
-    const isLoading = false;
-    const rows: any = [];
+    const watchUserId = watch("userId") || "";
+    const watchTestName = watch("testName") || "";
+    const watchUnit = watch("unit") || "";
 
     // get list of users for dropdown selection
     const { data: usersList, isLoading: usersLoading } = useGetUsersQuery("");
 
-    const columns = getTestsColumns({});
+    const deleteAction = (row: EditDeleteTestAttributes) => {
+        remove(row.rowId);
+    };
+
+    const columns = getTestsColumns({ usersList, deleteAction });
 
     const handleAddTest = () => {
         // append actual values into tests array
@@ -45,7 +45,7 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
     return (
         <Box>
             <Typography>Add Tests</Typography>
-            <Box display="flex" flexWrap="wrap" gap={4}>
+            <Box display="flex" flexWrap="wrap" gap={4} mb={2}>
                 <Box flex={1}>
                     <Controller
                         name="userId"
@@ -62,12 +62,9 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
                                     sx={{
                                         minWidth: "200px"
                                     }}
-                                // autoWidth
-                                // input={<OutlinedInput label="Assigned User" />}
-                                // readOnly={!!data}
                                 >
                                     {/* Placeholder or non-selectable option */}
-                                    <MenuItem value="{field.value}" disabled>
+                                    <MenuItem value="" disabled>
                                         Choose an Assigned User
                                     </MenuItem>
 
@@ -97,9 +94,10 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
                                     {...field}
                                     error={!!fieldState.error}
                                     size="small"
-                                // autoWidth
-                                // input={<OutlinedInput label="Test" />}
-                                // readOnly={!!data}
+                                    fullWidth
+                                    sx={{
+                                        minWidth: "200px"
+                                    }}
                                 >
                                     {Object.values(Test).map((test) => (
                                         <MenuItem key={test} value={test}>
@@ -123,9 +121,10 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
                                     {...field}
                                     error={!!fieldState.error}
                                     size="small"
-                                // autoWidth
-                                // input={<OutlinedInput label="Unit" />}
-                                // readOnly={!!data}
+                                    fullWidth
+                                    sx={{
+                                        minWidth: "200px"
+                                    }}
                                 >
                                     {Object.values(Unit).map((unit) => (
                                         <MenuItem key={unit} value={unit}>
@@ -139,7 +138,7 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
                 </Box>
                 <Box flex={1} minWidth="100px">
                     <Button variant="contained" onClick={handleAddTest} >
-                        Save Test
+                        Add Test
                     </Button>
                 </Box>
             </Box>

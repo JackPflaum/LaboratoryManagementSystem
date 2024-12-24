@@ -57,6 +57,14 @@ export interface TestAttributes {
     comment?: string;
 };
 
+export interface EditDeleteTestAttributes {
+    id: string;
+    rowId: number;
+    testName: string;
+    unit: "string";
+    userId: number;
+}
+
 export interface ResultsAttributes {
     id?: number;
     userId: number;
