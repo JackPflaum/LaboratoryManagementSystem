@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { ProfileAttributes } from "../../../types/interfaces";
+import { ProfileAttributes, UserAttributes } from "../../../types/interfaces";
+import { useUpdateProfileMutation } from "../../../queries/useQueries";
 
 
 // user/profile details validation schema
@@ -13,7 +14,7 @@ const ProfileDialogSchema = yup.object().shape({
 });
 
 interface ProfileDialogProps {
-    data: any; // User & Profile data
+    data: UserAttributes | undefined;
     open: boolean;
     handleClose: () => void;
 };
@@ -30,7 +31,7 @@ const ProfileDialog = ({ data, open, handleClose }: ProfileDialogProps) => {
     };
 
     const { handleSubmit, control, reset, formState: { errors } } = useForm<ProfileAttributes>({
-        defaultValues: mapDataToForm(data),
+        defaultValues: mapDataToForm(data?.profile),
         resolver: yupResolver(ProfileDialogSchema),
     });
 
@@ -38,9 +39,13 @@ const ProfileDialog = ({ data, open, handleClose }: ProfileDialogProps) => {
 
     // handle profile form submission
     const onSubmit = (formData: ProfileAttributes) => {
+        if (data?.id === undefined) {
+            setError("Profile ID is required");
+            return;
+        };
 
         // update profile in database
-        updateProfile({ data: formData, id: data.id }, {
+        updateProfile({ formData: formData, id: data.id }, {
             onSuccess: () => {
                 reset();
                 handleClose();

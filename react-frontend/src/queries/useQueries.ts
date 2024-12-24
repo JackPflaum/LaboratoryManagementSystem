@@ -270,7 +270,7 @@ export const useDeleteUserMutation = () => {
 
 // get Profile 
 export const useGetUserProfile = (id: string | undefined) => {
-    return useQuery<ProfileAttributes>({
+    return useQuery<UserAttributes>({
         queryKey: [...queryKeys.profile.getProfile, id],
         queryFn: async () => {
             if (!id) {
@@ -288,7 +288,7 @@ export const useGetUserProfile = (id: string | undefined) => {
                 throw new Error(responseData.error || "Something went wrong.");
             };
 
-            return responseData as ProfileAttributes;
+            return responseData as UserAttributes;
         },
     });
 };
@@ -309,8 +309,8 @@ export const useUpdateProfileMutation = () => {
                 body: JSON.stringify({ data: formData })
             });
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.profile.getProfile] });
+        onSuccess: (res, variables) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUser, variables.id.toString()] });
         },
     });
 };
@@ -603,7 +603,7 @@ export const useDeleteClientMutation = () => {
 
 
 // gets list of all Samples
-export const useGetSamplesQuery = (searchFilter: string, id?: string) => {
+export const useGetSamplesQuery = (searchFilter: string, id: string | undefined) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery<SampleAttributes[]>({
@@ -874,7 +874,7 @@ export const useSaveResultsMutation = () => {
 // handle changing user password
 export const useUpdatePasswordMutation = () => {
     return useMutation({
-        mutationFn: async ({ password, id }: { password: string, id: string }) => {
+        mutationFn: async ({ password, id }: { password: string, id: number }) => {
             await fetch(`http://localhost:8000/api/user/${id}/update-password`, {
                 method: "PUT",
                 headers: {

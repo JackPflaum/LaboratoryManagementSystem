@@ -1,14 +1,25 @@
 import { Request, Response } from 'express';
 import User from "../src/database/models/User";
+import Profile from '../src/database/models/Profile';
 
 // handles request related to User Profile
 export class UserController {
 
     // get user profile
     static async getUser(req: Request, res: Response) {
-        const { userId } = req.params;
+        const userId = req.params.id as string;
+
+        console.log("USER ID:", userId);
+
         try {
-            const user = await User.findByPk(userId);
+            const user = await User.findByPk(userId, {
+                include: {
+                    model: Profile,
+                    as: "profile"
+                }
+            });
+
+            console.log("USER EMAIL: ", user?.profile?.dataValues?.personalEmail);
 
             return res.status(200).json(user);
         } catch (error) {

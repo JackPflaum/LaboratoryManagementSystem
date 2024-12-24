@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Typography, Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import ProfileDialog from "./features/dialogs/profile-dialog";
-import { useNavigate, useParams } from "react-router-dom";
-import { ProfileAttributes, SampleAttributes } from "../types/interfaces";
+import { useNavigate } from "react-router-dom";
+import { SampleAttributes } from "../types/interfaces";
 import { useGetSamplesQuery, useGetUserProfile as useGetUserProfileQuery, useGetUserQuery } from "../queries/useQueries";
 import { useAuthUser } from "../context/UserAuthContext";
 import EditIcon from '@mui/icons-material/Edit';
@@ -32,8 +32,6 @@ const ProfilePage = () => {
 
     const { data: userDetails, isLoading } = useGetUserQuery(userId);
 
-    const { data: profileDetails, isLoading: loading } = useGetUserProfileQuery(userId);
-
     const { data: samplesData, isLoading: pending } = useGetSamplesQuery("", userId);
 
 
@@ -53,10 +51,11 @@ const ProfilePage = () => {
     } : { editResultsAction });
 
     const profileInformation = [
-        { label: "User ID", data: userDetails?.id ?? "" },
-        { label: "Laboratory Position", data: userDetails?.position ?? "" },
-        { label: "Email", data: userDetails?.workEmail ?? "" },
-        { label: "Phone Number", data: profileDetails?.phoneNumber ?? "" },
+        { label: "User ID", data: userDetails?.id ?? "N/A" },
+        { label: "Laboratory Position", data: userDetails?.position ?? "N/A" },
+        { label: "Work Email", data: userDetails?.workEmail ?? "N/A" },
+        { label: "Personal Email", data: userDetails?.profile?.personalEmail || "Not yet provided" },
+        { label: "Phone Number", data: userDetails?.profile?.phoneNumber || "Not yet provided" },
         {
             label: "Date started",
             data: userDetails?.dateStarted
@@ -77,7 +76,7 @@ const ProfilePage = () => {
                 searchFilter={searchFilter}
                 handleSearchChange={handleSearchChange}
             />
-            {editingProfile && <ProfileDialog data={profileDetails} open={!!editingProfile} handleClose={handleCloseDialog} />}
+            {editingProfile && <ProfileDialog data={userDetails} open={!!editingProfile} handleClose={handleCloseDialog} />}
             <DisplayGrid
                 rows={samplesData ?? []}
                 columns={columns}

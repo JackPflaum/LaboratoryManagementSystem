@@ -89,7 +89,9 @@ export interface UserAttributes {
     permissions: string[];
     dateStarted: Date;
     password?: string;
+    activeEmployee?: boolean;
     confirmPassword?: string;
+    profile?: ProfileAttributes;
 };
 
 export interface ChangePasswordAttributes {

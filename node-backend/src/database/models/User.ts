@@ -24,7 +24,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
     };
 
     static associate(models: ModelsInterface) {
-        User.hasOne(models.Profile, { foreignKey: "userId" });
+        User.hasOne(models.Profile, { foreignKey: "userId", as: "profile" });
         User.hasMany(models.Test, { foreignKey: "userId", as: "userTests" });
     };
 };
