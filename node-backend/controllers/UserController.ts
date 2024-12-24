@@ -9,8 +9,6 @@ export class UserController {
     static async getUser(req: Request, res: Response) {
         const userId = req.params.id as string;
 
-        console.log("USER ID:", userId);
-
         try {
             const user = await User.findByPk(userId, {
                 include: {
@@ -18,8 +16,6 @@ export class UserController {
                     as: "profile"
                 }
             });
-
-            console.log("USER EMAIL: ", user?.profile?.dataValues?.personalEmail);
 
             return res.status(200).json(user);
         } catch (error) {
