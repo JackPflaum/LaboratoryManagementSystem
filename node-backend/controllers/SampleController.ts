@@ -6,6 +6,7 @@ import Job from '../src/database/models/Job';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { incrementSampleNumber } from '../src/functions/miscellaneousFunctions';
+import { SampleNotFoundError } from '../src/custom/SampleNotFoundError';
 
 // handles requests related to samples
 export class SampleController {
@@ -16,7 +17,28 @@ export class SampleController {
         const jobId = req.query.jobId as string;
         const userId = req.query.userId as string;
 
-        const whereCondition: any = {};
+        const whereCondition: any = {}
+
+        if (searchFilter) {
+            whereCondition.sampleNumber = {
+                [Op.iLike]: `%${searchFilter}%`
+            };
+        };
+
+        if (userId) {
+            const samples = await Sample.findAll({
+                where: whereCondition,
+                include: [
+                    {
+                        model: Test,
+                        as: "tests",
+                        where: { userId: userId },
+                        required: true,
+                    }
+                ]
+            });
+            return res.status(200).json(samples);
+        };
 
         if (jobId) {
             const job = await Job.findByPk(jobId)
@@ -25,24 +47,9 @@ export class SampleController {
             };
         };
 
-        if (searchFilter) {
-            whereCondition.sampleNumber = {
-                [Op.iLike]: `%${searchFilter}%`
-            };
-        };
-
         try {
             const samples = await Sample.findAll({
                 where: whereCondition,
-                include: [
-                    {
-                        model: Test,
-                        as: "tests",
-                        // attributes: ['id'],
-                        attributes: { exclude: ['testId'] },
-                        where: userId ? { userId: userId } : {},
-                    }
-                ]
             });
 
             // respond with retieved sample data
@@ -94,10 +101,6 @@ export class SampleController {
                             order: [['sampleNumber', 'DESC']],
                             transaction: t
                         });
-
-                        if (lastSample === null) {
-                            throw new SampleNotFoundError(jobNumber);
-                        };
 
                         // Increment the sample number from the last sample number
                         let newSampleNumber = incrementSampleNumber(jobNumber, lastSample);
@@ -152,15 +155,15 @@ export class SampleController {
 
             // update tests
             // TODO: update both samples and tests in one transaction?
-            for (let test of tests) {
-                await Test.update({
-                    id: id,
-                    sampleId: sample.id,
-                    userId: test.userId,
-                    testName: test.testName,
-                    unit: test.unit
-                })
-            };
+            // for (let test of tests) {
+            //     await Test.update({
+            //         id: id,
+            //         sampleId: sample.id,
+            //         userId: test.userId,
+            //         testName: test.testName,
+            //         unit: test.unit
+            //     })
+            // };
 
             return res.status(201).json({ success: "Sample Details updated" });
         } catch (error) {
