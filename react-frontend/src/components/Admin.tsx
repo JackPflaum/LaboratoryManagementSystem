@@ -10,6 +10,7 @@ import { UserAttributes } from "../types/interfaces";
 import { getUsersColumns } from "./features/grid-columns/users-columns";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import PageTitle from "./features/page-title";
+import { SearchLabel } from "../types/enums";
 
 
 const Admin = () => {
@@ -69,7 +70,7 @@ const Admin = () => {
             <PageTitle title="Admin" />
             <CustomToolbar
                 toolbarButtons={toolbarButtons}
-                searchLabel="Search Email"
+                searchLabel={SearchLabel.SEARCH_EMAIL}
                 searchFilter={searchFilter}
                 handleSearchChange={handleSearchChange}
             />
@@ -83,7 +84,7 @@ const Admin = () => {
                 <DeleteDialog
                     open={openDeleteDialog}
                     handleClose={handleCloseDeleteDialog}
-                    // handleDelete={deleteUser}
+                    handleDelete={deleteUser}
                     isPending={isPending}
                     id={editingUser?.id}
                     description={editingUser?.workEmail} />

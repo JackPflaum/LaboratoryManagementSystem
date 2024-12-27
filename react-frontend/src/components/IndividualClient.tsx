@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { JobAttributes } from "../types/interfaces";
 import { useHasPermission } from "../hooks/custom-hooks";
-import { UserPermissions } from "../types/enums";
+import { SearchLabel, UserPermissions } from "../types/enums";
 import PageTitle from "./features/page-title";
 import CustomInformationCard from "./features/custom-information-card";
 
@@ -59,6 +59,7 @@ const IndividualClient = () => {
                 <CustomToolbar
                     toolbarButtons={toolbarButtons}
                     searchFilter={searchFilter}
+                    searchLabel={SearchLabel.SEARCH_JOB_NUMBER}
                     handleSearchChange={handleSearchChange}
                 />
             </Box>

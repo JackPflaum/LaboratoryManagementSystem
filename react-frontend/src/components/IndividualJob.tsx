@@ -7,7 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useDeleteSampleMutation, useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
 import JobDialog from "./features/dialogs/job-dialog";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
-import { UserPermissions } from "../types/enums";
+import { SearchLabel, UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { SampleAttributes } from "../types/interfaces";
 import DeleteDialog from "./features/dialogs/delete-dialog";
@@ -85,6 +85,7 @@ const IndividualJob = () => {
                 <CustomToolbar
                     toolbarButtons={toolbarButtons}
                     searchFilter={searchFilter}
+                    searchLabel={SearchLabel.SEARCH_SAMPLE_NUMBER}
                     handleSearchChange={handleSearchChange}
                 />
                 {sampleDialog &&

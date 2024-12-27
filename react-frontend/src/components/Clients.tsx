@@ -6,7 +6,7 @@ import DisplayGrid from "./features/display-grid";
 import { useDeleteClientMutation, useGetClientsQuery } from "../queries/useQueries";
 import { getClientsColumns } from "./features/grid-columns/clients-column";
 import { ClientAttributes } from "../types/interfaces";
-import { UserPermissions } from "../types/enums";
+import { SearchLabel, UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { useNavigate } from "react-router-dom";
 import CustomToolbar from "./features/custom-toolbar";
@@ -63,7 +63,7 @@ const Clients = () => {
         viewAction,
         editAction,
         deleteAction
-    } : { viewAction, deleteAction })
+    } : { viewAction })
 
     const toolbarButtons = [
         { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
@@ -75,6 +75,7 @@ const Clients = () => {
             <CustomToolbar
                 toolbarButtons={toolbarButtons}
                 searchFilter={searchFilter}
+                searchLabel={SearchLabel.SEARCH_CLIENT_NAME}
                 handleSearchChange={handleSearchChange}
             />
             <DisplayGrid

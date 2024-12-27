@@ -1,3 +1,10 @@
+export enum SearchLabel {
+    SEARCH_EMAIL = "Search Email",
+    SEARCH_SAMPLE_NUMBER = "Search Sample Number",
+    SEARCH_JOB_NUMBER = "Search Job Number",
+    SEARCH_CLIENT_NAME = "Search Client Number",
+};
+
 export enum UserPermissions {
     ADD_EDIT_CLIENTS = "Add/Edit Clients",
     ADD_EDIT_JOBS = "Add/Edit Jobs",

@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DisplayGrid from "./features/display-grid";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { useHasPermission } from "../hooks/custom-hooks";
-import { UserPermissions } from "../types/enums";
+import { SearchLabel, UserPermissions } from "../types/enums";
 import { format } from "date-fns";
 import CustomInformationCard from "./features/custom-information-card";
 import CustomToolbar from "./features/custom-toolbar";
@@ -81,6 +81,7 @@ const ProfilePage = () => {
             <CustomToolbar
                 toolbarButtons={toolbarButtons}
                 searchFilter={searchFilter}
+                searchLabel={SearchLabel.SEARCH_SAMPLE_NUMBER}
                 handleSearchChange={handleSearchChange}
             />
             {editingProfile && <ProfileDialog data={userDetails} open={!!editingProfile} handleClose={handleCloseDialog} />}

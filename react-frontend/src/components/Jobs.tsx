@@ -4,7 +4,7 @@ import { useDeleteJobMutation, useGetJobsQuery } from "../queries/useQueries";
 import DisplayGrid from "./features/display-grid";
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { useNavigate } from "react-router-dom";
-import { UserPermissions } from "../types/enums";
+import { SearchLabel, UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { JobAttributes } from "../types/interfaces";
 import JobDialog from "./features/dialogs/job-dialog";
@@ -86,6 +86,7 @@ const Jobs = () => {
                 <CustomToolbar
                     toolbarButtons={toolbarButtons}
                     searchFilter={searchFilter}
+                    searchLabel={SearchLabel.SEARCH_JOB_NUMBER}
                     handleSearchChange={handleSearchChange}
                 />
             </Box>
