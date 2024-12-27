@@ -137,7 +137,8 @@ export class AdminController {
                 return res.status(404).json({ error: "User not found" });
             };
 
-            user.activeEmployee = false;
+            // "delete" and "reactivate" employee status
+            user.activeEmployee = !user.activeEmployee;
             await user.save();
 
             return res.status(200).json({ success: "User has been deleted" });

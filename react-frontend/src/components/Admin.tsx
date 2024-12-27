@@ -89,6 +89,7 @@ const Admin = () => {
                     handleDelete={deleteUser}
                     isPending={isPending}
                     id={editingUser?.id}
+                    title={editingUser?.activeEmployee === false ? "Reactivate" : undefined}
                     description={editingUser?.workEmail} />
             )}
         </>

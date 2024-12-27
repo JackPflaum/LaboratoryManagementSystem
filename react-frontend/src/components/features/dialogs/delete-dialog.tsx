@@ -6,6 +6,7 @@ interface DeleteDialogProps {
     handleDelete?: (id: string) => void;
     isPending: boolean;
     id?: number;
+    title?: string;
     description?: string
 };
 
@@ -15,15 +16,16 @@ const DeleteDialog = ({
     handleDelete,
     isPending,
     id,
+    title,
     description,
 }: DeleteDialogProps) => {
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-            <DialogTitle>Deleting "{description}"</DialogTitle>
+            <DialogTitle>{title ? `${title} ${description}` : `Deleting ${description}`}</DialogTitle>
             <Divider />
             <DialogContent>
-                <Typography>Are you sure you want to delete?</Typography>
+                <Typography>{`Are you sure you want to ${title?.toLocaleLowerCase() ?? "delete"}?`}</Typography>
             </DialogContent>
             <DialogActions>
                 <Button variant="contained" onClick={handleClose}>
@@ -35,7 +37,7 @@ const DeleteDialog = ({
                     }
                     handleClose();
                 }}>
-                    {isPending ? "Deleting..." : "Delete"}
+                    {isPending ? "Pending..." : (title ?? "Delete")}
                 </Button>
             </DialogActions>
         </Dialog>
