@@ -373,14 +373,14 @@ export const useGetJobsQuery = (searchFilter: string, id?: string) => {
 
 
 // gets individual Job data
-export const useGetJobQuery = (id: string | undefined) => {
+export const useGetJobQuery = (jobNumber: string | undefined) => {
     return useQuery<JobAttributes>({
-        queryKey: id ? [...queryKeys.jobs.getJob, id] : [],
+        queryKey: jobNumber ? [...queryKeys.jobs.getJob, jobNumber] : [],
         queryFn: async () => {
-            if (!id) {
+            if (!jobNumber) {
                 throw new Error("Job ID is required")
             };
-            const response = await fetch(`http://localhost:8000/api/jobs/${id}`, {
+            const response = await fetch(`http://localhost:8000/api/jobs/${jobNumber}`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -603,7 +603,7 @@ export const useDeleteClientMutation = () => {
 
 
 // gets list of all Samples
-export const useGetSamplesQuery = (searchFilter: string, id: string | undefined) => {
+export const useGetSamplesQuery = (searchFilter: string, jobNumber: string | undefined, userId: string | undefined) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery<SampleAttributes[]>({
@@ -615,8 +615,12 @@ export const useGetSamplesQuery = (searchFilter: string, id: string | undefined)
                 url.searchParams.append("search", debouncedSearch);
             };
 
-            if (id) {
-                url.searchParams.append("jobId", id);
+            if (jobNumber) {
+                url.searchParams.append("jobNumber", jobNumber);
+            };
+
+            if (userId) {
+                url.searchParams.append("userId", userId);
             };
 
             const response = await fetch(url.toString(), {

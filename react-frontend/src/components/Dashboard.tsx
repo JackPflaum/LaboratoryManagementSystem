@@ -1,12 +1,10 @@
-import { Box, Stack, Typography, Container } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 import DashboardCard from "./features/dashboard-cards";
 import DisplayGrid from "./features/display-grid";
-import { GridRowsProp } from "@mui/x-data-grid"
 import { useGetDashboardQuery, useGetJobsQuery } from "../queries/useQueries";
 import { CardData, JobAttributes } from "../types/interfaces";
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { useNavigate } from "react-router-dom";
-import { generalStyling } from "../mui-styling";
 import PageTitle from "./features/page-title";
 
 const Dashboard = () => {
@@ -36,7 +34,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     const viewAction = (row: JobAttributes) => {
-        navigate(`/jobs/${row.id}`);
+        navigate(`/jobs/${row.jobNumber}`);
     };
 
     const columns = getJobsColumns({ viewAction });

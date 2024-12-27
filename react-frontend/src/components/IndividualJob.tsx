@@ -30,13 +30,13 @@ const IndividualJob = () => {
         setSearchFilter(event.target.value);
     };
 
-    const { id } = useParams<string>()
+    const { jobNumber } = useParams<string>()
 
     // get job data
-    const { data: jobData, isLoading: loading } = useGetJobQuery(id);
+    const { data: jobData, isLoading: loading } = useGetJobQuery(jobNumber);
 
     // get list of samples for currently selected Job
-    const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter, id);
+    const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter, jobNumber, "");
 
     // edit existing sample
     const editAction = (row: SampleAttributes) => {

@@ -14,7 +14,7 @@ export class SampleController {
     // get list of Samples
     static async getSamples(req: Request, res: Response) {
         const searchFilter = req.query.search as string;
-        const jobId = req.query.jobId as string;
+        const jobNumber = req.query.jobNumber as string;
         const userId = req.query.userId as string;
 
         const whereCondition: any = {}
@@ -40,10 +40,9 @@ export class SampleController {
             return res.status(200).json(samples);
         };
 
-        if (jobId) {
-            const job = await Job.findByPk(jobId)
+        if (jobNumber) {
             whereCondition.jobNumber = {
-                [Op.iLike]: job?.jobNumber
+                [Op.iLike]: jobNumber
             };
         };
 

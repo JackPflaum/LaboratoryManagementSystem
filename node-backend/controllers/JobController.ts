@@ -65,11 +65,11 @@ export class JobController {
 
     // retrieve job from the database with specific id
     static async getJobDetails(req: Request, res: Response) {
-        const { id } = req.params;
+        const { jobNumber } = req.params;
         try {
             const job = await Job.findOne({
                 where: {
-                    id: id,
+                    jobNumber: jobNumber,
                 },
                 include: [
                     {

@@ -31,7 +31,7 @@ router.get('/clients/confirm-client-exists', ClientController.confirmClientExist
 
 // Job related requests
 router.get('/jobs', JobController.getJobs);
-router.get('/jobs/:id', JobController.getJobDetails);
+router.get('/jobs/:jobNumber', JobController.getJobDetails);
 router.post('/jobs/add-new-job', JobController.addNewJob);
 router.put('/jobs/:id/update-job-details', JobController.updateJobDetails);
 router.delete('/jobs/:id/delete', JobController.deleteJob);

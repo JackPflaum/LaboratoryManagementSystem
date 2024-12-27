@@ -13,63 +13,99 @@ import IndividualClient from './components/IndividualClient';
 import { Box } from '@mui/material';
 import Admin from './components/Admin';
 import ProfilePage from './components/ProfilePage';
+import IndividualJob from './components/IndividualJob';
 
 function App() {
 
-    // get user authorization from UserAuthContext and AdminAuthContext
-    const { user, isLoading } = useAuthUser();
-    const { admin, isRefreshing } = useAuthAdmin();
+    console.log("App.tsx refreshed");
 
-    // if (isLoading || isRefreshing) {
-    if (isLoading) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 6
-                }}
-            >
-                ...loading
-            </Box>
-        );
-    };
+    // get user authorization from UserAuthContext and AdminAuthContext
+    // const { user, isLoading } = useAuthUser();
+    // const { admin, isRefreshing } = useAuthAdmin();
+
+    // if (isLoading) {
+    //     return (
+    //         <Box
+    //             sx={{
+    //                 display: "flex",
+    //                 justifyContent: "center",
+    //                 alignItems: "center",
+    //                 marginTop: 6
+    //             }}
+    //         >
+    //             ...loading
+    //         </Box>
+    //     );
+    // };
+
+
 
     return (
         <BrowserRouter>
             <Routes>
                 {/* User Routes */}
-                {user ?
-                    (
-                        <Route path="/*" element={<Layout />}>
-                            <Route index element={<Dashboard />} />  {/* this is the default child route when '/' path is rendered */}
-                            <Route path="dashboard" element={<Dashboard />} />
-                            <Route path="jobs" element={<Jobs />} />
-                            <Route path="clients" element={<Clients />} />
-                            <Route path="clients/:id" element={<IndividualClient />} />
-                            <Route path="user/:id" element={<ProfilePage />} />
-                            <Route path="*" element={<NoMatch />} />
-                        </Route>
-                    ) : null}
+                <Route path="/*" element={<Layout />}>
+                    <Route index element={<Dashboard />} />  {/* this is the default child route when '/' path is rendered */}
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="jobs" element={<Jobs />} />
+                    <Route path="jobs/:jobNumber" element={<IndividualJob />} />
+                    <Route path="clients" element={<Clients />} />
+                    <Route path="clients/:id" element={<IndividualClient />} />
+                    <Route path="user" element={<ProfilePage />} />
+                    <Route path="*" element={<NoMatch />} />
+                </Route>
 
                 {/* Admin Routes */}
-                {admin ? (
-                    <Route path="admin" element={<Admin />} />
-                ) : null}
+                <Route path="admin" element={<Admin />} />
 
                 {/* Public Routes */}
-                {!user && !admin ? (
-                    <>
-                        <Route path="/*" element={<UserLogin />} />
-                        <Route path="user-login" element={<UserLogin />} />
-                        <Route path="admin-login" element={<AdminLogin />} />
-                        <Route path="*" element={<NoMatch />} />
-                    </>
-                ) : null}
+                <Route path="/*" element={<UserLogin />} />
+                <Route path="user-login" element={<UserLogin />} />
+                <Route path="admin-login" element={<AdminLogin />} />
+                {/* <Route path="*" element={<NoMatch />} /> */}
             </Routes>
         </BrowserRouter>
     );
+
+
+
+
+
+    // return (
+    //     <BrowserRouter>
+    //         <Routes>
+    //             {/* User Routes */}
+    //             {user ?
+    //                 (
+    //                     <Route path="/*" element={<Layout user={user} />}>
+    //                         <Route index element={<Dashboard />} />  {/* this is the default child route when '/' path is rendered */}
+    //                         <Route path="dashboard" element={<Dashboard />} />
+    //                         <Route path="jobs" element={<Jobs />} />
+    //                         <Route path="jobs/:id" element={<IndividualJob />} />
+    //                         <Route path="clients" element={<Clients />} />
+    //                         <Route path="clients/:id" element={<IndividualClient />} />
+    //                         <Route path="user/:id" element={<ProfilePage />} />
+    //                         <Route path="*" element={<NoMatch />} />
+    //                     </Route>
+    //                 ) : null}
+
+    //             {/* Admin Routes */}
+    //             {admin ? (
+    //                 <Route path="admin" element={<Admin />} />
+    //             ) : null}
+
+    //             {/* Public Routes */}
+    //             {!user && !admin ? (
+    //                 <>
+    //                     <Route path="/*" element={<UserLogin />} />
+    //                     <Route path="user-login" element={<UserLogin />} />
+    //                     <Route path="admin-login" element={<AdminLogin />} />
+    //                     <Route path="*" element={<NoMatch />} />
+    //                 </>
+    //             ) : null}
+    //         </Routes>
+    //     </BrowserRouter>
+    // );
 }
 
 export default App;

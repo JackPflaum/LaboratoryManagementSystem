@@ -33,13 +33,16 @@ const ProfilePage = () => {
 
     const { data: userDetails, isLoading } = useGetUserQuery(userId);
 
-    const { data: samplesData, isLoading: pending } = useGetSamplesQuery("", userId);
+    // no jobNumber required
+    const jobNumber = "";
+
+    const { data: samplesData, isLoading: pending } = useGetSamplesQuery(searchFilter, jobNumber, userId);
 
 
     const navigate = useNavigate();
 
     const viewJobAction = (sample: SampleAttributes) => {
-        navigate(`job/${sample.jobNumber}`);
+        navigate(`/jobs/${sample.jobNumber}`);
     };
 
     const editResultsAction = () => {
@@ -49,7 +52,10 @@ const ProfilePage = () => {
     const columns = getSamplesColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
         viewJobAction,
         editResultsAction
-    } : { editResultsAction });
+    } : {
+        editResultsAction, viewJobAction,
+        // editResultsAction
+    });
 
     const profileInformation = [
         { label: "User ID", data: userDetails?.id ?? "N/A" },

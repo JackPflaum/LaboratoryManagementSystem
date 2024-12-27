@@ -39,7 +39,7 @@ const Jobs = () => {
 
     // view selected Job on dedicated page
     const viewAction = (row: JobAttributes) => {
-        navigate(`/jobs/${row.id}`);
+        navigate(`/jobs/${row.jobNumber}`);
     };
 
     // edit existing Job
