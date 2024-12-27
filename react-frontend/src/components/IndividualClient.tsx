@@ -34,7 +34,7 @@ const IndividualClient = () => {
     const navigate = useNavigate();
 
     const viewAction = (row: JobAttributes) => {
-        navigate(`/jobs/${row.id}`);
+        navigate(`/jobs/${row.jobNumber}`);
     };
 
     const columns = getJobsColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
