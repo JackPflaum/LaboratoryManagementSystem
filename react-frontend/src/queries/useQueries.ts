@@ -133,7 +133,7 @@ export const useLogoutMutation = () => {
 
 
 // gets list of all Users
-export const useGetUsersQuery = (searchFilter: string) => {
+export const useGetUsersQuery = (searchFilter: string, isActiveUser: boolean | null) => {
     const debouncedSearch = useDebouncer(searchFilter, DEBOUNCER_TIME.TIME);
 
     return useQuery<UserAttributes[]>({
@@ -141,7 +141,11 @@ export const useGetUsersQuery = (searchFilter: string) => {
         queryFn: async () => {
             const url = new URL("http://localhost:8000/api/admin");
             if (debouncedSearch) {
-                url.searchParams.append("search", debouncedSearch);
+                url.searchParams.append("searchFilter", debouncedSearch);
+            };
+
+            if (isActiveUser !== null) {
+                url.searchParams.append("isActiveUser", String(isActiveUser));
             };
 
             const response = await fetch(url.toString(), {

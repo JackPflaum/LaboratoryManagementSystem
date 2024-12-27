@@ -23,8 +23,10 @@ const Admin = () => {
     // const { handleLogout } = useAuthAdmin();
     const { mutate: logout } = useLogoutMutation();
 
+    const isActiveUser = null;
+
     // get list of users
-    const { data, isLoading } = useGetUsersQuery(searchFilter);
+    const { data, isLoading } = useGetUsersQuery(searchFilter, isActiveUser);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);

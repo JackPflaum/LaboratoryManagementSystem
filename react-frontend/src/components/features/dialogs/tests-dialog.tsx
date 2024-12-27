@@ -22,8 +22,12 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
     const watchTestName = watch("testName") || "";
     const watchUnit = watch("unit") || "";
 
+
+    const searchFilter = "";
+    const isActiveUser = true;
+
     // get list of users for dropdown selection
-    const { data: usersList, isLoading: usersLoading } = useGetUsersQuery("");
+    const { data: usersList, isLoading: usersLoading } = useGetUsersQuery(searchFilter, isActiveUser);
 
     const deleteAction = (row: EditDeleteTestAttributes) => {
         remove(row.rowId);
