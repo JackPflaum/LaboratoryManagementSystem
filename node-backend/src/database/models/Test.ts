@@ -14,7 +14,7 @@ class Test extends Model<TestAttributes> implements TestAttributes {
     comment?: string;
 
     static associate(models: ModelsInterface) {
-        Test.belongsTo(models.Sample, { foreignKey: 'sampleId', onDelete: 'CASCADE', });
+        Test.belongsTo(models.Sample, { foreignKey: 'sampleId', as: "tests", onDelete: 'CASCADE', });
         Test.belongsTo(models.User, { foreignKey: 'userId' });
     };
 };
