@@ -14,7 +14,6 @@ import DeleteDialog from "./features/dialogs/delete-dialog";
 import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 import CustomInformationCard from "./features/custom-information-card";
 import { Add } from "@mui/icons-material";
-import { format } from "date-fns";
 import { formatDate } from "./features/grid-columns/jobs-columns";
 
 
@@ -35,8 +34,10 @@ const IndividualJob = () => {
     // get job data
     const { data: jobData, isLoading: loading } = useGetJobQuery(jobNumber);
 
+    const userId = undefined;
+
     // get list of samples for currently selected Job
-    const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter, jobNumber, "");
+    const { data: samplesData, isLoading } = useGetSamplesQuery(searchFilter, jobNumber, userId);
 
     // edit existing sample
     const editAction = (row: SampleAttributes) => {
@@ -91,7 +92,10 @@ const IndividualJob = () => {
                 {sampleDialog &&
                     <SampleFormProvider
                         open={sampleDialog}
-                        handleClose={() => setSampleDialog(false)}
+                        handleClose={() => {
+                            setSampleDialog(false)
+                            setEditingSample(undefined);
+                        }}
                         data={editingSample}
                         jobNumber={jobData?.jobNumber}
                     />

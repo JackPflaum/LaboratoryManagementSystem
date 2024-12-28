@@ -10,8 +10,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useFormContext } from "react-hook-form";
 import { Storage, Type } from "../../../types/enums";
 
+interface SampleDialogProps {
+    editing: boolean;
+};
 
-const SampleDialog = () => {
+const SampleDialog = ({ editing }: SampleDialogProps) => {
     const { control } = useFormContext();
 
     return (
@@ -27,6 +30,7 @@ const SampleDialog = () => {
                             {...field}
                             error={!!fieldState.error}
                             size="small"
+                            disabled={editing}
                         >
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
                                 <MenuItem key={value} value={value}>

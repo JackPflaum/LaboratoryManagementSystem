@@ -7,6 +7,8 @@ import { useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCreateSampleMutation, useUpdateSampleMutation } from "../../../queries/useQueries";
+import { Test, Unit } from "../../../types/enums";
+
 
 // sample details validation schema
 const SampleSchema = yup.object().shape({
@@ -37,13 +39,23 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
     const [error, setError] = useState<string>("");
 
     const mapDataToForm = (data?: SampleAttributes) => {
+        console.log("SAMPLE FORM PROVIDER:", data);
+
         return {
             jobNumber: jobNumber,
             numberOfSamples: 1,
-            type: data?.type ?? "liquid",
-            storage: data?.storage ?? "shelf#1",
+            type: data?.type ?? "Liquid",
+            storage: data?.storage ?? "Shelf#1",
             comments: data?.comments ?? undefined,
-            tests: data?.tests ?? []
+            tests: data?.tests?.map(test => ({
+                userId: test?.userId,
+                testName: test?.testName,
+                unit: test?.unit,
+            })) ?? [{
+                // userId: undefined,
+                // testName: Test.EOM,
+                // unit: "mg/L",
+            }]
         }
     };
 
@@ -51,8 +63,6 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
         defaultValues: mapDataToForm(data),
         resolver: yupResolver(SampleSchema),
     });
-
-
 
     const { mutate: createSample, isPending: isCreating } = useCreateSampleMutation();
 
@@ -96,7 +106,7 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
             <DialogContent>
                 <FormProvider {...formMethods}>
                     <Stack spacing={2}>
-                        <SampleDialog />
+                        <SampleDialog editing={!!data} />
                         <Divider />
                         <AddTests sampleData={data} />
                     </Stack>
