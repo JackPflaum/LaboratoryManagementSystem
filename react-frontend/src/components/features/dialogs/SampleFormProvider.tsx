@@ -39,8 +39,6 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
     const [error, setError] = useState<string>("");
 
     const mapDataToForm = (data?: SampleAttributes) => {
-        console.log("SAMPLE FORM PROVIDER:", data);
-
         return {
             jobNumber: jobNumber,
             numberOfSamples: 1,
@@ -48,15 +46,12 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
             storage: data?.storage ?? "Shelf#1",
             comments: data?.comments ?? undefined,
             tests: data?.tests?.map(test => ({
+                id: test?.id,
                 userId: test?.userId,
                 testName: test?.testName,
                 unit: test?.unit,
-            })) ?? [{
-                // userId: undefined,
-                // testName: Test.EOM,
-                // unit: "mg/L",
-            }]
-        }
+            })) ?? []
+        };
     };
 
     const formMethods = useForm<SampleAttributes>({

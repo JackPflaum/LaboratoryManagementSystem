@@ -709,7 +709,7 @@ export const useUpdateSampleMutation = () => {
             })
         },
         onSuccess: () => {
-            // queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
         }
     });
 };

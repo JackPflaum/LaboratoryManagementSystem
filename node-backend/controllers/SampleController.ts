@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Sample from '../src/database/models/Sample';
-import { Op } from 'sequelize';
-import { SampleAttributes, TestAttributes } from '../src/database/types/models-interface';
-import Job from '../src/database/models/Job';
+import { Op, Transaction } from 'sequelize';
+import { SampleAttributes } from '../src/database/types/models-interface';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { incrementSampleNumber } from '../src/functions/miscellaneousFunctions';
@@ -135,7 +134,10 @@ export class SampleController {
             storage,
             completed,
             comments,
-            tests }: SampleAttributes & { tests: { id: number, userId: number, testName: string, unit: string }[] } = req.body;
+            tests }: SampleAttributes & {
+                tests:
+                { id: number | undefined, userId: number, testName: string, unit: string }[]
+            } = req.body;
         try {
             const sample = await Sample.findByPk(sampleId);
 
@@ -143,26 +145,45 @@ export class SampleController {
                 return res.status(404).json({ error: 'Sample not found' });
             };
 
-            await sample.update({
-                type: type,
-                storage: storage,
-                completed: completed,
-                comments: comments
+            await sequelize.transaction(async (t) => {
+                await sample.update({
+                    type: type,
+                    storage: storage,
+                    completed: completed,
+                    comments: comments
+                }, { transaction: t });
+
+                // get the current tests associated with the sample being updated
+                const existingTestsIds = await Test.findAll({
+                    where: { sampleId: sampleId },
+                    transaction: t
+                });
+
+                // identify tests to delete (existing tests that are no longer in tests request)
+                const testsToDelete = existingTestsIds.filter(existingTests =>
+                    !tests.some(test => test.id === existingTests.id));
+
+                for (let deleteTest of testsToDelete) {
+                    await Test.destroy({
+                        where: { id: deleteTest.id },
+                        transaction: t
+                    });
+                };
+
+                // create newly added tests
+                for (let test of tests) {
+                    if (test.id === undefined) {
+                        await Test.create({
+                            sampleId: parseInt(sampleId, 10),
+                            testName: test.testName,
+                            unit: test.unit,
+                            userId: test.userId,
+                        }, { transaction: t });
+                    };
+                };
             });
 
-            // update tests
-            // TODO: update both samples and tests in one transaction?
-            // for (let test of tests) {
-            //     await Test.update({
-            //         id: id,
-            //         sampleId: sample.id,
-            //         userId: test.userId,
-            //         testName: test.testName,
-            //         unit: test.unit
-            //     })
-            // };
-
-            return res.status(201).json({ success: "Sample Details updated" });
+            return res.status(200).json({ success: "Sample Details updated" });
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error.' });
         };

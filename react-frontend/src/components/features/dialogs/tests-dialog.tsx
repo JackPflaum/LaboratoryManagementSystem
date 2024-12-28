@@ -18,7 +18,7 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
 
     const { fields, append, remove } = useFieldArray({ control, name: "tests" });
 
-    const watchUserId = watch("userId") || "";
+    const watchUserId = watch("userId") || undefined;
     const watchTestName = watch("testName") || "";
     const watchUnit = watch("unit") || "";
 
@@ -39,6 +39,7 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
         // append actual values into tests array
         if (watchUserId && watchTestName && watchUnit) {
             append({
+                id: undefined,    // new tests don't have an id yet
                 userId: watchUserId,
                 testName: watchTestName,
                 unit: watchUnit,
@@ -149,7 +150,8 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
             <DisplayGrid
                 rows={fields.map((field, index) => ({
                     rowId: index,
-                    ...field
+                    ...field,
+                    id: field.id || undefined    // If no id, set it to undefined for new tests
                 }))}
                 columns={columns}
             />
