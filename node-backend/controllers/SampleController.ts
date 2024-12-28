@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Sample from '../src/database/models/Sample';
 import { Op } from 'sequelize';
-import { SampleAttributes } from '../src/database/types/models-interface';
+import { SampleAttributes, TestAttributes } from '../src/database/types/models-interface';
 import Job from '../src/database/models/Job';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
@@ -25,30 +25,28 @@ export class SampleController {
             };
         };
 
-        if (userId) {
-            const samples = await Sample.findAll({
-                where: whereCondition,
-                include: [
-                    {
-                        model: Test,
-                        as: "tests",
-                        where: { userId: userId },
-                        required: true,
-                    }
-                ]
-            });
-            return res.status(200).json(samples);
-        };
-
         if (jobNumber) {
             whereCondition.jobNumber = {
                 [Op.iLike]: jobNumber
             };
         };
 
+        // Prepare include for tests
+        const includeTests: any = {
+            model: Test,
+            as: "tests",
+        };
+
+        // If userId is provided, include tests for that user only
+        if (userId) {
+            includeTests.where = { userId: userId };
+            includeTests.required = true
+        }
+
         try {
             const samples = await Sample.findAll({
                 where: whereCondition,
+                include: [includeTests]
             });
 
             // respond with retieved sample data
