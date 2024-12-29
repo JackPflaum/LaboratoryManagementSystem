@@ -2,21 +2,22 @@ import { GridActionsCellItem, GridColDef, GridRowParams, GridRenderCellParams } 
 import { Typography } from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
+import { Add } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CompletedChip from "../completed-chip";
 import IncompleteChip from "../incomplete-chip";
-import { ResultsAttributes, SampleAttributes } from "../../../types/interfaces";
+import { SampleAttributes } from "../../../types/interfaces";
 
 
 interface SampleColumnProps {
     editAction?: (row: SampleAttributes) => void;
     deleteAction?: (row: SampleAttributes) => void;
     viewJobAction?: (sample: SampleAttributes) => void;
-    editResultsAction?: (row: ResultsAttributes) => void;
+    editResultsAction?: (row: SampleAttributes) => void;
 };
 
 
-export function getSamplesColumns({ editAction, deleteAction }: SampleColumnProps) {
+export function getSamplesColumns({ editAction, deleteAction, viewJobAction, editResultsAction }: SampleColumnProps) {
     const columns: GridColDef[] = [
         {
             field: "sampleNumber",
@@ -68,9 +69,21 @@ export function getSamplesColumns({ editAction, deleteAction }: SampleColumnProp
                 actions.push(
                     <GridActionsCellItem
                         key="edit"
-                        label="Edit"
+                        label="Sample"
                         icon={<EditIcon />}
                         onClick={() => editAction(params.row)}
+                        showInMenu
+                    />
+                );
+            };
+
+            if (editResultsAction) {
+                actions.push(
+                    <GridActionsCellItem
+                        key="editingResults"
+                        label="Results"
+                        icon={<Add />}
+                        onClick={() => editResultsAction(params.row)}
                         showInMenu
                     />
                 );
@@ -87,6 +100,18 @@ export function getSamplesColumns({ editAction, deleteAction }: SampleColumnProp
                     />
                 );
             };
+
+            if (viewJobAction) {
+                actions.push(
+                    <GridActionsCellItem
+                        key="viewJob"
+                        label="View Job"
+                        icon={<VisibilityIcon />}
+                        onClick={() => viewJobAction(params.row)}
+                        showInMenu
+                    />
+                )
+            }
             return actions;
         }
     };
