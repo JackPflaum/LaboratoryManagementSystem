@@ -16,7 +16,7 @@ export function getTestsColumns({ usersList, editAction, deleteAction }: TestCol
             field: "userId",
             headerName: "Assigned User",
             flex: 1,
-            valueGetter: (row: TestColumnsAttributes) => {
+            valueGetter: (value, row: TestColumnsAttributes) => {
                 const user = usersList?.find((user) => user.id === row.userId);
                 return `${user?.firstName} ${user?.lastName}`;
             }
