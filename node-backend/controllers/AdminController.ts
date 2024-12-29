@@ -32,7 +32,10 @@ export class AdminController {
             }
 
             const users = await User.findAll({
-                where: whereCondition
+                where: whereCondition,
+                attributes: {
+                    exclude: ["password"]
+                }
             });
 
             if (!users) {
