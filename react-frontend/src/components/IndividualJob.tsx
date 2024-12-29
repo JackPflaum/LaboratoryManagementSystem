@@ -15,6 +15,7 @@ import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 import CustomInformationCard from "./features/custom-information-card";
 import { Add } from "@mui/icons-material";
 import { formatDate } from "./features/grid-columns/jobs-columns";
+import ResultsDialog from "./features/dialogs/results-dialog";
 
 
 const IndividualJob = () => {
@@ -24,6 +25,7 @@ const IndividualJob = () => {
     const [editingSample, setEditingSample] = useState<SampleAttributes | undefined>(undefined);
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [sampleDialog, setSampleDialog] = useState<boolean>(false);
+    const [editingResults, setEditingResults] = useState<SampleAttributes | undefined>(undefined);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -45,6 +47,11 @@ const IndividualJob = () => {
         setSampleDialog(true);
     };
 
+    // add sample test results
+    const editResultsAction = (row: SampleAttributes) => {
+        setEditingResults(row);
+    };
+
     const handleCloseDeleteDialog = () => {
         setEditingSample(undefined);
         setOpenDeleteDialog(false);
@@ -61,7 +68,7 @@ const IndividualJob = () => {
     const columns = getSamplesColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
         editAction,
         deleteAction
-    } : { deleteAction, editAction });
+    } : { deleteAction, editAction, editResultsAction });
 
     const jobInformation = [
         { label: "Client", data: jobData?.client ?? "" },
@@ -107,6 +114,13 @@ const IndividualJob = () => {
                 isLoading={isLoading}
             />
             {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={jobData} />}
+            {editingResults &&
+                <ResultsDialog
+                    data={editingResults}
+                    open={!!editingResults}
+                    handleClose={() => setEditingResults(undefined)}
+                />
+            }
             {openDeleteDialog && (
                 <DeleteDialog
                     open={openDeleteDialog}
