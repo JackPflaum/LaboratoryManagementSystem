@@ -1,7 +1,7 @@
 import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { EditDeleteTestAttributes, TestAttributes, UserAttributes } from "../../../types/interfaces";
+import { EditDeleteTestAttributes, TestColumnsAttributes, UserAttributes } from "../../../types/interfaces";
 
 
 interface TestColumnProps {
@@ -10,19 +10,16 @@ interface TestColumnProps {
     deleteAction?: (row: EditDeleteTestAttributes) => void;
 };
 
-
 export function getTestsColumns({ usersList, editAction, deleteAction }: TestColumnProps) {
-    console.log("USERSLIST: ", usersList);
     const columns: GridColDef[] = [
         {
             field: "userId",
             headerName: "Assigned User",
             flex: 1,
-            // valueGetter: (params: GridRowParams<UserAttributes>) => {
-            //     console.log("ROW DATA: ", params.row);
-            //     // const user = usersList?.find((user) => user.id === params.row.id);
-            //     // return user ? `${user.firstName} ${user.lastName}` : "Unknown User";
-            // }
+            valueGetter: (row: TestColumnsAttributes) => {
+                const user = usersList?.find((user) => user.id === row.userId);
+                return `${user?.firstName} ${user?.lastName}`;
+            }
         },
         {
             field: "testName",

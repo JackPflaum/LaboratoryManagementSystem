@@ -57,6 +57,14 @@ export interface TestAttributes {
     comment?: string;
 };
 
+export interface TestColumnsAttributes {
+    id: string;
+    rowId: number;
+    testName: string;
+    unit: string;
+    userId: number;
+};
+
 export interface EditDeleteTestAttributes {
     id: string;
     rowId: number;
