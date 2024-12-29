@@ -14,10 +14,12 @@ import { format } from "date-fns";
 import CustomInformationCard from "./features/custom-information-card";
 import CustomToolbar from "./features/custom-toolbar";
 import { formatDate } from "./features/grid-columns/jobs-columns";
+import ResultsDialog from "./features/dialogs/results-dialog";
 
 const ProfilePage = () => {
     const [editingProfile, setEditingProfile] = useState<boolean>(false);
     const [searchFilter, setSearchFilter] = useState<string>("");
+    const [editingResults, setEditingResults] = useState<SampleAttributes | undefined>(undefined);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -45,8 +47,9 @@ const ProfilePage = () => {
         navigate(`/jobs/${sample.jobNumber}`);
     };
 
-    const editResultsAction = () => {
-        //TODO: open results dialog and allow results mutation.
+    // add sample test results
+    const editResultsAction = (row: SampleAttributes) => {
+        setEditingResults(row);
     };
 
     const columns = getSamplesColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
@@ -54,7 +57,6 @@ const ProfilePage = () => {
         editResultsAction
     } : {
         editResultsAction, viewJobAction,
-        // editResultsAction
     });
 
     const profileInformation = [
@@ -85,6 +87,13 @@ const ProfilePage = () => {
                 handleSearchChange={handleSearchChange}
             />
             {editingProfile && <ProfileDialog data={userDetails} open={!!editingProfile} handleClose={handleCloseDialog} />}
+            {editingResults &&
+                <ResultsDialog
+                    data={editingResults}
+                    open={!!editingResults}
+                    handleClose={() => setEditingResults(undefined)}
+                />
+            }
             <DisplayGrid
                 rows={samplesData ?? []}
                 columns={columns}
