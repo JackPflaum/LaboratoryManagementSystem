@@ -2,6 +2,7 @@ import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid
 import { UserAttributes } from "../../../types/interfaces";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import { formatDate } from "./jobs-columns";
 
 
@@ -13,14 +14,12 @@ interface UserColumnProps {
 export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
     const columns: GridColDef[] = [
         {
-            field: "firstName",
-            headerName: "First Name",
+            field: "name",
+            headerName: "Name",
             flex: 1,
-        },
-        {
-            field: "lastName",
-            headerName: "Last Name",
-            flex: 1,
+            valueGetter: (value, row: UserAttributes) => {
+                return `${row.firstName} ${row.lastName}`
+            }
         },
         {
             field: "workEmail",
@@ -47,13 +46,13 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
         },
         {
             field: "activeEmployee",
-            headerName: "Currently Employed",
+            headerName: "Actively Employed",
             flex: 1,
             renderCell: (params) => {
                 if (params.value === true) {
                     return "Yes"
                 } else {
-                    return "No Longer"
+                    return "No"
                 };
             }
         }
@@ -74,8 +73,8 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
                 />,
                 <GridActionsCellItem
                     key="delete"
-                    label="Delete"
-                    icon={<DeleteIcon />}
+                    label={params.row.activeEmployee ? "Delete" : "ReActivate"}
+                    icon={params.row.activeEmployee ? <DeleteIcon /> : <RestoreFromTrashIcon />}
                     onClick={() => deleteAction(params.row)}
                     showInMenu
                 />
