@@ -96,7 +96,7 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-            <DialogTitle>{!data ? "Add Sample" : "Edit Sample"}</DialogTitle>
+            <DialogTitle>{!data ? "Add Sample" : `Edit Sample: ${data?.sampleNumber}`}</DialogTitle>
             <Divider />
             <DialogContent>
                 <FormProvider {...formMethods}>
