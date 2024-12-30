@@ -7,7 +7,7 @@ import { AuthorizationController } from '../controllers/AuthorizationController'
 import { UserController } from '../controllers/UserController';
 import { AdminController } from '../controllers/AdminController';
 import { ProfileController } from '../controllers/ProfileController';
-import { TestController } from '../controllers/TestController';
+import { ResultsController } from '../controllers/ResultsController';
 
 
 const router = Router();
@@ -38,17 +38,12 @@ router.delete('/jobs/:id/delete', JobController.deleteJob);
 
 // Sample related requests
 router.get('/samples', SampleController.getSamples);
-router.get('/samples/:id', SampleController.getSampleDetails);
 router.post('/samples/add-new-sample', SampleController.addNewSample);
 router.put('/samples/:id/update-sample-details', SampleController.updateSampleDetails);
 router.delete('/samples/:id/delete-sample', SampleController.deleteSample);
 
-// Tests related requests
-router.get('/tests', TestController.getTests);
-router.get('/tests/:id', TestController.getTestDetails);
-router.post('/tests/add-new-test', TestController.addNewTest);
-router.put('/tests/:id/update-test-details', TestController.updateTestDetails);
-router.delete('/tests/:id/delete-test', TestController.deleteTest);
+// Results related requests
+router.put('/results/save-results', ResultsController.saveResults);
 
 // User Authorization requests
 router.post('/user-login', AuthorizationController.userlogin);

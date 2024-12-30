@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { SampleAttributes, TestAttributes } from "../../../types/interfaces";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSaveResultsMutation } from "../../../queries/useQueries";
+import { useGetUsersQuery, useSaveResultsMutation } from "../../../queries/useQueries";
 
 
 const ResultsSchema = yup.object().shape({
@@ -35,7 +35,7 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
                 sampleId: test?.sampleId,
                 userId: test?.userId,
                 testName: test?.testName,
-                result: test?.result,
+                result: test.result ?? undefined,
                 unit: test?.unit,
             })) ?? []
         };
@@ -49,7 +49,7 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
     const { mutate: saveResults, isPending: isSaving } = useSaveResultsMutation();
 
     const onSubmit = (formData: { tests: TestAttributes[] }) => {
-        saveResults(formData, {
+        saveResults(formData.tests, {
             onSuccess: () => {
                 handleClose();
             },
@@ -59,20 +59,26 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
         });
     };
 
+    const usersList = useGetUsersQuery("", null);
+
     return (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Results</DialogTitle>
             <Divider />
             <DialogContent>
                 <Stack gap={2}>
                     {data?.tests.map((test, index) => (
                         <Stack key={index} direction="row" spacing={2} margin={2} alignItems="center">
-                            <Typography variant="body2" sx={{ flex: 1 }}>
-                                <strong>User:</strong>{test.userId}
+                            <Typography sx={{ flex: 1 }}>
+                                <strong>Assigned User: </strong>
+                                {(() => {
+                                    const user = usersList.data?.find((user) => user.id === test.userId);
+                                    return user ? `${user.firstName} ${user.lastName}` : "User not found";
+                                })()}
                             </Typography>
-                            <Typography>{test.testName}</Typography>
+                            <Typography>{test.testName}:</Typography>
                             <Controller
-                                name={`tests.${index}`}
+                                name={`tests.${index}.result`}  // dynamically bind 'result' field to the correct index in the 'tests' array
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <TextField

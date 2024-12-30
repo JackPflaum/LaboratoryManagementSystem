@@ -734,106 +734,6 @@ export const useDeleteSampleMutation = () => {
 };
 
 
-// get list of all Tests
-export const useGetTestsQuery = (id?: number) => {
-
-    return useQuery<TestAttributes[]>({
-        queryKey: [...queryKeys.tests.getTestsList, id],
-        queryFn: async () => {
-            const url = new URL("http://localhost:8000/api/tests");
-
-            if (id) {
-                url.searchParams.append("id", id.toString());
-            };
-
-            const response = await fetch(url.toString(), {
-                method: "GET",
-                credentials: "include"
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
-
-            return responseData as TestAttributes[];
-        },
-    });
-};
-
-
-// get individual Test data
-export const useGetTestQuery = (id: string | undefined) => {
-    return useQuery<TestAttributes>({
-        queryKey: id ? [...queryKeys.tests.getTest, id] : [],
-        queryFn: async () => {
-            if (!id) {
-                throw new Error("Test ID is required");
-            };
-
-            const response = await fetch(`http://localhost:8000/api/tests/${id}`, {
-                method: "GET",
-                credentials: "include",
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
-
-            return responseData as TestAttributes;
-        },
-    });
-};
-
-
-// creating new Test for particular sample
-export const useCreateTestMutation = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async (data: TestAttributes) => {
-            await fetch(`http://localhost:8000/api/tests/add-new-test`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(data)
-            });
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
-        },
-    });
-};
-
-
-// updating existing Test
-export const useUpdateTestMutation = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async ({ data, id }: { data: TestAttributes, id: number }) => {
-            await fetch(`http://localhost:8000/api/tests/${id}/update-test-details`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(data)
-            });
-        },
-        onSuccess: (res, id) => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList, id.toString()] });
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
-        },
-    });
-};
-
-
 // deleting Test
 export const useDeleteTestMutation = () => {
     const queryClient = useQueryClient();
@@ -862,14 +762,14 @@ export const useSaveResultsMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (data: TestAttributes) => {
-            await fetch("http://localhost:8000/api/save-results", {
+        mutationFn: async (data: TestAttributes[]) => {
+            await fetch("http://localhost:8000/api/results/save-results", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify(data),
+                body: JSON.stringify({ data }),
             });
         },
         onSuccess: () => {
