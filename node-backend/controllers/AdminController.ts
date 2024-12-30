@@ -33,9 +33,10 @@ export class AdminController {
 
             const users = await User.findAll({
                 where: whereCondition,
-                attributes: {
-                    exclude: ["password"]
-                }
+                order: [["lastName", "ASC"]]
+                // attributes: {
+                //     exclude: ["password"]
+                // }
             });
 
             if (!users) {
@@ -144,9 +145,8 @@ export class AdminController {
             user.activeEmployee = !user.activeEmployee;
             await user.save();
 
-            return res.status(200).json({ success: "User has been deleted" });
+            return res.status(200).json({ success: "User has been deleted/reactivated" });
         } catch (error) {
-            console.log("delete user: ", error);
             return res.status(500).json({ error: "Internal server error" })
         };
     };

@@ -29,7 +29,8 @@ export class ClientController {
                     "state",
                     "postcode",
                     "fullAddress"
-                ]
+                ],
+                order: [["name", "ASC"]]
             });
 
             // convert to plain javascript objects to remove Sequelize meta data
@@ -79,6 +80,7 @@ export class ClientController {
             await Client.create({ name, email, phoneNumber, addressLine, suburb, state, postcode, purchaseOrderNumber });
             return res.status(201).json({ success: "New Client has been created" });
         } catch (error) {
+            console.log("ADD CLIENT: ", error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     };
@@ -126,6 +128,7 @@ export class ClientController {
     // handle deleting Client
     static async deleteClient(req: Request, res: Response) {
         const clientId = req.params.id as string;
+
         try {
             const client = await Client.findByPk(clientId);
 
