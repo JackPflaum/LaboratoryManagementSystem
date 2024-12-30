@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import Sample from '../src/database/models/Sample';
-import { Op, Transaction } from 'sequelize';
+import { Op } from 'sequelize';
 import { SampleAttributes } from '../src/database/types/models-interface';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { incrementSampleNumber } from '../src/functions/miscellaneousFunctions';
-import { SampleNotFoundError } from '../src/custom/SampleNotFoundError';
 
 // handles requests related to samples
 export class SampleController {
@@ -45,7 +44,8 @@ export class SampleController {
         try {
             const samples = await Sample.findAll({
                 where: whereCondition,
-                include: [includeTests]
+                include: [includeTests],
+                order: [["sampleNumber", "ASC"]]
             });
 
             // respond with retieved sample data
@@ -57,24 +57,7 @@ export class SampleController {
     };
 
 
-    // retrieve sample from database with specified id
-    static async getSampleDetails(req: Request, res: Response) {
-        try {
-            const { sampleId } = req.params;
-            const sampleDetails = Sample.findByPk(sampleId);
-
-            if (!sampleDetails) {
-                return res.status(404).json({ error: 'Sample not found.' });
-            }
-
-            // respond with retieved sample data
-            return res.status(200).json(sampleDetails);
-        } catch (error) {
-            return res.status(500).json({ error: 'Internal server erorr.' });
-        };
-    };
-
-
+    // add new sample/s to specified 'Job Number'
     static async addNewSample(req: Request, res: Response) {
         const {
             jobNumber,
