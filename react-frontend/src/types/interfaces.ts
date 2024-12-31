@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Storage, Test, Type, Unit, UserPermissions } from "./enums";
 
 export interface CardData {
@@ -113,4 +114,10 @@ export interface UserAttributes {
 export interface ChangePasswordAttributes {
     password: string;
     confirmPassword: string;
+};
+
+export interface ButtonConfig {
+    label: string;
+    icon: ReactNode;
+    onClick: () => void;
 };

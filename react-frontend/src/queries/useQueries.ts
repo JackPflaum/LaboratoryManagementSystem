@@ -789,7 +789,7 @@ export const useUpdatePasswordMutation = () => {
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
-                body: JSON.stringify(password)
+                body: JSON.stringify({ password })
             });
         },
     });

@@ -1,12 +1,10 @@
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Box, Typography, Stack, Divider, TextField, Button } from "@mui/material";
+import { Stack, Divider, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import * as yup from "yup";
 import { ref } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useUpdatePasswordMutation } from "../queries/useQueries";
 import { ChangePasswordAttributes } from "../types/interfaces";
-import { useParams } from "react-router-dom";
 import { useAuthUser } from "../context/UserAuthContext";
 
 
@@ -23,10 +21,13 @@ const updatePasswordSchema = yup.object().shape({
 });
 
 
-const ChangePassword = () => {
+interface ChangePasswordProps {
+    open: boolean;
+    handleClose: () => void;
+    setAlert: (alert: { message: string, severity: "error" | "info" | "success" | "warning" }) => void;
+};
 
-    const [alert, setAlert] = useState({ message: "", severity: "" });
-
+const ChangePassword = ({ open, handleClose, setAlert }: ChangePasswordProps) => {
 
     const { handleSubmit, control } = useForm<ChangePasswordAttributes>({
         defaultValues: { password: "", confirmPassword: "" },
@@ -44,62 +45,66 @@ const ChangePassword = () => {
                 onSuccess: () => {
                     setAlert({ message: "Password has been updated.", severity: "success" });
                     setTimeout(() => {
-                        setAlert({ message: "", severity: "" });
+                        setAlert({ message: "", severity: "success" });
                     }, 3000);
+                    handleClose();
                 },
                 onError: (error: Error) => {
-                    setAlert({ message: error.message, severity: "warning" });
+                    setTimeout(() => {
+                        setAlert({ message: error.message, severity: "warning" });
+                    }, 3000);
+                    handleClose();
                 },
             });
         }
     };
 
-
-
     return (
-        <Box>
-            <Stack gap={2}>
-                <Typography component="h2">Change Password</Typography>
-                <Divider />
-                <Controller
-                    name="password"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Password"
-                            type="password"
-                            value={field}
-                            onChange={(e) => {
-                                field.onChange(e)
-                            }}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            size="small"
-                        />
-                    )}
-                />
-                <Controller
-                    name="confirmPassword"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField
-                            label="Confirm Password"
-                            type="confirmPassword"
-                            value={field}
-                            onChange={(e) => {
-                                field.onChange(e)
-                            }}
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                            size="small"
-                        />
-                    )}
-                />
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+            <DialogTitle>Change Password</DialogTitle>
+            <Divider />
+            <DialogContent>
+                <Stack gap={2}>
+                    <Divider />
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Password"
+                                type="password"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                size="small"
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="confirmPassword"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                label="Confirm Password"
+                                type="password"
+                                {...field}
+                                error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                size="small"
+                            />
+                        )}
+                    />
+                </Stack>
+            </DialogContent>
+            <DialogActions>
+                <Button variant="contained" onClick={handleClose}>
+                    Cancel
+                </Button>
                 <Button variant="contained" onClick={handleSubmit(onSubmit)}>
                     {isPending ? "Changing Password..." : "Change Password"}
                 </Button>
-            </Stack>
-        </Box>
+            </DialogActions>
+        </Dialog>
     )
 };
 

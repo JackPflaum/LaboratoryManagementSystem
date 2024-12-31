@@ -1,25 +1,32 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import { Alert, Box } from "@mui/material";
 import ProfileDialog from "./features/dialogs/profile-dialog";
 import { useNavigate } from "react-router-dom";
 import { SampleAttributes } from "../types/interfaces";
 import { useGetSamplesQuery, useGetUserProfile as useGetUserProfileQuery, useGetUserQuery } from "../queries/useQueries";
 import { useAuthUser } from "../context/UserAuthContext";
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import EditIcon from '@mui/icons-material/Edit';
 import DisplayGrid from "./features/display-grid";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { SearchLabel, UserPermissions } from "../types/enums";
-import { format } from "date-fns";
 import CustomInformationCard from "./features/custom-information-card";
 import CustomToolbar from "./features/custom-toolbar";
 import { formatDate } from "./features/grid-columns/jobs-columns";
 import ResultsDialog from "./features/dialogs/results-dialog";
+import ChangePassword from "./ChangePassword";
 
 const ProfilePage = () => {
     const [editingProfile, setEditingProfile] = useState<boolean>(false);
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [editingResults, setEditingResults] = useState<SampleAttributes | undefined>(undefined);
+    const [updatingPassword, setUpdatingPassword] = useState<boolean>(false);
+
+    // change password alert
+    const [alert, setAlert] = useState<
+        { message: string; severity: "error" | "info" | "success" | "warning" }
+    >({ message: "", severity: "success" });
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -56,7 +63,7 @@ const ProfilePage = () => {
         viewJobAction,
         editResultsAction
     } : {
-        editResultsAction, viewJobAction,
+        viewJobAction,
     });
 
     const profileInformation = [
@@ -74,11 +81,13 @@ const ProfilePage = () => {
     ];
 
     const toolbarButtons = [
+        { label: "Update Password", icon: <VpnKeyIcon />, onClick: () => setUpdatingPassword(true) },
         { label: "Edit Profile", icon: <EditIcon />, onClick: () => setEditingProfile(true) }
     ];
 
     return (
         <Box>
+            {alert.message && <Alert severity={alert.severity} sx={{ mb: 2 }}>{alert.message}</Alert>}
             <CustomInformationCard title={`${userDetails?.firstName} ${userDetails?.lastName}`} data={profileInformation} />
             <CustomToolbar
                 toolbarButtons={toolbarButtons}
@@ -86,6 +95,13 @@ const ProfilePage = () => {
                 searchLabel={SearchLabel.SEARCH_SAMPLE_NUMBER}
                 handleSearchChange={handleSearchChange}
             />
+            {updatingPassword &&
+                <ChangePassword
+                    open={updatingPassword}
+                    handleClose={() => setUpdatingPassword(false)}
+                    setAlert={setAlert}
+                />
+            }
             {editingProfile && <ProfileDialog data={userDetails} open={!!editingProfile} handleClose={handleCloseDialog} />}
             {editingResults &&
                 <ResultsDialog
