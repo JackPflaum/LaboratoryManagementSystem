@@ -87,6 +87,6 @@ export interface TestAttributes {
     userId: number;
     testName: string;
     unit: string;
-    result?: number;
+    result?: number | null;
     comment?: string;
 }

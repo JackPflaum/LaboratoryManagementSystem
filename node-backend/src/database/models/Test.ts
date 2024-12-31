@@ -10,7 +10,7 @@ class Test extends Model<TestAttributes> implements TestAttributes {
     userId!: number;
     testName!: string;
     unit!: string;
-    result?: number;
+    result?: number | null;
     comment?: string;
 
     static associate(models: ModelsInterface) {
@@ -51,7 +51,8 @@ Test.init({
         allowNull: false,
     },
     result: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
+        allowNull: true,
     },
     comment: {
         type: DataTypes.STRING,

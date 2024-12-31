@@ -13,8 +13,17 @@ export class ResultsController {
             await sequelize.transaction(async (t) => {
                 // prepare array of the update promises
                 const updatePromises = testsData.map((test) => {
+                    // convert 'test.result' to float or null
+                    let resultValue: number | null;
+                    if (test.result !== undefined && test.result !== null) {
+                        const parsed = parseFloat(test.result.toString());
+                        resultValue = isNaN(parsed) ? null : parsed;
+                    } else {
+                        resultValue = null;
+                    };
+
                     return Test.update(
-                        { result: test.result },   // update result column
+                        { result: resultValue },   // update result column
                         {
                             where: { id: test.id },  // only update row with matching 'id'
                             transaction: t,
@@ -26,6 +35,7 @@ export class ResultsController {
             })
             return res.status(200).json({ success: "Results have been saved successfully." });
         } catch (error) {
+            console.error("Error during transaction:", error);
             return res.status(500).json({ error: 'Internal server error.' });
         };
     };
