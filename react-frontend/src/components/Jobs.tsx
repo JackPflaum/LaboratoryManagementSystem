@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useState } from "react";
 import { useDeleteJobMutation, useGetJobsQuery } from "../queries/useQueries";
 import DisplayGrid from "./features/display-grid";
@@ -6,7 +6,7 @@ import { getJobsColumns } from "./features/grid-columns/jobs-columns";
 import { useNavigate } from "react-router-dom";
 import { SearchLabel, UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
-import { JobAttributes } from "../types/interfaces";
+import { ButtonConfig, JobAttributes } from "../types/interfaces";
 import JobDialog from "./features/dialogs/job-dialog";
 import CustomToolbar from "./features/custom-toolbar";
 import { Add } from "@mui/icons-material";
@@ -20,6 +20,9 @@ const Jobs = () => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [editingJob, setEditingJob] = useState<JobAttributes | undefined>(undefined);
+
+    // get Grid data
+    const { data: rows, isLoading } = useGetJobsQuery(searchFilter);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -56,27 +59,17 @@ const Jobs = () => {
         setOpenDeleteDialog(true);
     };
 
+    const canAddEditJobs = useHasPermission(UserPermissions.ADD_EDIT_JOBS);
+
     // Data Grid columns
-    const columns = getJobsColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
+    const columns = getJobsColumns(canAddEditJobs ? {
         viewAction,
         editAction,
         deleteAction,
-    } : { viewAction, deleteAction });
+    } : { viewAction });
 
-    // get Grid data
-    const { data: rows, isLoading } = useGetJobsQuery(searchFilter);
-
-    // check if i  can Pass data directly into data grid -------------------------->?????
-    // const rows = data?.map((data: JobAttributes) => ({
-    //     jobNumber: data?.jobNumber,
-    //     client: data?.client,
-    //     created: data?.createdAt,
-    //     dueDate: data?.dueDate,
-    //     completed: data?.completed,
-    // }));
-
-    const toolbarButtons = [
-        { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
+    const toolbarButtons: ButtonConfig[] = [
+        ...(canAddEditJobs ? [{ label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }] : [])
     ];
 
     return (

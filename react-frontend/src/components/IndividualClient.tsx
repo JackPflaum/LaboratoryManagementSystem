@@ -7,7 +7,7 @@ import CustomToolbar from "./features/custom-toolbar";
 import ClientDialog from "./features/dialogs/client-dialog";
 import EditIcon from '@mui/icons-material/Edit';
 import { getJobsColumns } from "./features/grid-columns/jobs-columns";
-import { JobAttributes } from "../types/interfaces";
+import { ButtonConfig, JobAttributes } from "../types/interfaces";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { SearchLabel, UserPermissions } from "../types/enums";
 import PageTitle from "./features/page-title";
@@ -37,9 +37,7 @@ const IndividualClient = () => {
         navigate(`/jobs/${row.jobNumber}`);
     };
 
-    const columns = getJobsColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
-        viewAction,
-    } : { viewAction });
+    const columns = getJobsColumns({ viewAction });
 
     const clientInformation = [
         { label: "Email", data: clientData?.email ?? "" },
@@ -48,8 +46,12 @@ const IndividualClient = () => {
         { label: "Purchase Order Number", data: clientData?.purchaseOrderNumber ?? "" },
     ];
 
-    const toolbarButtons = [
-        { label: "Edit Client", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
+    // Check user permissions
+    const canEditClient = useHasPermission(UserPermissions.ADD_EDIT_CLIENTS);
+
+    const toolbarButtons: ButtonConfig[] = [
+        ...(canEditClient ? [
+            { label: "Edit Client", icon: <EditIcon />, onClick: () => setOpenDialog(true) }] : [])
     ];
 
     return (

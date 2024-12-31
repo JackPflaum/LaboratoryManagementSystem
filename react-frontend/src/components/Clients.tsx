@@ -1,11 +1,10 @@
 import { Add } from "@mui/icons-material";
-import { Typography } from "@mui/material"
 import { useState } from "react";
 import ClientDialog from "./features/dialogs/client-dialog";
 import DisplayGrid from "./features/display-grid";
 import { useDeleteClientMutation, useGetClientsQuery } from "../queries/useQueries";
 import { getClientsColumns } from "./features/grid-columns/clients-column";
-import { ClientAttributes } from "../types/interfaces";
+import { ButtonConfig, ClientAttributes } from "../types/interfaces";
 import { SearchLabel, UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
 import { useNavigate } from "react-router-dom";
@@ -59,14 +58,17 @@ const Clients = () => {
         setOpenDeleteDialog(true);
     };
 
-    const columns = getClientsColumns(useHasPermission(UserPermissions.ADD_EDIT_CLIENTS) ? {
+    // Check user permissions
+    const canAddEditClients = useHasPermission(UserPermissions.ADD_EDIT_CLIENTS);
+
+    const columns = getClientsColumns(canAddEditClients ? {
         viewAction,
         editAction,
         deleteAction
-    } : { viewAction })
+    } : { viewAction });
 
-    const toolbarButtons = [
-        { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
+    const toolbarButtons: ButtonConfig[] = [
+        ...(canAddEditClients ? [{ label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }] : [])
     ];
 
     return (

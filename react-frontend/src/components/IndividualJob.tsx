@@ -9,7 +9,7 @@ import JobDialog from "./features/dialogs/job-dialog";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
 import { SearchLabel, UserPermissions } from "../types/enums";
 import { useHasPermission } from "../hooks/custom-hooks";
-import { SampleAttributes } from "../types/interfaces";
+import { ButtonConfig, SampleAttributes } from "../types/interfaces";
 import DeleteDialog from "./features/dialogs/delete-dialog";
 import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 import CustomInformationCard from "./features/custom-information-card";
@@ -65,10 +65,21 @@ const IndividualJob = () => {
         setOpenDeleteDialog(true);
     };
 
-    const columns = getSamplesColumns(useHasPermission(UserPermissions.ADD_EDIT_JOBS) ? {
+    // Check user permissions
+    const canAddEditJobs = useHasPermission(UserPermissions.ADD_EDIT_CLIENTS);
+
+    const columns = getSamplesColumns(canAddEditJobs ? {
         editAction,
+        editResultsAction,
         deleteAction
-    } : { deleteAction, editAction, editResultsAction });
+    } : { editResultsAction });
+
+    const toolbarButtons: ButtonConfig[] = [
+        ...(canAddEditJobs ? [
+            { label: "Add Sample", icon: <Add />, onClick: () => setSampleDialog(true) },
+            { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
+        ] : [])
+    ];
 
     const jobInformation = [
         { label: "Client", data: jobData?.client ?? "" },
@@ -79,11 +90,6 @@ const IndividualJob = () => {
         },
         { label: "Completed", data: jobData?.completed ? "Yes" : "No" },
         { label: "Comments", data: jobData?.comments ?? "No comments" },
-    ];
-
-    const toolbarButtons = [
-        { label: "Add Sample", icon: <Add />, onClick: () => setSampleDialog(true) },
-        { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
     ];
 
     return (
