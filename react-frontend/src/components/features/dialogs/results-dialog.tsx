@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { SampleAttributes, TestAttributes } from "../../../types/interfaces";
 import * as yup from "yup";
@@ -12,7 +12,16 @@ const ResultsSchema = yup.object().shape({
         yup.object().shape({
             userId: yup.number().required("User is required"),
             testName: yup.string().required("Test name is required"),
-            result: yup.number().typeError("Result must be a number"),
+            result: yup
+                .number()
+                .nullable()
+                .transform((value, originalValue) => {
+                    // if empty input then convert to null
+                    if (originalValue === "") return null;
+                    // otherwise return original value with no transformation needed
+                    return value;
+                })
+                .typeError("Result must be a number"),
             unit: yup.string().required("Unit is required")
         })
     ).required("Tests are required")
@@ -35,7 +44,7 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
                 sampleId: test?.sampleId,
                 userId: test?.userId,
                 testName: test?.testName,
-                result: test.result ?? undefined,
+                result: test.result ?? null,
                 unit: test?.unit,
             })) ?? []
         };
@@ -99,6 +108,7 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
                     ))}
                 </Stack>
             </DialogContent>
+            {error && <Alert severity="error">{error}</Alert>}
             <DialogActions>
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
