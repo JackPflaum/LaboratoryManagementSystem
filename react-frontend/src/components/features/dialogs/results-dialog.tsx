@@ -5,6 +5,7 @@ import { SampleAttributes, TestAttributes } from "../../../types/interfaces";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useGetUsersQuery, useSaveResultsMutation } from "../../../queries/useQueries";
+import { useAuthUser } from "../../../context/UserAuthContext";
 
 
 const ResultsSchema = yup.object().shape({
@@ -70,6 +71,8 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
 
     const usersList = useGetUsersQuery("", null);
 
+    const { user } = useAuthUser();
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Results</DialogTitle>
@@ -97,6 +100,7 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
                                         onChange={(e) => {
                                             field.onChange(e);
                                         }}
+                                        disabled={user?.id !== test.userId}
                                         error={!!fieldState?.error}
                                         helperText={fieldState?.error?.message}
                                         size="small"
