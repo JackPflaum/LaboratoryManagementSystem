@@ -1,6 +1,7 @@
+import { Transaction } from "sequelize";
 import Sample from "../database/models/Sample";
 import Test from "../database/models/Test";
-import { SampleAttributes } from "../database/types/models-interface";
+import { SampleAttributes, TestAttributes } from "../database/types/models-interface";
 
 
 export const incrementSampleNumber = (jobNumber: string, sample: SampleAttributes | null) => {
@@ -24,28 +25,23 @@ export const incrementSampleNumber = (jobNumber: string, sample: SampleAttribute
 
 
 // checks if all samples are completed based on whether tests have results.
-export async function samplesCompleted(jobNumber: string): Promise<boolean> {
-    // Fetch all samples and include the associated tests in the same query
-    const samples = await Sample.findAll({
-        where: { jobNumber: jobNumber },
-        include: [{
-            model: Test,
-            as: "tests",
-            attributes: ["result"]
-        }],
+export async function samplesCompleted(testsData: TestAttributes[], t: Transaction): Promise<void> {
+    // get all tests for given sample
+    const tests = await Test.findAll({
+        where: { sampleId: testsData[0].sampleId },  // assuming all tests belong to the same Sample
+        attributes: ["result"],
+        transaction: t
     });
 
-    // iterate over all sample tests to see if results are not null.
-    for (let sample of samples) {
-        if (sample.tests) {
-            for (let test of sample.tests) {
-                if (test.result === null) {
-                    return false;   // return false immediately if any test has no result
-                };
-            };
-        };
-    };
+    // check if all test results for the sample are non-null
+    const allTestsCompleted = tests.every((test) => test.result !== null);
 
-    // all tests have results if this point is reached
-    return true;
+    // update Sample complete status
+    await Sample.update(
+        { completed: allTestsCompleted },
+        {
+            where: { id: testsData[0].sampleId },   // assuming all tests belong to the same Sample
+            transaction: t
+        }
+    );
 };
