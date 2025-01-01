@@ -9,9 +9,10 @@ import { Test, Unit } from "../../../types/enums";
 
 interface AddTestsProps {
     sampleData?: SampleAttributes;
+    setError: (errorMessage: string) => void;
 };
 
-const AddTests = ({ sampleData }: AddTestsProps) => {
+const AddTests = ({ sampleData, setError }: AddTestsProps) => {
 
     // track the field values using "useWatch"
     const { watch, control } = useFormContext();
@@ -30,6 +31,18 @@ const AddTests = ({ sampleData }: AddTestsProps) => {
     const { data: usersList, isLoading: usersLoading } = useGetUsersQuery(searchFilter, isActiveUser);
 
     const deleteAction = (row: EditDeleteTestAttributes) => {
+        const currentTests = watch("tests");
+
+        if (currentTests.length <= 1) {
+            setError("At least one test must be associated with the sample.");
+            setTimeout(() => {
+                setError("");
+            }, 3000);
+
+            return;
+        };
+
+        // proceed with removal if there is more than test
         remove(row.rowId);
     };
 

@@ -7,7 +7,6 @@ import { useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCreateSampleMutation, useUpdateSampleMutation } from "../../../queries/useQueries";
-import { Test, Unit } from "../../../types/enums";
 
 
 // sample details validation schema
@@ -103,7 +102,7 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
                     <Stack spacing={2}>
                         <SampleDialog editing={!!data} />
                         <Divider />
-                        <AddTests sampleData={data} />
+                        <AddTests sampleData={data} setError={setError} />
                     </Stack>
                 </FormProvider>
             </DialogContent>
