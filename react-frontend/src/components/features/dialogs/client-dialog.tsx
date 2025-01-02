@@ -163,7 +163,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     />
                     <Grid container>
                         <Grid item xs={12} md={6} >
-                            <Stack marginRight={2}>
+                            <Stack sx={{ marginRight: { xs: 0, md: 2 } }} marginBottom={2}>
                                 <Controller
                                     name="addressLine"
                                     control={control}
@@ -177,6 +177,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                             error={!!fieldState.error}
                                             helperText={fieldState.error?.message}
                                             size="small"
+                                            fullWidth
                                             sx={{ marginBottom: 2 }}
                                         />
                                     )}
@@ -194,6 +195,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                             error={!!fieldState.error}
                                             helperText={fieldState.error?.message}
                                             size="small"
+                                            fullWidth
                                         />
                                     )}
                                 />
@@ -204,14 +206,14 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                 name="state"
                                 control={control}
                                 render={({ field, fieldState }) => (
-                                    <FormControl size="small">
+                                    <FormControl size="small" fullWidth>
                                         <InputLabel>State</InputLabel>
                                         <Select
                                             label="State"
                                             {...field}
                                             error={!!fieldState.error}
                                             placeholder={fieldState.error?.message}
-                                            sx={{ minWidth: "100px", marginBottom: 2 }}
+                                            sx={{ marginBottom: 2 }}
                                         >
                                             {australianStates.map((state) => (
                                                 <MenuItem key={state.value} value={state.value}>
@@ -235,6 +237,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                         size="small"
+                                        fullWidth
                                     />
                                 )}
                             />
