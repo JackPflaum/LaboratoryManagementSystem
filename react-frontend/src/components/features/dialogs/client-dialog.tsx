@@ -17,21 +17,24 @@ const clientSchema = yup.object().shape({
     state: yup.string().optional(),
     postcode: yup.string().optional(),
     purchaseOrderNumber: yup.string().trim().optional(),
-})
-//     .test(
-//     "address-required",
-//     "All address fields must be filled if one is filled",
-//     (value) => {
-//         const { addressLine, suburb, state, postcode } = value;
+}).test(
+    "address-required",
+    "All address fields must be filled if one is filled",
+    (value) => {
+        const { addressLine, suburb, state, postcode } = value;
+        const addressFields = [addressLine, suburb, state, postcode];
 
-//         // If any address field is filled, check that all other address fields are also filled
-//         if (addressLine || suburb || state || postcode) {
-//             return false;
-//         };
+        const filledAddressCount = addressFields
+            .filter(field => field && field.trim() !== "")
+            .length;
 
-//         return true; // If none of the address fields are filled, pass the validation
-//     }
-// );
+        // If one field is filled and others aren't, it's an error
+        if (filledAddressCount > 0 && filledAddressCount !== 4) {
+            return false;
+        }
+        return true;
+    }
+);
 
 interface ClientDialogProps {
     data?: ClientAttributes;
@@ -163,7 +166,7 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                     />
                     <Grid container>
                         <Grid item xs={12} md={6} >
-                            <Stack sx={{ marginRight: { xs: 0, md: 2 } }} marginBottom={2}>
+                            <Stack sx={{ marginRight: { xs: 0, md: 2 } }} >
                                 <Controller
                                     name="addressLine"
                                     control={control}
@@ -212,7 +215,6 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                                             label="State"
                                             {...field}
                                             error={!!fieldState.error}
-                                            placeholder={fieldState.error?.message}
                                             sx={{ marginBottom: 2 }}
                                         >
                                             {australianStates.map((state) => (
