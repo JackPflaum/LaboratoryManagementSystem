@@ -59,7 +59,11 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
     const { mutate: saveResults, isPending: isSaving } = useSaveResultsMutation();
 
     const onSubmit = (formData: { tests: TestAttributes[] }) => {
-        saveResults(formData.tests, {
+        const formDataWithJobNumber = {
+            ...formData,
+            jobNumber: data?.jobNumber
+        }
+        saveResults(formDataWithJobNumber, {
             onSuccess: () => {
                 handleClose();
             },

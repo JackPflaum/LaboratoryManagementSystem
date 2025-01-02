@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
-import { TestAttributes } from '../src/database/types/models-interface';
+import { SaveResultsAttributes, TestAttributes } from '../src/database/types/models-interface';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
-import { samplesCompleted } from '../src/functions/miscellaneousFunctions';
+import { jobCompleted, samplesCompleted } from '../src/functions/miscellaneousFunctions';
 
 // handles requests related to Test results
 export class ResultsController {
 
     // save test results
     static async saveResults(req: Request, res: Response) {
-        const testsData = req.body.data as TestAttributes[];
+        const { tests, jobNumber }: SaveResultsAttributes = req.body.data;
         try {
             await sequelize.transaction(async (t) => {
                 // prepare array of the update promises
-                const updatePromises = testsData.map((test) => {
+                const updatePromises = tests.map((test) => {
                     // convert 'test.result' to float or null
                     let resultValue: number | null;
                     if (test.result !== undefined && test.result !== null) {
@@ -36,7 +36,10 @@ export class ResultsController {
                 await Promise.all(updatePromises);
 
                 // update Sample completion status if all test results are non-null
-                await samplesCompleted(testsData, t);
+                await samplesCompleted(tests, t);
+
+                // update Job completion status if all Samples are complete
+                await jobCompleted(jobNumber, t);
             });
 
             return res.status(200).json({ success: "Results have been saved successfully." });

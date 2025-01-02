@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AdminContextAttributes, ClientAttributes, DashboardAttributes, JobAttributes, ProfileAttributes, SampleAttributes, TestAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
+import { AdminContextAttributes, ClientAttributes, DashboardAttributes, JobAttributes, ProfileAttributes, ResultsAttributes, SampleAttributes, TestAttributes, UserAttributes, UserContextAttributes } from "../types/interfaces";
 import { useAuthUser } from "../context/UserAuthContext";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import useDebouncer from "./debouncer";
@@ -762,7 +762,7 @@ export const useSaveResultsMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (data: TestAttributes[]) => {
+        mutationFn: async (data: ResultsAttributes) => {
             await fetch("http://localhost:8000/api/results/save-results", {
                 method: "PUT",
                 headers: {
@@ -771,8 +771,11 @@ export const useSaveResultsMutation = () => {
                 credentials: "include",
                 body: JSON.stringify({ data }),
             });
+
+            return { jobNumber: data.jobNumber };
         },
-        onSuccess: () => {
+        onSuccess: (variables) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob, variables.jobNumber] })
             queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
         },
     });

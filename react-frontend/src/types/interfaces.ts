@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Storage, Test, Type, Unit, UserPermissions } from "./enums";
+import { UserPermissions } from "./enums";
 
 export interface CardData {
     title: string;
@@ -72,14 +72,12 @@ export interface EditDeleteTestAttributes {
     testName: string;
     unit: "string";
     userId: number;
-}
+};
 
 export interface ResultsAttributes {
-    id?: number;
-    userId: number;
-    result?: string;
-    unit: string;
-}
+    tests: TestAttributes[];
+    jobNumber?: string;
+};
 
 export interface UserContextAttributes {
     id: number;

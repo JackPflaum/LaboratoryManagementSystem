@@ -90,3 +90,8 @@ export interface TestAttributes {
     result?: number | null;
     comment?: string;
 }
+
+export interface SaveResultsAttributes {
+    tests: TestAttributes[];
+    jobNumber: string;
+}
