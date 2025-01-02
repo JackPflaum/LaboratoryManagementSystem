@@ -20,19 +20,32 @@ class Job extends Model<JobAttributes> implements JobAttributes {
 
     // create a new job number based on the most recent job number
     static async createJobNumber(): Promise<string> {
-        // get most recent job number
-        const latestJobNumber = await Job.findOne({
-            order: [['createdAt', 'DESC']],
-        });
+        try {
+            // get most recent job number
+            const latestJobNumber = await Job.findOne({
+                order: [['createdAt', 'DESC']],
+                attributes: ["jobNumber"]
+            });
 
-        if (latestJobNumber) {
-            // split jobNumber into year and number
-            const [year, number] = latestJobNumber.jobNumber.split("-");
-            const newNumber = parseInt(number, 10) + 1;  // using 10 base to ensure unexpected behavior e.g. leading zeroes.
-            return `${year}-${newNumber}`;
-        } else {
             const currentYear = new Date().getFullYear().toString();
-            return `${currentYear}-1`;
+
+            if (latestJobNumber) {
+                // split jobNumber into year and number
+                const [year, number] = latestJobNumber.jobNumber.split("-");
+
+                if (currentYear > year) {
+                    // new year has started
+                    return `${currentYear}-1`;
+                };
+
+                const newNumber = parseInt(number, 10) + 1;  // using 10 base to ensure unexpected behavior e.g. leading zeroes.
+                return `${year}-${newNumber}`;
+            } else {
+                // If no previous job number exists, start with 1 for the current year
+                return `${currentYear}-1`;
+            };
+        } catch (error) {
+            throw new Error("Failed to generate a new job number");
         };
     };
 };
