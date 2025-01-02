@@ -71,8 +71,11 @@ const IndividualJob = () => {
     const columns = getSamplesColumns(canAddEditJobs ? {
         editAction,
         editResultsAction,
-        deleteAction
+        deleteAction,
     } : { editResultsAction });
+
+    // exclude "dueDate" column on Job screen
+    const filteredColumns = columns.filter(column => column.field !== "dueDate");
 
     const toolbarButtons: ButtonConfig[] = [
         ...(canAddEditJobs ? [
@@ -116,7 +119,7 @@ const IndividualJob = () => {
             </Box>
             <DisplayGrid
                 rows={samplesData ?? []}
-                columns={columns}
+                columns={filteredColumns}
                 isLoading={isLoading}
             />
             {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={jobData} />}
