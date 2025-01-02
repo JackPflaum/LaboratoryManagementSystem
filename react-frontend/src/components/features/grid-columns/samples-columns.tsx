@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CompletedChip from "../completed-chip";
 import IncompleteChip from "../incomplete-chip";
 import { SampleAttributes } from "../../../types/interfaces";
+import { formatDate } from "./jobs-columns";
 
 
 interface SampleColumnProps {
@@ -38,6 +39,14 @@ export function getSamplesColumns({ editAction, deleteAction, viewJobAction, edi
             field: "storage",
             headerName: "Storage",
             flex: 1,
+        },
+        {
+            field: "dueDate",
+            headerName: "Due Date",
+            flex: 1,
+            valueGetter: (value, row: SampleAttributes) => {
+                return row.Job?.dueDate ? formatDate(new Date(row.Job?.dueDate)) : "N/A";
+            },
         },
         {
             field: "completed",

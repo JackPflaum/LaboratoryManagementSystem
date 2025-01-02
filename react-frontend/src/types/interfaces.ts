@@ -46,6 +46,7 @@ export interface SampleAttributes {
     comments?: string;
     numberOfSamples: number;
     tests: TestAttributes[];
+    Job?: { dueDate: Date };
 };
 
 export interface TestAttributes {

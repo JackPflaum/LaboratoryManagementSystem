@@ -73,6 +73,7 @@ export interface SampleAttributes {
     numberOfSamples?: number;
     tests?: Test[];
     samplePhotos?: SamplePhoto[]
+    job?: Job;
 }
 
 export interface SamplePhotoAttributes {

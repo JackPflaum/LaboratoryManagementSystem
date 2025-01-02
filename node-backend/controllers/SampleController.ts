@@ -5,6 +5,7 @@ import { SampleAttributes } from '../src/database/types/models-interface';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { incrementSampleNumber } from '../src/functions/miscellaneousFunctions';
+import Job from '../src/database/models/Job';
 
 // handles requests related to samples
 export class SampleController {
@@ -35,6 +36,12 @@ export class SampleController {
             as: "tests",
         };
 
+        // include job to get dueDate
+        const includeJob: any = {
+            model: Job,
+            attributes: ["dueDate"]
+        };
+
         // If userId is provided, include tests for that user only
         if (userId) {
             includeTests.where = { userId: userId };
@@ -44,7 +51,10 @@ export class SampleController {
         try {
             const samples = await Sample.findAll({
                 where: whereCondition,
-                include: [includeTests],
+                include: [
+                    includeTests,
+                    includeJob
+                ],
                 order: [["sampleNumber", "ASC"]]
             });
 

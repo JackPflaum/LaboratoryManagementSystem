@@ -16,9 +16,10 @@ class Sample extends Model<SampleAttributes> implements SampleAttributes {
     comments?: string;
     tests?: Test[];
     samplePhotos?: SamplePhoto[];
+    job?: Job;
 
     static associate(models: ModelsInterface) {
-        Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', onDelete: 'CASCADE' });
+        Sample.belongsTo(models.Job, { foreignKey: 'jobNumber', targetKey: "jobNumber", onDelete: 'CASCADE' });
         Sample.hasMany(models.Test, { foreignKey: "sampleId", as: "tests" });
         Sample.hasMany(models.SamplePhoto, { foreignKey: "sampleId", as: "samplePhotos" });
     };
