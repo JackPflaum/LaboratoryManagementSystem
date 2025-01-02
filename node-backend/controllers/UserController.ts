@@ -42,8 +42,8 @@ export class UserController {
                 return res.status(404).json({ error: 'User not found' });
             };
 
-            // update password (password is hashed on update)
-            user.password = password
+            // update password (password is hashed on update for security)
+            user.password = await User.hashPassword(password);
             await user.save();
 
             return res.status(200).json({ success: "User password has been updated." });

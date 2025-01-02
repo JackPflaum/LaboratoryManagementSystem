@@ -98,11 +98,6 @@ User.init({
                 user.password = await User.hashPassword(user.password);
             }
         },
-        beforeUpdate: async (user: User) => {
-            if (user.password) {
-                user.password = await User.hashPassword(user.password);
-            }
-        },
     }
 });
 
