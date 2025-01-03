@@ -50,11 +50,9 @@ export class JobController {
                     include: [
                         [literal(`"Client"."name"`), "client"]
                     ]
-                }
+                },
+                order: [["jobNumber", "DESC"]]
             });
-
-            // check if samples related to job are all completed
-            // const allCompleted = await samplesCompleted(job);
 
             return res.status(200).json(jobs);
         } catch (error) {
@@ -88,9 +86,6 @@ export class JobController {
             if (!job) {
                 return res.status(404).json({ error: 'Job not found' });
             };
-
-            // check if samples related to job are all completed
-            // const allCompleted = await samplesCompleted(job);
 
             return res.status(200).json(job);
         } catch (error) {
@@ -147,15 +142,11 @@ export class JobController {
 
             const clientId = selectedClient.id;
 
-            // check if samples related to job are all completed
-            // const allCompleted = await samplesCompleted(job);
-
             job.update({
                 clientId: clientId,
                 jobNumber: job.jobNumber,
                 comments: comments,
                 dueDate: dueDate,
-                // completed: allCompleted,
             });
 
             return res.status(200).json({ success: "Job Details updated" });
