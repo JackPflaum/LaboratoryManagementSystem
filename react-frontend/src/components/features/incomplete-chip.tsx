@@ -1,3 +1,4 @@
+import { Close } from "@mui/icons-material";
 import { Chip } from "@mui/material";
 
 
@@ -7,10 +8,12 @@ const IncompleteChip = () => {
         <Chip
             label="Incomplete"
             variant="outlined"
+            icon={<Close />}
+            color="error"
             sx={{
                 color: "#c82121",
                 backgroundColor: "#ffaaa5",
-                border: "2px solid red"
+                border: "1px solid red"
             }}
         />
     );

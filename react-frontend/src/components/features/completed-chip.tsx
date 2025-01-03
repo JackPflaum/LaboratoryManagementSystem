@@ -1,3 +1,4 @@
+import { Done } from "@mui/icons-material";
 import { Chip } from "@mui/material";
 
 
@@ -7,10 +8,12 @@ const CompletedChip = () => {
         <Chip
             label="Completed"
             variant="outlined"
+            icon={<Done />}
+            color="success"
             sx={{
                 color: "green",
                 backgroundColor: "#c9fdd7",
-                border: "2px solid green"
+                border: "1px solid green"
             }}
         />
     );
