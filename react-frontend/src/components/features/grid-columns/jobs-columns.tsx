@@ -63,7 +63,10 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
                 return (
                     <Typography variant="body2" display="flex" alignItems="center" height="100%">
                         {params.value}
-                        {overdue && <WarningAmberIcon sx={{ color: 'red', marginLeft: 1 }} />}
+                        {/* Only show warning icon if the job is overdue and not completed */}
+                        {overdue && params.row.completed !== true && (
+                            <WarningAmberIcon sx={{ color: 'red', marginLeft: 1 }} />
+                        )}
                     </Typography>
                 );
             }

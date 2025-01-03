@@ -4,6 +4,7 @@ import DisplayGrid from "./features/display-grid";
 import { useParams } from "react-router-dom";
 import CustomToolbar from "./features/custom-toolbar";
 import EditIcon from '@mui/icons-material/Edit';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useDeleteSampleMutation, useGetJobQuery, useGetSamplesQuery } from "../queries/useQueries";
 import JobDialog from "./features/dialogs/job-dialog";
 import { getSamplesColumns } from "./features/grid-columns/samples-columns";
@@ -14,8 +15,10 @@ import DeleteDialog from "./features/dialogs/delete-dialog";
 import SampleFormProvider from "./features/dialogs/SampleFormProvider";
 import CustomInformationCard from "./features/custom-information-card";
 import { Add } from "@mui/icons-material";
-import { formatDate } from "./features/grid-columns/jobs-columns";
+import { formatDate, isOverdue } from "./features/grid-columns/jobs-columns";
 import ResultsDialog from "./features/dialogs/results-dialog";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 
 const IndividualJob = () => {
@@ -84,14 +87,28 @@ const IndividualJob = () => {
         ] : [])
     ];
 
+    // Determine overdue state for "Due Date"
+    const dueDate = jobData?.dueDate ? formatDate(jobData.dueDate) : "Not Available";
+    const overdue = isOverdue(dueDate);
+
     const jobInformation = [
-        { label: "Client", data: jobData?.client ?? "" },
+        { label: "Client", data: jobData?.client ?? "Not Available" },
         {
-            label: "Due Date", data: jobData?.dueDate
-                ? formatDate(jobData?.dueDate)
-                : "N/A"
+            label: "Due Date",
+            data: (
+                <>
+                    {dueDate}
+                    {overdue && jobData?.completed !== true && (
+                        <WarningAmberIcon sx={{ color: "red", marginLeft: 1, verticalAlign: "middle" }} />
+                    )}
+                </>
+            )
         },
-        { label: "Completed", data: jobData?.completed ? "Yes" : "No" },
+        {
+            label: "Completed", data: jobData?.completed ? (
+                <CheckCircleOutlineIcon sx={{ color: "green", marginLeft: 1, verticalAlign: "middle" }} />
+            ) : (<HighlightOffIcon sx={{ color: "red", marginLeft: 1, verticalAlign: "middle" }} />)
+        },
         { label: "Comments", data: jobData?.comments ?? "No comments" },
     ];
 
