@@ -1,9 +1,12 @@
 import { GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { UserAttributes } from "../../../types/interfaces";
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import { formatDate } from "./jobs-columns";
+import { Chip } from "@mui/material";
 
 
 interface UserColumnProps {
@@ -34,14 +37,26 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
         {
             field: "permissions",
             headerName: "Permissions",
-            flex: 1,
+            flex: 2,
+            valueGetter: (value, row: UserAttributes) => {
+                return row.permissions.join(", ");
+            },
+            renderCell: (params) => {
+                return params.row.permissions.map((permission: string) => (
+                    <Chip
+                        key={permission}
+                        label={permission}
+                        style={{ margin: 2 }}
+                    />
+                ))
+            },
         },
         {
             field: "dateStarted",
             headerName: "Date Started",
             flex: 1,
-            renderCell: (params) => {
-                return formatDate(params.value);
+            valueGetter: (value, row: UserAttributes) => {
+                return formatDate(row.dateStarted);
             }
         },
         {
@@ -50,9 +65,9 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
             flex: 1,
             renderCell: (params) => {
                 if (params.value === true) {
-                    return "Yes"
+                    return <DoneIcon fontSize="large" sx={{ color: "green" }} />
                 } else {
-                    return "No"
+                    return <CloseIcon fontSize="large" sx={{ color: "red" }} />
                 };
             }
         }
