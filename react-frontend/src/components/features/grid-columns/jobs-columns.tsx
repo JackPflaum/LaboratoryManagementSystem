@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CompletedChip from "../completed-chip";
 import IncompleteChip from "../incomplete-chip";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { JobAttributes } from "../../../types/interfaces";
 import { format } from "date-fns";
 
@@ -23,6 +24,11 @@ interface JobColumnProps {
 export const formatDate = (date: Date) => {
     const formattedDate = format(new Date(date), "dd/MM/yyyy");
     return formattedDate;
+};
+
+export const isOverdue = (dueDate: string) => {
+    const today = format(new Date(), "dd/MM/yyyy");
+    return today > dueDate;
 };
 
 export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColumnProps) {
@@ -41,16 +47,25 @@ export function getJobsColumns({ viewAction, editAction, deleteAction }: JobColu
             field: "createdAt",
             headerName: "Created",
             flex: 1,
-            renderCell: (params) => {
-                return formatDate(params.value);
-            }
+            valueGetter: (value, row: JobAttributes) => {
+                return row.createdAt ? formatDate(row.createdAt) : "Not Available";
+            },
         },
         {
             field: "dueDate",
             headerName: "Due Date",
             flex: 1,
+            valueGetter: (value, row: JobAttributes) => {
+                return formatDate(row.dueDate);
+            },
             renderCell: (params) => {
-                return formatDate(params.value);
+                const overdue = isOverdue(params.value);
+                return (
+                    <Typography variant="body2" display="flex" alignItems="center" height="100%">
+                        {params.value}
+                        {overdue && <WarningAmberIcon sx={{ color: 'red', marginLeft: 1 }} />}
+                    </Typography>
+                );
             }
         },
         {
