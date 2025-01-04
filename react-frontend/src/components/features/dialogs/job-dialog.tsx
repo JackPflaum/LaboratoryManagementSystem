@@ -23,6 +23,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCreateJobMutation, useGetClientsQuery, useUpdateJobMutation } from "../../../queries/useQueries";
+import CustomDatePicker from "../custom-datepicker";
 
 // calculate 90 days from now
 const currentDate = new Date();
@@ -35,7 +36,7 @@ const JobSchema = yup.object().shape({
     comments: yup.string().trim().optional(),
     dueDate: yup.date()
         .required("Due date is required.")
-        // .min(new Date(), "Due date cannot be in the past.")
+        .min(new Date(), "Due date cannot be in the past.")
         .max(maxDate, "Due date cannot be more than 90days from now."),
 });
 
@@ -73,7 +74,6 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
     const { mutate: updateJob, isPending: isUpdating } = useUpdateJobMutation();
 
     const onSubmit = (formData: JobAttributes) => {
-        console.log("Data", formData);
         if (data?.id) {
             updateJob({ formData: formData, id: data.id }, {
                 onSuccess: () => {
@@ -96,6 +96,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
             });
         };
     };
+
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
@@ -153,18 +154,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                         name="dueDate"
                         control={control}
                         render={({ field, fieldState }) => (
-                            <FormControl className="custom-datepicker">
-                                <InputLabel htmlFor="dueDate">Due Date</InputLabel>
-                                <DatePicker
-                                    selected={field.value}
-                                    onChange={(e) => {
-                                        field.onChange(e)
-                                        console.log("Date: ", field.value);
-                                    }}
-                                    dateFormat="d MMMM, yyyy"
-                                />
-                                <FormHelperText sx={{ color: "red" }}>{fieldState.error?.message}</FormHelperText>
-                            </FormControl>
+                            <CustomDatePicker field={field} fieldState={fieldState} label={"Due Date"} />
                         )}
                     />
                 </Stack>

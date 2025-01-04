@@ -18,7 +18,7 @@ import {
     Divider,
     DialogContent,
     DialogActions,
-    FormHelperText
+    FormHelperText,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -26,6 +26,7 @@ import { ref } from "yup";
 import { UserAttributes } from "../../../types/interfaces";
 import { useCreateUserMutation, useUpdateUserMutation } from "../../../queries/useQueries";
 import { useState } from "react";
+import { UserPermissions } from "../../../types/enums";
 import DatePicker from "react-datepicker";
 
 const currentDate = new Date();
@@ -75,11 +76,14 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
     const [error, setError] = useState<string>("");
     const [success, setSuccess] = useState<string>("");
 
+    // used for DatePicker
+    const [click, setClick] = useState<boolean>(false);
+
     const permissionOptions = [
-        { name: "Add/Edit Clients", value: "add_edit_clients" },
-        { name: "Add/Edit Jobs", value: "add_edit_jobs" },
-        { name: "Add/Edit Results", value: "add_edit_results" },
-        { name: "View Reports", value: "view_reports" }
+        { name: UserPermissions.ADD_EDIT_CLIENTS, value: UserPermissions.ADD_EDIT_CLIENTS },
+        { name: UserPermissions.ADD_EDIT_JOBS, value: UserPermissions.ADD_EDIT_JOBS },
+        { name: UserPermissions.ADD_EDIT_RESULTS, value: UserPermissions.ADD_EDIT_RESULTS },
+        { name: UserPermissions.VIEW_REPORTS, value: UserPermissions.VIEW_REPORTS }
     ];
 
     const mapDataToForm = (data?: UserAttributes) => {
@@ -89,7 +93,7 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
             workEmail: data?.workEmail ?? "",
             position: data?.position ?? "",
             permissions: data?.permissions ?? [],
-            dateStarted: data?.dateStarted ?? new Date(currentDate.getDate()),
+            dateStarted: data?.dateStarted ?? new Date(),
             password: data ? "!1xXXXXXXXX" : "",
             confirmPassword: data ? "!1xXXXXXXXX" : "",
         };
@@ -256,14 +260,27 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
                         name="dateStarted"
                         control={control}
                         render={({ field, fieldState }) => (
-                            <FormControl className="custom-datepicker">
-                                <InputLabel htmlFor="dateStarted">Date Started</InputLabel>
+                            <FormControl
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                            >
                                 <DatePicker
                                     selected={field.value}
-                                    onChange={(e) => {
-                                        field.onChange(e)
-                                    }}
                                     dateFormat="d MMMM, yyyy"
+                                    onChange={(date) => field.onChange(date)}  // This will update the form value
+                                    customInput={
+                                        <TextField
+                                            label="Date Started"
+                                            value={field.value}
+                                            onClick={() => setClick(true)}
+                                            onChange={(e) => field.onChange(e.target.value)}
+                                            error={!!fieldState.error}
+                                            variant="outlined"
+                                            fullWidth
+                                            size="small"
+                                        />
+                                    }
                                 />
                                 <FormHelperText sx={{ color: "red" }}>{fieldState.error?.message}</FormHelperText>
                             </FormControl>
