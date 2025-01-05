@@ -6,6 +6,12 @@ import useDebouncer from "./debouncer";
 import { DEBOUNCER_TIME } from "../types/enums";
 import { useNavigate } from "react-router-dom";
 
+// generic API response
+interface ApiResponse {
+    success?: string;
+    error?: string;
+};
+
 // all Query Keys in one single object.
 const queryKeys = {
     jobs: {
@@ -33,6 +39,17 @@ const queryKeys = {
     },
 };
 
+// handle API response by checking the status and throwing error message if not OK
+async function handleResponse<T>(response: Response): Promise<T> {
+    const responseData = await response.json();
+
+    if (!response.ok) {
+        throw new Error(responseData.error || "Something went wrong");
+    }
+
+    return responseData as T;
+};
+
 
 // admin login to the system
 export const useAdminLoginMutation = () => {
@@ -47,15 +64,8 @@ export const useAdminLoginMutation = () => {
                 },
                 credentials: "include",
                 body: JSON.stringify(data),
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData;
+            })
+            return await handleResponse<AdminContextAttributes>(response);
         },
         onSuccess: (res: AdminContextAttributes) => {
             // set returned authorization data to AdminAuthContext
@@ -80,11 +90,7 @@ export const useLoginMutation = () => {
                 body: JSON.stringify(data)
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
+            const responseData = await handleResponse<UserContextAttributes>(response)
 
             localStorage.setItem("user", JSON.stringify(responseData));
 
@@ -114,13 +120,7 @@ export const useLogoutMutation = () => {
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData;
+            return await handleResponse<ApiResponse>(response);
         },
         onSuccess: () => {
             localStorage.removeItem("user");
@@ -153,13 +153,7 @@ export const useGetUsersQuery = (searchFilter: string, isActiveUser: boolean | n
                 credentials: "include"
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData as UserAttributes[];
+            return await handleResponse<UserAttributes[]>(response);
         },
     });
 };
@@ -176,13 +170,7 @@ export const useGetUserQuery = (id: string | undefined) => {
                 credentials: "include"
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData as UserAttributes;
+            return await handleResponse<UserAttributes>(response);
         },
     });
 };
@@ -203,13 +191,7 @@ export const useCreateUserMutation = () => {
                 body: JSON.stringify(data)
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData;
+            return await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsersList] });
@@ -233,13 +215,7 @@ export const useUpdateUserMutation = () => {
                 body: JSON.stringify(data)
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData;
+            return await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsersList] });
@@ -259,11 +235,7 @@ export const useDeleteUserMutation = () => {
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUsersList] });
@@ -286,13 +258,7 @@ export const useGetUserProfile = (id: string | undefined) => {
                 credentials: "include",
             })
 
-            const responseData = await response.json()
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData as UserAttributes;
+            return await handleResponse<UserAttributes>(response);
         },
     });
 };
@@ -304,7 +270,7 @@ export const useUpdateProfileMutation = () => {
 
     return useMutation({
         mutationFn: async ({ formData, id }: { formData: ProfileAttributes, id: number }) => {
-            await fetch(`http://localhost:8000/api/profile/${id}/update-profile`, {
+            const response = await fetch(`http://localhost:8000/api/profile/${id}/update-profile`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -312,6 +278,8 @@ export const useUpdateProfileMutation = () => {
                 credentials: "include",
                 body: JSON.stringify({ data: formData })
             });
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res, variables) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.users.getUser, variables.id.toString()] });
@@ -330,13 +298,7 @@ export const useGetDashboardQuery = () => {
                 credentials: "include",
             })
 
-            const responseData = await response.json()
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData as DashboardAttributes;
+            return await handleResponse<DashboardAttributes>(response);
         },
     });
 };
@@ -364,13 +326,7 @@ export const useGetJobsQuery = (searchFilter: string, id?: string) => {
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData as JobAttributes[];
+            return await handleResponse<JobAttributes[]>(response);
         },
     });
 };
@@ -389,13 +345,7 @@ export const useGetJobQuery = (jobNumber: string | undefined) => {
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
-
-            return responseData;
+            return await handleResponse<JobAttributes>(response);
         },
     });
 };
@@ -406,7 +356,7 @@ export const useCreateJobMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (formData: JobAttributes) => {
-            await fetch("http://localhost:8000/api/jobs/add-new-job", {
+            const response = await fetch("http://localhost:8000/api/jobs/add-new-job", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -414,6 +364,8 @@ export const useCreateJobMutation = () => {
                 credentials: "include",
                 body: JSON.stringify(formData)
             });
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] });
@@ -429,7 +381,7 @@ export const useUpdateJobMutation = () => {
 
     return useMutation({
         mutationFn: async ({ formData, id }: { formData: JobAttributes, id: number }) => {
-            await fetch(`http://localhost:8000/api/jobs/${id}/update-job-details`, {
+            const response = await fetch(`http://localhost:8000/api/jobs/${id}/update-job-details`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -437,9 +389,11 @@ export const useUpdateJobMutation = () => {
                 credentials: "include",
                 body: JSON.stringify({ data: formData })
             });
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob] });
+            queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] });
         },
     });
 };
@@ -456,11 +410,7 @@ export const useDeleteJobMutation = () => {
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res, id) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob, id.toString()] });
@@ -491,13 +441,7 @@ export const useGetClientsQuery = (
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData as ClientAttributes[];
+            return await handleResponse<ClientAttributes[]>(response);
         },
     });
 };
@@ -517,13 +461,7 @@ export const useGetClientQuery = (id: string | undefined) => {
                 credentials: "include",
             })
 
-            const responseData = await response.json()
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
-
-            return responseData;
+            return await handleResponse<ClientAttributes>(response);
         }
     });
 };
@@ -544,11 +482,7 @@ export const useCreateClientMutation = () => {
                 body: JSON.stringify(data),
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong.");
-            };
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res) => {
             // refresh the cached Client list
@@ -564,7 +498,7 @@ export const useUpdateClientMutation = () => {
 
     return useMutation({
         mutationFn: async ({ data, id }: { data: ClientAttributes, id: number }) => {
-            await fetch(`http://localhost:8000/api/clients/${id}/update-client-details`, {
+            const response = await fetch(`http://localhost:8000/api/clients/${id}/update-client-details`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -572,6 +506,8 @@ export const useUpdateClientMutation = () => {
                 credentials: "include",
                 body: JSON.stringify(data),
             });
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res, variables) => {
             // refresh the cached Client list
@@ -593,11 +529,7 @@ export const useDeleteClientMutation = () => {
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.clients.getClientsList] });
@@ -632,43 +564,10 @@ export const useGetSamplesQuery = (searchFilter: string, jobNumber: string | und
                 credentials: "include",
             });
 
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
-
-            return responseData as SampleAttributes[];
+            return await handleResponse<SampleAttributes[]>(response);
         }
     });
 };
-
-
-// get individual Sample data
-export const useGetSampleQuery = (id: string | undefined) => {
-    return useQuery<SampleAttributes>({
-        queryKey: id ? [...queryKeys.samples.getSample, id] : [],
-        queryFn: async () => {
-            if (!id) {
-                throw new Error("Sample ID is required");
-            };
-
-            const response = await fetch(`http://localhost:8000/api/samples/${id}`, {
-                method: "GET",
-                credentials: "include",
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
-
-            return responseData;
-        },
-    });
-};
-
 
 // handle adding new sample to Job
 export const useCreateSampleMutation = () => {
@@ -676,7 +575,7 @@ export const useCreateSampleMutation = () => {
 
     return useMutation({
         mutationFn: async (formData: SampleAttributes) => {
-            await fetch(`http://localhost:8000/api/samples/add-new-sample`, {
+            const response = await fetch(`http://localhost:8000/api/samples/add-new-sample`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -684,6 +583,8 @@ export const useCreateSampleMutation = () => {
                 credentials: "include",
                 body: JSON.stringify(formData)
             })
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: () => {
             // refresh the cached samples list
@@ -699,14 +600,16 @@ export const useUpdateSampleMutation = () => {
 
     return useMutation({
         mutationFn: async ({ formData, id }: { formData: SampleAttributes, id: number }) => {
-            await fetch(`http://localhost:8000/api/samples/${id}/update-sample-details`, {
+            const response = await fetch(`http://localhost:8000/api/samples/${id}/update-sample-details`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
                 body: JSON.stringify(formData)
-            })
+            });
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
@@ -721,10 +624,12 @@ export const useDeleteSampleMutation = () => {
 
     return useMutation({
         mutationFn: async (id: string) => {
-            await fetch(`http://localhost:8000/api/samples/${id}/delete-sample`, {
+            const response = await fetch(`http://localhost:8000/api/samples/${id}/delete-sample`, {
                 method: "DELETE",
                 credentials: "include",
-            })
+            });
+
+            await handleResponse<ApiResponse>(response);
         },
         onSuccess: (res, variables) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] })
@@ -734,36 +639,13 @@ export const useDeleteSampleMutation = () => {
 };
 
 
-// deleting Test
-export const useDeleteTestMutation = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async (id: number) => {
-            const response = await fetch(`http://localhost:8000/api/tests/${id}/delete-test`, {
-                method: "DELETE",
-                credentials: "include"
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseData.error || "Something went wrong");
-            };
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [...queryKeys.tests.getTestsList] });
-        },
-    });
-};
-
 // save test results
 export const useSaveResultsMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (data: ResultsAttributes) => {
-            await fetch("http://localhost:8000/api/results/save-results", {
+            const response = await fetch("http://localhost:8000/api/results/save-results", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -771,6 +653,8 @@ export const useSaveResultsMutation = () => {
                 credentials: "include",
                 body: JSON.stringify({ data }),
             });
+
+            await handleResponse<ApiResponse>(response);
 
             return { jobNumber: data.jobNumber };
         },
@@ -786,7 +670,7 @@ export const useSaveResultsMutation = () => {
 export const useUpdatePasswordMutation = () => {
     return useMutation({
         mutationFn: async ({ password, id }: { password: string, id: number }) => {
-            await fetch(`http://localhost:8000/api/user/${id}/update-password`, {
+            const response = await fetch(`http://localhost:8000/api/user/${id}/update-password`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -794,6 +678,8 @@ export const useUpdatePasswordMutation = () => {
                 credentials: "include",
                 body: JSON.stringify({ password })
             });
+
+            await handleResponse<ApiResponse>(response);
         },
     });
 };
