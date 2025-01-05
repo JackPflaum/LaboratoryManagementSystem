@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { SaveResultsAttributes, TestAttributes } from '../src/database/types/models-interface';
+import { SaveResultsAttributes } from '../src/database/types/models-interface';
 import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { jobCompleted, samplesCompleted } from '../src/functions/miscellaneousFunctions';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 // handles requests related to Test results
 export class ResultsController {
@@ -28,7 +29,8 @@ export class ResultsController {
                         {
                             where: { id: test.id },  // only update row with matching 'id'
                             transaction: t,
-                        }
+                            validate: true,
+                        },
                     );
                 });
 
@@ -44,8 +46,7 @@ export class ResultsController {
 
             return res.status(200).json({ success: "Results have been saved successfully." });
         } catch (error) {
-            console.error("Error during transaction:", error);
-            return res.status(500).json({ error: 'Internal server error.' });
+            return handleSequelizeErrors(error, res);
         };
     };
 };

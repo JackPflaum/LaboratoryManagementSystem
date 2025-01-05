@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import User from "../src/database/models/User";
 import Profile from '../src/database/models/Profile';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 // handles request related to User Profile
 export class UserController {
@@ -19,7 +20,7 @@ export class UserController {
 
             return res.status(200).json(user);
         } catch (error) {
-            return res.status(500).json({ 'error': 'Internal server erorr' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -48,7 +49,7 @@ export class UserController {
 
             return res.status(200).json({ success: "User password has been updated." });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 };

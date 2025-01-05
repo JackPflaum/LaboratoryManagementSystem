@@ -6,6 +6,7 @@ import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { incrementSampleNumber } from '../src/functions/miscellaneousFunctions';
 import Job from '../src/database/models/Job';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 // handles requests related to samples
 export class SampleController {
@@ -61,9 +62,8 @@ export class SampleController {
             // respond with retieved sample data
             return res.status(200).json(samples);
         } catch (error) {
-            console.error("Error fetching samples:", error);
-            return res.status(500).json({ error: 'Internal server error.' });
-        }
+            return handleSequelizeErrors(error, res);
+        };
     };
 
 
@@ -113,8 +113,7 @@ export class SampleController {
 
             return res.status(201).json({ success: "New Sample has been created" });
         } catch (error) {
-            console.log("ERROR: ", error);
-            return res.status(500).json({ error: 'Internal server error.' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -144,7 +143,10 @@ export class SampleController {
                     storage: storage,
                     completed: completed,
                     comments: comments
-                }, { transaction: t });
+                }, {
+                    transaction: t,
+                    validate: true
+                });
 
                 // get the current tests associated with the sample being updated
                 const existingTestsIds = await Test.findAll({
@@ -178,7 +180,7 @@ export class SampleController {
 
             return res.status(200).json({ success: "Sample Details updated" });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error.' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -203,8 +205,7 @@ export class SampleController {
 
             return res.status(200).json({ success: "Sample deleted successfully" });
         } catch (error) {
-            console.log("ERROR---->", error);
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 };

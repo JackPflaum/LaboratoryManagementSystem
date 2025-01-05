@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Job from '../src/database/models/Job';
 import Sample from '../src/database/models/Sample';
 import { Op } from 'sequelize';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 
 // handle Dashboard requests
@@ -40,7 +41,7 @@ export class DashboardController {
                 completedJobsCount: completedJobsCount,
             });
         } catch (error) {
-            return res.status(500).json({ 'error': 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 };

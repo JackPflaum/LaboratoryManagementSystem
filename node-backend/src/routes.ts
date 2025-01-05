@@ -27,7 +27,6 @@ router.get('/clients/:id', ClientController.getClientDetails);
 router.post('/clients/add-new-client', ClientController.addNewClient);
 router.put('/clients/:id/update-client-details', ClientController.updateClientDetails);
 router.delete('/clients/:id/delete', ClientController.deleteClient);
-router.get('/clients/confirm-client-exists', ClientController.confirmClientExists);
 
 // Job related requests
 router.get('/jobs', JobController.getJobs);

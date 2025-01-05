@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 import Client from '../src/database/models/Client';
 import { ClientAttributes } from '../src/database/types/models-interface';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 
 // handles requests related to client information
@@ -38,7 +39,7 @@ export class ClientController {
 
             return res.status(200).json(formattedClients);
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         }
     };
 
@@ -56,7 +57,7 @@ export class ClientController {
             // respond with retieved client details
             return res.status(200).json(client);
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -80,8 +81,7 @@ export class ClientController {
             await Client.create({ name, email, phoneNumber, addressLine, suburb, state, postcode, purchaseOrderNumber });
             return res.status(201).json({ success: "New Client has been created" });
         } catch (error) {
-            console.log("ADD CLIENT: ", error);
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         }
     };
 
@@ -116,11 +116,11 @@ export class ClientController {
                 state: state,
                 postcode: postcode,
                 purchaseOrderNumber: purchaseOrderNumber,
-            });
+            }, { validate: true });
 
-            return res.status(201).json({ success: "Client Details updated" });
+            return res.status(200).json({ success: "Client Details updated" });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -140,33 +140,7 @@ export class ClientController {
 
             return res.status(200).json({ success: "Client has been deleted" });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-    };
-
-
-    // confirms clients existance in the database (called before addNewClient)
-    static async confirmClientExists(req: Request, res: Response) {
-        const { name, email } = req.query;
-        try {
-            // check database for existance of name or email
-            const client = await Client.findOne({
-                where: {
-                    [Op.or]: [
-                        { name: name as string },
-                        { email: email as string }
-                    ]
-                }
-            });
-
-            // return true or false based on whether name or email was found in database
-            if (client) {
-                return res.status(200).json({ result: true });
-            } else {
-                return res.status(200).json({ result: false });
-            };
-        } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         }
     };
 };

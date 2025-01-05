@@ -4,6 +4,7 @@ import { UserAttributes } from '../src/database/types/models-interface';
 import { Op } from 'sequelize';
 import sequelize from "../src/database/models/db";
 import Profile from "../src/database/models/Profile";
+import { handleSequelizeErrors } from "../src/custom/SequelizeErrorHandler";
 
 // handles Admin requests
 export class AdminController {
@@ -34,9 +35,6 @@ export class AdminController {
             const users = await User.findAll({
                 where: whereCondition,
                 order: [["lastName", "ASC"]]
-                // attributes: {
-                //     exclude: ["password"]
-                // }
             });
 
             if (!users) {
@@ -45,8 +43,7 @@ export class AdminController {
 
             return res.status(200).json(users);
         } catch (error) {
-            console.log("get users:", error);
-            return res.status(500).json({ error: "Internal server error" });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -88,7 +85,7 @@ export class AdminController {
 
             return res.status(201).json({ success: "New User has been created" });
         } catch (error) {
-            return res.status(500).json({ error: "Internal server error" })
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -121,11 +118,11 @@ export class AdminController {
                 position: position,
                 permissions: permissions,
                 dateStarted: dateStarted,
-            });
+            }, { validate: true });
 
             return res.status(200).json({ success: "User has been updated" });
         } catch (error) {
-            return res.status(500).json({ error: "Internal server error" })
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -147,7 +144,7 @@ export class AdminController {
 
             return res.status(200).json({ success: "User has been deleted/reactivated" });
         } catch (error) {
-            return res.status(500).json({ error: "Internal server error" })
+            return handleSequelizeErrors(error, res);
         };
     };
 };

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { literal, Op } from 'sequelize';
 import Job from '../src/database/models/Job';
 import Client from '../src/database/models/Client';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 
 // maybe import from Job
@@ -56,7 +57,7 @@ export class JobController {
 
             return res.status(200).json(jobs);
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         }
     };
 
@@ -89,7 +90,7 @@ export class JobController {
 
             return res.status(200).json(job);
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -112,10 +113,10 @@ export class JobController {
             // create a new job number incremented up from most recently created job
             const jobNumber = await Job.createJobNumber();
 
-            const newJob = await Job.create({ jobNumber, clientId, comments, dueDate });
-            return res.status(201).json(newJob);
+            await Job.create({ jobNumber, clientId, comments, dueDate });
+            return res.status(201).json({ success: "New Job was created." });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -147,12 +148,11 @@ export class JobController {
                 jobNumber: job.jobNumber,
                 comments: comments,
                 dueDate: dueDate,
-            });
+            }, { validate: true });
 
             return res.status(200).json({ success: "Job Details updated" });
         } catch (error) {
-            console.log('updateJobDetails() Error:', error);
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 
@@ -172,7 +172,7 @@ export class JobController {
 
             return res.status(200).json({ success: "Job deleted successfully" });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 };

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ProfileAttributes } from '../src/database/types/models-interface';
 import Profile from '../src/database/models/Profile';
+import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
 
 export class ProfileController {
 
@@ -18,11 +19,11 @@ export class ProfileController {
             profile.update({
                 personalEmail: personalEmail,
                 phoneNumber: phoneNumber
-            });
+            }, { validate: true });
 
             return res.status(200).json({ success: "Profile updated" });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal server error' });
+            return handleSequelizeErrors(error, res);
         };
     };
 };
