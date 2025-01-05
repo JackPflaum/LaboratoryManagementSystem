@@ -325,7 +325,7 @@ const UserDialog = ({ open, handleClose, data }: UserDialogProps) => {
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+                <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={isCreating || isUpdating}>
                     {isCreating || isUpdating ? "Submitting..." : "Submit"}
                 </Button>
             </DialogActions>

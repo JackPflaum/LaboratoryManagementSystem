@@ -111,7 +111,7 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={formMethods.handleSubmit(onSubmit)}>
+                <Button variant="contained" onClick={formMethods.handleSubmit(onSubmit)} disabled={isCreating || isUpdating}>
                     {isCreating || isUpdating ? "Saving Sample..." : "Save"}
                 </Button>
             </DialogActions>

@@ -164,7 +164,7 @@ const JobDialog = ({ data, open, handleClose }: JobDialogProps) => {
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+                <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={isCreating || isUpdating}>
                     {isCreating || isUpdating ? "Saving Job..." : "Save"}
                 </Button>
             </DialogActions>

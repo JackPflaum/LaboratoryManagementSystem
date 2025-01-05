@@ -121,7 +121,7 @@ const ResultsDialog = ({ data, open, handleClose }: ResultsDialogProps) => {
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+                <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={isSaving}>
                     {isSaving ? "Saving Results..." : "Save"}
                 </Button>
             </DialogActions>

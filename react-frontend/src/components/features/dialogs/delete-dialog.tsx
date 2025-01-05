@@ -31,7 +31,7 @@ const DeleteDialog = ({
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={() => {
+                <Button variant="contained" disabled={isPending} onClick={() => {
                     if (handleDelete && id !== undefined) {
                         handleDelete(id.toString());    // Convert the id to string for the delete mutation function
                     }

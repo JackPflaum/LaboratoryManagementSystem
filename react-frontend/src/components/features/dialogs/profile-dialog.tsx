@@ -35,7 +35,7 @@ const ProfileDialog = ({ data, open, handleClose }: ProfileDialogProps) => {
         resolver: yupResolver(ProfileDialogSchema),
     });
 
-    const { mutate: updateProfile } = useUpdateProfileMutation();
+    const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
 
     // handle profile form submission
     const onSubmit = (formData: ProfileAttributes) => {
@@ -100,8 +100,8 @@ const ProfileDialog = ({ data, open, handleClose }: ProfileDialogProps) => {
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={handleSubmit(onSubmit)}>
-                    Save
+                <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={isPending}>
+                    {isPending ? "Saving..." : "Save"}
                 </Button>
             </DialogActions>
         </Dialog>

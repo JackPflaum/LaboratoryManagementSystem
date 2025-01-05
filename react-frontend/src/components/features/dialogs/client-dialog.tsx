@@ -79,9 +79,9 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
         resolver: yupResolver(clientSchema)
     });
 
-    const { mutate: createClient } = useCreateClientMutation();
+    const { mutate: createClient, isPending: isCreating } = useCreateClientMutation();
 
-    const { mutate: updateClient } = useUpdateClientMutation();
+    const { mutate: updateClient, isPending: isUpdating } = useUpdateClientMutation();
 
     // handle client form submissions
     const onSubmit = (formData: ClientAttributes) => {
@@ -268,8 +268,8 @@ const ClientDialog = ({ data, open, handleClose }: ClientDialogProps) => {
                 <Button variant="contained" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={handleSubmit(onSubmit)}>
-                    Save
+                <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={isCreating || isUpdating}>
+                    {isCreating || isUpdating ? "Saving Client..." : "Save"}
                 </Button>
             </DialogActions>
         </Dialog >
