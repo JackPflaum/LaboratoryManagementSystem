@@ -42,7 +42,8 @@ export async function samplesCompleted(tests: TestAttributes[], t: Transaction):
         { completed: allTestsCompleted },
         {
             where: { id: tests[0].sampleId },   // assuming all tests belong to the same Sample
-            transaction: t
+            transaction: t,
+            validate: true,
         }
     );
 };
@@ -65,7 +66,8 @@ export async function jobCompleted(jobNumber: string, t: Transaction): Promise<v
         { completed: allSamplesComplete },
         {
             where: { jobNumber: jobNumber },
-            transaction: t
+            transaction: t,
+            validate: true,
         }
     );
 };
