@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from './db';    // import database instance from database.ts
 import { ModelsInterface, ClientAttributes } from '../types/models-interface';
+import Job from './Job';
 
 // In Typescript '!' means the attribute must be assigned a value and '?' means it is optional
 class Client extends Model<ClientAttributes> implements ClientAttributes {
@@ -14,6 +15,7 @@ class Client extends Model<ClientAttributes> implements ClientAttributes {
     postcode?: string;
     fullAddress?: string;    // virtual field
     purchaseOrderNumber?: string;
+    jobs?: Job[];
 
     static associate(models: ModelsInterface) {
         Client.hasMany(models.Job, { foreignKey: "clientId" });    // establish hasMany relationship with Job model
