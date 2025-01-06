@@ -19,6 +19,8 @@ import { formatDate, isOverdue } from "./features/grid-columns/jobs-columns";
 import ResultsDialog from "./features/dialogs/results-dialog";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import PdfDialog from "./features/dialogs/pdf-dialog";
 
 
 const IndividualJob = () => {
@@ -29,6 +31,7 @@ const IndividualJob = () => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [sampleDialog, setSampleDialog] = useState<boolean>(false);
     const [editingResults, setEditingResults] = useState<SampleAttributes | undefined>(undefined);
+    const [pdfDialog, setPdfDialog] = useState<boolean>(false);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchFilter(event.target.value);
@@ -82,6 +85,7 @@ const IndividualJob = () => {
 
     const toolbarButtons: ButtonConfig[] = [
         ...(canAddEditJobs ? [
+            { label: "Create PDF", icon: <PictureAsPdfIcon />, onClick: () => setPdfDialog(true) },
             { label: "Add Sample", icon: <Add />, onClick: () => setSampleDialog(true) },
             { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
         ] : [])
@@ -139,6 +143,13 @@ const IndividualJob = () => {
                 columns={filteredColumns}
                 isLoading={isLoading}
             />
+            {pdfDialog &&
+                <PdfDialog
+                    open={pdfDialog}
+                    handleClose={() => setPdfDialog(false)}
+                    data={{ job: jobData, samples: samplesData }}
+                />
+            }
             {openDialog && <JobDialog open={openDialog} handleClose={() => setOpenDialog(false)} data={jobData} />}
             {editingResults &&
                 <ResultsDialog
