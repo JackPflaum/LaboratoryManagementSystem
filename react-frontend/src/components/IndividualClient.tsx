@@ -40,10 +40,10 @@ const IndividualClient = () => {
     const columns = getJobsColumns({ viewAction });
 
     const clientInformation = [
-        { label: "Email", data: clientData?.email ?? "" },
-        { label: "Phone Number", data: clientData?.phoneNumber ?? "" },
-        { label: "Address", data: clientData?.fullAddress ?? "" },
-        { label: "Purchase Order Number", data: clientData?.purchaseOrderNumber ?? "" },
+        { label: "Email", data: clientData?.email ?? "Not Available" },
+        { label: "Phone Number", data: clientData?.phoneNumber ?? "Not yet provided" },
+        { label: "Address", data: clientData?.fullAddress ?? "Not yet provided" },
+        { label: "Purchase Order Number", data: clientData?.purchaseOrderNumber ?? "Not yet provided" },
     ];
 
     // Check user permissions
