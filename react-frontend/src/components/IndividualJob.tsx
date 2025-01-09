@@ -73,6 +73,7 @@ const IndividualJob = () => {
 
     // Check user permissions
     const canAddEditJobs = useHasPermission(UserPermissions.ADD_EDIT_CLIENTS);
+    const canViewReports = useHasPermission(UserPermissions.VIEW_REPORTS);
 
     const columns = getSamplesColumns(canAddEditJobs ? {
         editAction,
@@ -83,13 +84,23 @@ const IndividualJob = () => {
     // exclude "dueDate" column on Job screen
     const filteredColumns = columns.filter(column => column.field !== "dueDate");
 
-    const toolbarButtons: ButtonConfig[] = [
-        ...(canAddEditJobs ? [
-            { label: "Create PDF", icon: <PictureAsPdfIcon />, onClick: () => setPdfDialog(true) },
+    // Configure toolbar buttons conditionally
+    const toolbarButtons: ButtonConfig[] = [];
+
+    // add "Create PDF" button if user has permission and job is complete
+    if (canViewReports && jobData?.completed) {
+        toolbarButtons.push(
+            { label: "Create PDF", icon: <PictureAsPdfIcon />, onClick: () => setPdfDialog(true) }
+        );
+    };
+
+    // add "Add Sample" and "Edit Job" buttons if user has the permission to add/edit jobs
+    if (canAddEditJobs) {
+        toolbarButtons.push(
             { label: "Add Sample", icon: <Add />, onClick: () => setSampleDialog(true) },
-            { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) },
-        ] : [])
-    ];
+            { label: "Edit Job", icon: <EditIcon />, onClick: () => setOpenDialog(true) }
+        );
+    };
 
     // Determine overdue state for "Due Date"
     const dueDate = jobData?.dueDate ? formatDate(jobData.dueDate) : "Not Available";
