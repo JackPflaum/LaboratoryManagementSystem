@@ -13,7 +13,7 @@ interface ApiResponse {
 };
 
 // all Query Keys in one single object.
-const queryKeys = {
+export const queryKeys = {
     jobs: {
         getJob: ["getJob"],
         getJobsList: ["getJobsData"]
@@ -37,10 +37,13 @@ const queryKeys = {
     profile: {
         getProfile: ["getProfile"],
     },
+    dashboard: {
+        getDashboardData: ["dashboardData"]
+    },
 };
 
 // handle API response by checking the status and throwing error message if not OK
-async function handleResponse<T>(response: Response): Promise<T> {
+export async function handleResponse<T>(response: Response): Promise<T> {
     const responseData = await response.json();
 
     if (!response.ok) {
@@ -291,7 +294,7 @@ export const useUpdateProfileMutation = () => {
 // gets dashboard data
 export const useGetDashboardQuery = () => {
     return useQuery<DashboardAttributes>({
-        queryKey: ["dashboardData"],
+        queryKey: [queryKeys.dashboard.getDashboardData],
         queryFn: async () => {
             const response = await fetch("http://localhost:8000/api/dashboard", {
                 method: "GET",
@@ -392,8 +395,9 @@ export const useUpdateJobMutation = () => {
 
             await handleResponse<ApiResponse>(response);
         },
-        onSuccess: () => {
+        onSuccess: (res, variables) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJobsList] });
+            queryClient.invalidateQueries({ queryKey: [queryKeys.clients.getClient, variables.id] });
         },
     });
 };
@@ -655,10 +659,8 @@ export const useSaveResultsMutation = () => {
             });
 
             await handleResponse<ApiResponse>(response);
-
-            return { jobNumber: data.jobNumber };
         },
-        onSuccess: (variables) => {
+        onSuccess: (res, variables) => {
             queryClient.invalidateQueries({ queryKey: [...queryKeys.jobs.getJob, variables.jobNumber] })
             queryClient.invalidateQueries({ queryKey: [...queryKeys.samples.getSamplesList] });
         },
