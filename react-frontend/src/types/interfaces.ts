@@ -1,6 +1,14 @@
 import { ReactNode } from "react";
 import { UserPermissions } from "./enums";
 
+export interface messageAttributes {
+    type: string;
+    action: string;
+    id?: string;
+    data?: ClientAttributes | JobAttributes | SampleAttributes;
+    timestamp: Date;
+};
+
 export interface CardData {
     title: string;
     count?: string;
