@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import routes from "./routes";
 import cors from "cors";
 import { cookieJwtAuth, unless } from "./middleware/cookieJwtAuth";
@@ -44,15 +46,26 @@ const models = {
 // load up '.env' file into 'process.env' object of Node.js
 dotenv.config();
 
+const corsOptions = {
+    origin: "http://localhost:3000",   // allowing requests from this origin to access backend resources
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,    // allow cookies and credentials
+}
+
 const app = express();
+const server = createServer(app);   // create HTTP server
+const io = new Server(server, {
+    cors: corsOptions
+});
+
+// export the "io" instance
+export { io };
+
 const port = process.env.PORT;
 
 // use CORS (Cross-Origin Resource Sharing) middleware package for secure requests between front and backend.
 app.use(
-    cors({
-        origin: "http://localhost:3000", // allowing requests from this origin to access backend resources
-        credentials: true, // allow cookies and credentials
-    })
+    cors(corsOptions)
 );
 
 // converts incoming JSON payloads in request body to javascript object which becomes available in request.body object
@@ -76,6 +89,19 @@ app.use(
 
 app.use("/api", routes);
 
-app.listen(port, () => {
+// setting up websocket connection
+io.on("connection", (socket) => {
+    console.log("New client connected");
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+    });
+
+    socket.on("error", (error) => {
+        console.log("Socket error:", error);
+    });
+})
+
+server.listen(port, () => {
     console.log(`Listen for server running on http://localhost:${port}`);
 });

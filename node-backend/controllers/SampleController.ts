@@ -7,6 +7,7 @@ import Test from '../src/database/models/Test';
 import { incrementSampleNumber } from '../src/functions/miscellaneousFunctions';
 import Job from '../src/database/models/Job';
 import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
+import { io } from '../src/server';
 
 // handles requests related to samples
 export class SampleController {
@@ -67,6 +68,30 @@ export class SampleController {
     };
 
 
+    // get single sample data
+    static async getSample(req: Request, res: Response) {
+        const sampleId: string = req.params.id;
+
+        try {
+            const sample = await Sample.findOne({
+                where: { id: sampleId },
+                include: [
+                    { model: Job, attributes: ["dueDate"] },
+                    { model: Test, as: "tests" },
+                ]
+            });
+
+            if (!sample) {
+                return res.status(404).json({ error: "Sample not found" });
+            };
+
+            return res.status(200).json(sample);
+        } catch (error) {
+            return handleSequelizeErrors(error, res);
+        };
+    };
+
+
     // add new sample/s to specified 'Job Number'
     static async addNewSample(req: Request, res: Response) {
         const {
@@ -110,6 +135,15 @@ export class SampleController {
                     }
                 }
             });
+
+            // broadcast new "Sample/s" via WebSocket to connected clients
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "sample",
+                    action: "added",
+                    timestamp: new Date().toISOString(),
+                });
+            };
 
             return res.status(201).json({ success: "New Sample has been created" });
         } catch (error) {
@@ -178,6 +212,16 @@ export class SampleController {
                 };
             });
 
+            // after updating, broadcast the "sampleUpdate" event to all connected clients
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "sample",
+                    action: "updated",
+                    id: sampleId,
+                    timestamp: new Date().toISOString(),
+                });
+            };
+
             return res.status(200).json({ success: "Sample Details updated" });
         } catch (error) {
             return handleSequelizeErrors(error, res);
@@ -202,6 +246,14 @@ export class SampleController {
             });
 
             await sample.destroy();
+
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "sample",
+                    action: "deleted",
+                    timestamp: new Date().toISOString(),
+                });
+            };
 
             return res.status(200).json({ success: "Sample deleted successfully" });
         } catch (error) {

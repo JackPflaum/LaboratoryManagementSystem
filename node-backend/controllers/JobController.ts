@@ -3,6 +3,7 @@ import { literal, Op } from 'sequelize';
 import Job from '../src/database/models/Job';
 import Client from '../src/database/models/Client';
 import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
+import { io } from '../src/server';
 
 
 // maybe import from Job
@@ -114,6 +115,16 @@ export class JobController {
             const jobNumber = await Job.createJobNumber();
 
             await Job.create({ jobNumber, clientId, comments, dueDate });
+
+            // broadcast new "Job" via WebSocket to connected clients
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "job",
+                    action: "added",
+                    timestamp: new Date().toISOString(),
+                });
+            };
+
             return res.status(201).json({ success: "New Job was created." });
         } catch (error) {
             return handleSequelizeErrors(error, res);
@@ -143,12 +154,26 @@ export class JobController {
 
             const clientId = selectedClient.id;
 
-            job.update({
+            const jobData = await job.update({
                 clientId: clientId,
                 jobNumber: job.jobNumber,
                 comments: comments,
                 dueDate: dueDate,
             }, { validate: true });
+
+            // remove sequelize metadata
+            const updatedJob = jobData.get({ plain: true });
+
+            // after updating, broadcast the "jobUpdate" event to all connected clients
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "job",
+                    action: "updated",
+                    id: id,
+                    data: updatedJob,
+                    timestamp: new Date().toISOString(),
+                });
+            };
 
             return res.status(200).json({ success: "Job Details updated" });
         } catch (error) {
@@ -169,6 +194,14 @@ export class JobController {
             };
 
             await job.destroy();
+
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "job",
+                    action: "deleted",
+                    timestamp: new Date().toISOString(),
+                });
+            };
 
             return res.status(200).json({ success: "Job deleted successfully" });
         } catch (error) {

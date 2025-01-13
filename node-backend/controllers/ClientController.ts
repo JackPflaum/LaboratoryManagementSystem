@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import Client from '../src/database/models/Client';
 import { ClientAttributes } from '../src/database/types/models-interface';
 import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
+import { io } from '../src/server';
 
 
 // handles requests related to client information
@@ -40,7 +41,7 @@ export class ClientController {
             return res.status(200).json(formattedClients);
         } catch (error) {
             return handleSequelizeErrors(error, res);
-        }
+        };
     };
 
 
@@ -78,11 +79,30 @@ export class ClientController {
 
         try {
             // create client and send back newly created client in json response
-            await Client.create({ name, email, phoneNumber, addressLine, suburb, state, postcode, purchaseOrderNumber });
+            await Client.create({
+                name,
+                email,
+                phoneNumber,
+                addressLine,
+                suburb,
+                state,
+                postcode,
+                purchaseOrderNumber
+            });
+
+            // broadcast new client via WebSocket to connected clients
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "client",
+                    action: "added",
+                    timestamp: new Date().toISOString(),
+                });
+            };
+
             return res.status(201).json({ success: "New Client has been created" });
         } catch (error) {
             return handleSequelizeErrors(error, res);
-        }
+        };
     };
 
 
@@ -107,7 +127,7 @@ export class ClientController {
                 return res.status(404).json({ error: "Client not found." });
             }
 
-            await client.update({
+            const updatedClient = await client.update({
                 name: name,
                 email: email,
                 phoneNumber: phoneNumber,
@@ -117,6 +137,20 @@ export class ClientController {
                 postcode: postcode,
                 purchaseOrderNumber: purchaseOrderNumber,
             }, { validate: true });
+
+            // after updating, broadcast the "clientUpdate" event to all connected clients
+            if (io.sockets.sockets.size > 0) {
+                // remove sequelize metadata
+                const updatedClientData = updatedClient.get({ plain: true });
+
+                io.emit("message", {
+                    type: "client",
+                    action: "updated",
+                    id: id,
+                    data: updatedClientData,
+                    timestamp: new Date().toISOString(),
+                });
+            };
 
             return res.status(200).json({ success: "Client Details updated" });
         } catch (error) {
@@ -138,9 +172,17 @@ export class ClientController {
 
             await client.destroy();
 
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "client",
+                    action: "deleted",
+                    timestamp: new Date().toISOString(),
+                });
+            };
+
             return res.status(200).json({ success: "Client has been deleted" });
         } catch (error) {
             return handleSequelizeErrors(error, res);
-        }
+        };
     };
 };
