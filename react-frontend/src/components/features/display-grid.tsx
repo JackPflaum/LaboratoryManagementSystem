@@ -11,8 +11,29 @@ interface DisplayGridProps {
 const DisplayGrid = ({ columns, rows, isLoading }: DisplayGridProps) => {
     const pageSize = 5;
 
+    const dataGridStyles = {
+        backgroundColor: "white",
+        borderRadius: 4,
+        '.MuiDataGrid-columnSeparator': {
+            display: 'none',
+        },
+        '& .MuiDataGrid-columnHeader': {
+            backgroundColor: 'white',  // Header background color
+            color: 'black',
+        },
+        '& .MuiDataGrid-row': {
+            backgroundColor: 'white',  // Row background color
+        },
+        '& .MuiDataGrid-footerContainer': {
+            backgroundColor: 'white',  // Footer background color
+        },
+        '& .MuiDataGrid-cell': {
+            color: 'black',  // Cell text color
+        },
+    };
+
     return (
-        <Box sx={{ width: "100%", height: 340 }}>
+        <Box sx={{ width: "100%", height: "calc(100vh - 300px)" }}>
             <DataGrid
                 rows={rows}
                 columns={columns}
@@ -24,11 +45,10 @@ const DisplayGrid = ({ columns, rows, isLoading }: DisplayGridProps) => {
                     },
                 }}
                 pageSizeOptions={[pageSize]}
-                sx={{
-                    backgroundColor: "white",
-                    borderRadius: 4,
-                }}
+                sx={dataGridStyles}
                 loading={isLoading}
+                disableColumnMenu={true}
+                disableColumnResize={true}
                 slots={{
                     noRowsOverlay: () => (
                         <Box
