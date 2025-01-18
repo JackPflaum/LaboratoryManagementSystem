@@ -8,45 +8,67 @@ interface PDFProps {
 };
 
 // PDF Document styles
-const styles = StyleSheet.create({
+const pdfStyles = StyleSheet.create({
     page: {
-        flexDirection: "row",
+        flexDirection: "column",
         backgroundColor: "white",
-    },
-    section: {
-        margin: 10,
-        padding: 10,
-        flexGrow: 1,
     },
     header: {
         fontSize: "16px",
-        fontWeight: 900,
+        marginBottom: "5px",
+        paddingLeft: 10,
     },
+    headerText: {
+        fontSize: "20px",
+        fontWeight: "semibold"
+    },
+    section: {
+        marginTop: "5px",
+        paddingLeft: 10
+    },
+    sampleSection: {
+        paddingLeft: 10,
+    },
+    resultsSection: {
+        marginTop: "10px",
+    }
 });
+
+const DividerLine = () => (
+    <View style={{ borderBottomWidth: 0.8, borderBottomColor: "black", marginVertical: 10 }} />
+);
 
 
 const ResultsPDF = ({ job, samples }: PDFProps) => {
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
-                <View style={styles.section}>
-                    <Text style={styles.header}>Client: {job?.client}</Text>
-                </View>
-                <View style={styles.section}>
-                    <Text>Job Number: {job?.jobNumber}</Text>
-                </View>
-                {samples?.map((sample, index) => (
-                    <View key={index}>
-                        <Text>Sample: {sample.sampleNumber}</Text>
-                        <Text>Type: {sample.type}</Text>
-                        {sample.tests.map((test, testIndex) => (
-                            <View key={testIndex}>
-                                <Text>Test: {test.testName}</Text>
-                                <Text>Result: {`${test.result} ${test.unit}`}</Text>
+            <Page size="A4" style={pdfStyles.page}>
+                <View style={pdfStyles.section}>
+                    <Text style={pdfStyles.header}>
+                        <Text style={pdfStyles.headerText}>Client:</Text> {job?.client}
+                    </Text>
+                    <DividerLine />
+                    <Text style={pdfStyles.header}>
+                        <Text style={pdfStyles.headerText}>Job Number:</Text> {job?.jobNumber}
+                    </Text>
+                    <DividerLine />
+                    <View style={pdfStyles.sampleSection}>
+                        {samples?.map((sample,) => (
+                            <View key={sample.id} >
+                                <Text>
+                                    <Text style={pdfStyles.headerText}>Sample:</Text> {sample.sampleNumber}
+                                </Text>
+                                <Text>Type: {sample.type}</Text>
+                                {sample.tests.map((test) => (
+                                    <View key={test.id} style={pdfStyles.resultsSection}>
+                                        <Text>Test: {test.testName}</Text>
+                                        <Text>Result: {`${test.result} ${test.unit}`}</Text>
+                                    </View>
+                                ))}
                             </View>
                         ))}
                     </View>
-                ))}
+                </View>
             </Page>
         </Document>
     );
