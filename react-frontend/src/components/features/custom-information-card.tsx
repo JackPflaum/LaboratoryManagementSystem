@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, Divider, Typography } from "@mui/material";
+import { Card, CardContent, CardHeader, Divider, Typography, useTheme } from "@mui/material";
 
 interface CardInformationItem {
     label: string;
@@ -12,13 +12,17 @@ interface CustomInformationCardProps {
 };
 
 const CustomInformationCard = ({ title, data, colour }: CustomInformationCardProps) => {
+
+    const theme = useTheme();
+
     return (
         <Card
             variant="outlined"
             sx={{
-                // background: `linear-gradient(to right, rgba(255, 255, 255, 0) 0%, ${colour || "rgba(0, 21, 255)"} 70%, ${colour || "rgba(0, 21, 255)"} 100%)`,
                 height: 'auto',
                 borderRadius: '12px',
+                backgroundColor: "rgb(8, 72, 99)",
+                color: "white"
             }}
         >
             <CardHeader title={title} />

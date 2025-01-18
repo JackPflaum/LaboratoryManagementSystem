@@ -1,10 +1,13 @@
 import NavigationSidebar from "./NavigationSidebar";
 
+interface LayoutProps {
+    toggleTheme: () => void;
+};
 
-const Layout = () => {
+const Layout = ({ toggleTheme }: LayoutProps) => {
 
     return (
-        <NavigationSidebar />
+        <NavigationSidebar toggleTheme={toggleTheme} />
     );
 };
 
