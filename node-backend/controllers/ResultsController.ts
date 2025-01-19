@@ -4,6 +4,7 @@ import sequelize from '../src/database/models/db';
 import Test from '../src/database/models/Test';
 import { jobCompleted, samplesCompleted } from '../src/functions/miscellaneousFunctions';
 import { handleSequelizeErrors } from '../src/custom/SequelizeErrorHandler';
+import { io } from '../src/server';
 
 // handles requests related to Test results
 export class ResultsController {
@@ -43,6 +44,15 @@ export class ResultsController {
                 // update Job completion status if all Samples are complete
                 await jobCompleted(jobNumber, t);
             });
+
+            // broadcast results via WebSocket to connected clients
+            if (io.sockets.sockets.size > 0) {
+                io.emit("message", {
+                    type: "sample",
+                    action: "saveResults",
+                    timestamp: new Date().toISOString(),
+                });
+            };
 
             return res.status(200).json({ success: "Results have been saved successfully." });
         } catch (error) {
