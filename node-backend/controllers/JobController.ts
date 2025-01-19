@@ -53,7 +53,10 @@ export class JobController {
                         [literal(`"Client"."name"`), "client"]
                     ]
                 },
-                order: [["jobNumber", "DESC"]]
+                order: [
+                    ["completed", "ASC"],
+                    ["dueDate", "ASC"]
+                ]
             });
 
             return res.status(200).json(jobs);
