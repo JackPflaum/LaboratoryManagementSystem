@@ -8,6 +8,7 @@ import { useLogoutMutation } from "../queries/useQueries";
 import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Toolbar, Typography, useTheme } from "@mui/material";
 import LightModeIcon from '@mui/icons-material/LightMode';
 import NightlightIcon from '@mui/icons-material/Nightlight';
+import Navbar from "./features/navbar";
 
 
 interface NavigationSidebarProps {
@@ -71,25 +72,7 @@ const NavigationSidebar = ({ toggleTheme }: NavigationSidebarProps) => {
 
     return (
         <Box sx={{ display: "flex" }}>
-            <AppBar position="fixed" sx={{
-                zIndex: (theme) => theme.zIndex.drawer + 1,
-                backgroundColor: "rgb(8, 72, 99)"
-            }}
-            >
-                <Toolbar sx={{ justifyContent: "space-between", backgroundColor: "rgb(0, 65, 92)" }}>
-                    <Typography variant="h6" noWrap component="div">
-                        Laboratory Management System
-                    </Typography>
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        {theme.palette.mode === "light" ? (
-                            <LightModeIcon />
-                        ) : (
-                            <NightlightIcon />
-                        )}
-                        <Switch checked={theme.palette.mode === "dark"} onChange={toggleTheme} defaultChecked color="default" />
-                    </Box>
-                </Toolbar>
-            </AppBar>
+            <Navbar toggleTheme={toggleTheme} theme={theme} />
             <Drawer
                 variant="permanent"
                 sx={{
@@ -151,7 +134,7 @@ const NavigationSidebar = ({ toggleTheme }: NavigationSidebarProps) => {
             <Box sx={{
                 flexGrow: 1,
                 padding: 2,
-                background: theme.palette.background.default,
+                backgroundColor: theme.palette.background.default,
                 height: `calc(100vh - 32px)`,
             }}>
                 <Toolbar />

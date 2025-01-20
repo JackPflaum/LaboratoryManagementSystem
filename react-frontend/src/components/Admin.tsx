@@ -2,7 +2,7 @@ import { Add } from "@mui/icons-material";
 import CustomToolbar from "./features/custom-toolbar";
 import DeleteDialog from "./features/dialogs/delete-dialog";
 import DisplayGrid from "./features/display-grid";
-import { Button, Typography, Box } from "@mui/material";
+import { Button, Typography, Box, useTheme } from "@mui/material";
 import { useDeleteUserMutation, useGetUsersQuery, useLogoutMutation } from "../queries/useQueries";
 import { useState } from "react";
 import UserDialog from "./features/dialogs/user-dialog";
@@ -11,9 +11,14 @@ import { getUsersColumns } from "./features/grid-columns/users-columns";
 import { useAuthAdmin } from "../context/AdminAuthContext";
 import PageTitle from "./features/page-title";
 import { SearchLabel } from "../types/enums";
+import Navbar from "./features/navbar";
 
 
-const Admin = () => {
+interface AdminProps {
+    toggleTheme: () => void;
+};
+
+const Admin = ({ toggleTheme }: AdminProps) => {
 
     const [searchFilter, setSearchFilter] = useState<string>("");
     const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -64,9 +69,22 @@ const Admin = () => {
         { label: "Add", icon: <Add />, onClick: () => setOpenDialog(true) }
     ];
 
+    const theme = useTheme();
+
     return (
-        <>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box sx={{
+            flexGrow: 1,
+            paddingLeft: 2,
+            paddingRight: 2,
+            height: "100vh",
+            backgroundColor: theme.palette.background.default
+        }}>
+            <Navbar toggleTheme={toggleTheme} theme={theme} />
+            <Box sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                paddingTop: 10,
+            }}>
                 <Button onClick={() => logout()}>Logout</Button>
             </Box>
             <PageTitle title="Admin" />
@@ -92,7 +110,7 @@ const Admin = () => {
                     title={editingUser?.activeEmployee === false ? "Reactivate" : undefined}
                     description={`${editingUser?.firstName} ${editingUser?.lastName}`} />
             )}
-        </>
+        </Box>
     )
 };
 

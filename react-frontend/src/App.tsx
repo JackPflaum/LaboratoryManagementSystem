@@ -11,6 +11,7 @@ import IndividualClient from './components/IndividualClient';
 import Admin from './components/Admin';
 import ProfilePage from './components/ProfilePage';
 import IndividualJob from './components/IndividualJob';
+import { useAuthUser } from './context/UserAuthContext';
 
 interface AppProps {
     toggleTheme: () => void;
@@ -18,6 +19,12 @@ interface AppProps {
 
 function App({ toggleTheme }: Readonly<AppProps>) {
     console.log("App.tsx refreshed");
+
+    // const ProtectedRoutes = () => {
+    //     const { user } = useAuthUser();
+    //     console.log("USER:", user);
+    //     return user ? <Layout toggleTheme={toggleTheme} /> : <Navigate to="/user-login" /> // Redirect to login if not authenticated
+    // };
 
     return (
         <BrowserRouter>
@@ -35,7 +42,7 @@ function App({ toggleTheme }: Readonly<AppProps>) {
                 </Route>
 
                 {/* Admin Routes */}
-                <Route path="admin" element={<Admin />} />
+                <Route path="admin" element={<Admin toggleTheme={toggleTheme} />} />
 
                 {/* Public Routes */}
                 <Route path="/*" element={<UserLogin />} />
