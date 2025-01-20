@@ -46,7 +46,11 @@ export function getUsersColumns({ editAction, deleteAction }: UserColumnProps) {
                     <Chip
                         key={permission}
                         label={permission}
-                        style={{ margin: 2 }}
+                        style={{
+                            margin: 2,
+                            color: "rgb(21, 41, 42)",
+                            backgroundColor: "rgb(79, 156, 160)",
+                        }}
                     />
                 ))
             },
