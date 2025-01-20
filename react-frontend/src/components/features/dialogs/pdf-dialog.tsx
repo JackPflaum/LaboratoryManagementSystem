@@ -19,8 +19,13 @@ const PdfDialog = ({ open, handleClose, data }: PdfDialogProps) => {
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
             <DialogTitle>Preview PDF</DialogTitle>
             <Divider />
-            <DialogContent>
-                <PDFViewer width="100%" height={700}>
+            <DialogContent sx={{
+                display: "flex",
+            }}>
+                <PDFViewer style={{
+                    width: "100%",
+                    height: 500,
+                }}>
                     <ResultsPDF {...data} />
                 </PDFViewer>
             </DialogContent>
