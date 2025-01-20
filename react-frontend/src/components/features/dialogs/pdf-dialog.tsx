@@ -24,7 +24,7 @@ const PdfDialog = ({ open, handleClose, data }: PdfDialogProps) => {
             }}>
                 <PDFViewer style={{
                     width: "100%",
-                    height: 500,
+                    height: 600,
                 }}>
                     <ResultsPDF {...data} />
                 </PDFViewer>

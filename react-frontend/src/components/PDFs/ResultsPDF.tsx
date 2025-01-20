@@ -15,6 +15,7 @@ const pdfStyles = StyleSheet.create({
     },
     header: {
         fontSize: "16px",
+        marginTop: "10px",
         marginBottom: "5px",
         paddingLeft: 10,
     },
@@ -26,20 +27,27 @@ const pdfStyles = StyleSheet.create({
         marginTop: "5px",
         paddingLeft: 10
     },
+    sampleHeader: {
+        marginTop: "20px",
+    },
     sampleSection: {
         paddingLeft: 10,
     },
     resultsSection: {
         marginTop: "10px",
+        paddingLeft: 10,
     }
 });
 
-const DividerLine = () => (
-    <View style={{ borderBottomWidth: 0.8, borderBottomColor: "black", marginVertical: 10 }} />
+const DividerLine = ({ width }: { width: string }) => (
+    <View style={{ borderBottomWidth: 0.8, borderBottomColor: "black", marginVertical: 10, width: `${width}%` }} />
 );
 
 
 const ResultsPDF = ({ job, samples }: PDFProps) => {
+    const headerWidth: string = "100";
+    const sampleSectionWidth: string = "75";
+
     return (
         <Document>
             <Page size="A4" style={pdfStyles.page}>
@@ -47,24 +55,27 @@ const ResultsPDF = ({ job, samples }: PDFProps) => {
                     <Text style={pdfStyles.header}>
                         <Text style={pdfStyles.headerText}>Client:</Text> {job?.client}
                     </Text>
-                    <DividerLine />
+                    <DividerLine width={headerWidth} />
                     <Text style={pdfStyles.header}>
                         <Text style={pdfStyles.headerText}>Job Number:</Text> {job?.jobNumber}
                     </Text>
-                    <DividerLine />
+                    <DividerLine width={headerWidth} />
                     <View style={pdfStyles.sampleSection}>
                         {samples?.map((sample,) => (
                             <View key={sample.id} >
-                                <Text>
+                                <Text style={pdfStyles.sampleHeader}>
                                     <Text style={pdfStyles.headerText}>Sample:</Text> {sample.sampleNumber}
                                 </Text>
-                                <Text>Type: {sample.type}</Text>
+                                <Text>
+                                    <Text style={pdfStyles.headerText}>Type:</Text> {sample.type}
+                                </Text>
                                 {sample.tests.map((test) => (
                                     <View key={test.id} style={pdfStyles.resultsSection}>
                                         <Text>Test: {test.testName}</Text>
                                         <Text>Result: {`${test.result} ${test.unit}`}</Text>
                                     </View>
                                 ))}
+                                <DividerLine width={sampleSectionWidth} />
                             </View>
                         ))}
                     </View>
