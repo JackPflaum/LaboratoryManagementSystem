@@ -63,6 +63,15 @@ const SampleFormProvider = ({ data, jobNumber, open, handleClose }: SampleDialog
     const { mutate: updateSample, isPending: isUpdating } = useUpdateSampleMutation();
 
     const onSubmit = (formData: SampleAttributes) => {
+
+        if (formData.tests.length === 0) {
+            setError("At least one test must be associated with the sample.");
+            setTimeout(() => {
+                setError("");
+            }, 3000);
+            return;
+        };
+
         const formDataWithTests = {
             ...formData,
             tests: formData.tests ?? [],  // Ensure tests are included
